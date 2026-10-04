@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "name": "react-validacion-tecnica-201",
+      "path": "/home/david/Cursos/react-validacion-tecnica-201"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true
+    }
+  }
+}
