@@ -1,0 +1,26 @@
+{
+  "avisos": {
+    "cargando": "S'estan carregant els avisos…",
+    "error": "No s'han pogut carregar els avisos.",
+    "form": {
+      "enviar": "Publicar",
+      "texto": "Text",
+      "textoVacio": "Escriu el text.",
+      "titulo": "Títol",
+      "tituloCorto": "El títol necessita almenys 3 caràcters."
+    },
+    "titulo": "Avisos",
+    "vacio": "No hi ha avisos."
+  },
+  "errores": {
+    "noEncontrada": "Aquesta ruta no existeix."
+  },
+  "marca": "Tauler",
+  "sesion": {
+    "cargando": "S'està comprovant la sessió…",
+    "entrar": "Entrar",
+    "entrarTexto": "Entra per veure els avisos.",
+    "error": "Keycloak no respon. El contenidor està en marxa?",
+    "salir": "Sortir"
+  }
+}

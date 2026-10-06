@@ -2,19 +2,29 @@
 
 [← Página anterior](M02-03-condicional.md) · [Siguiente página →](M02-05-evento.md)
 
-> Un paso. El mismo componente, seis datos, cada uno con `key`.
+> Práctica de [Props](../M01-fundamentos/03-props.md).
 
 ### Objetivo
 
-Recorrer un array `Entregable[]` y pintar una `Tarjeta` por elemento.
+Pintar seis `Tarjeta` desde un `Entregable[]`, cada una con `key` estable.
 
 ### Prerrequisitos
 
-- [M02-03](M02-03-condicional.md): `Tarjeta` recibe `item` y ya no guarda el objeto dentro.
+- [M02-03](M02-03-condicional.md): `Tarjeta` solo conoce `item`. En `App` hay un único objeto `entrega`.
+
+### En qué consiste
+
+El array se crea en su archivo y se recorre. El experimento repite un id y mira la consola, y prueba la `key` por índice.
 
 ### 1 — El array tipado
 
-**Qué agregamos:** `bandeja/src/datos.ts`.
+**Dónde:** archivo nuevo `bandeja/src/datos.ts`.
+
+**Qué haces:**
+
+1. Crea el archivo con estos seis objetos.
+2. Guarda.
+3. No lo importes todavía.
 
 ```tsx
 import type { Entregable } from "./modelo"
@@ -29,13 +39,25 @@ export const entregables: Entregable[] = [
 ]
 ```
 
-**Con esto conseguimos:** una lista que solo acepta `Entregable`. Un `estado` mal escrito falla en este archivo, no en la pantalla.
+**Experimento:** cambia el estado de E-104 a `"listo"`. Guarda. Mira Problems en este archivo, no en la página.
 
-**Validar:** cambia un momento el estado de E-104 a `"listo"`. El editor marca esa línea. Restáuralo a `"rechazado"`.
+→ Problems marca esa línea. Restáuralo a `"rechazado"`. Problems se vacía. La página sigue con una sola ficha: `App` todavía no importa el array.
+
+**Validación:**
+
+- Seis ids distintos, de E-101 a E-106.
+- Problems vacío en `datos.ts`.
 
 ### 2 — El map
 
-**Qué agregamos:** en `App.tsx`, quita la constante `entrega`. Importa el array y sustituye la etiqueta suelta.
+**Dónde:** `App.tsx`. Borra la constante `entrega` y su import de tipo si ya no se usa.
+
+**Qué haces:**
+
+1. Importa `entregables` desde `./datos`.
+2. Sustituye la `<Tarjeta>` suelta por la lista.
+3. Guarda.
+4. Abre la consola del navegador y cuenta fichas.
 
 ```tsx
 import { entregables } from "./datos"
@@ -49,26 +71,37 @@ import { entregables } from "./datos"
 </ul>
 ```
 
-**Con esto conseguimos:** seis fichas. `key` va en el `<li>`, que es el elemento que devuelve el `map`, y vale el id, que no cambia al reordenar.
+**Experimento:** duplica el objeto E-101 dentro del array, con el mismo `id`. Guarda. Lee la consola. Borra el duplicado.
 
-**Validar:** se ven las seis fichas. «Falta revisión» está en E-101, E-103 y E-105, y no en E-102. La consola del navegador no avisa de `key`.
+→ La consola avisa de dos hijos con la misma `key`. Al borrar el duplicado, el aviso no vuelve al recargar.
+
+Segundo experimento: cambia `key={item.id}` por `key={index}` añadiendo el segundo argumento del `map`. Vuelve a `key={item.id}`.
+
+→ Con el índice compila, porque es `number`. No lo dejes: al filtrar, la posición de una ficha cambia. La `key` del curso es `item.id`, en el `<li>`, no dentro de `Tarjeta`.
+
+**Validación:**
+
+- Se ven seis fichas.
+- «Falta revisión» está en E-101, E-103 y E-105. No está en E-102 ni en E-106 ni en E-104.
+- La consola, tras recargar sin el duplicado, no avisa de `key`.
+- En `App.tsx` no queda la constante `entrega`.
 
 ## Comprueba tu entendimiento
 
-**La key no es la posición**
-Pon `key={index}` usando el segundo argumento del `map` y mira el tipo: el index es `number`. Vuelve a `key={item.id}`.
-→ Con el id, cada ficha queda atada al entregable. El aviso de `key`, si lo había, no está.
+**El componente no se copió seis veces**
+`Tarjeta.tsx` sigue siendo un solo archivo.
+→ Las seis fichas salen del `map`. Si hay seis funciones `Tarjeta` copiadas a mano, no es este paso.
 
 ## Reto
 
-### 1 — Un id repetido
+### 1 — Un elemento de menos
 
-Duplica el objeto E-101 dentro del array, con el mismo `id`.
+Quita `proveedor` de E-105 en el array.
 
 <details>
 <summary>Ver solución</summary>
 
-La consola avisa de dos hijos con la misma `key`. Borra el duplicado. El array se queda en seis ids distintos.
+Problems marca ese objeto: falta `proveedor`. La página puede seguir enseñando cinco fichas o la última compilación buena. Restaura `proveedor: "Oeste"`. Vuelven a ser seis y Problems se vacía.
 
 </details>
 
@@ -77,4 +110,5 @@ La consola avisa de dos hijos con la misma `key`. Borra el duplicado. El array s
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
 | Warning de `key` | `key` está dentro de `Tarjeta` | `key={item.id}` en el `<li>` |
-| `entregables` no se usa y sigue la ficha única | No sustituiste `<Tarjeta item={entrega} />` | El único uso es el `map` |
+| Sigue una sola ficha | El `map` no sustituyó a `<Tarjeta item={entrega} />` | El único uso es el `map` |
+| `entregables` no se usa | Importaste el array y no lo recorres | El `map` llama a `entregables.map` |

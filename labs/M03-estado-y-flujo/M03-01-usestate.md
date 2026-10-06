@@ -2,27 +2,36 @@
 
 [← Página anterior](README.md) · [Siguiente página →](M03-02-derivado.md)
 
-> Un paso. El texto de la caja vive en el estado y la caja lo muestra.
+> Práctica de [Estado y valor derivado](../M02-estado-y-hooks/01-estado.md).
 
 ### Objetivo
 
-Tener un input cuyo valor es `texto` y cuyo cambio llama a `setTexto`.
+Tener una caja cuyo texto es estado, y ver que una variable normal no sirve para lo mismo.
 
 ### Prerrequisitos
 
-- [M02-05](../M02-props-lista-evento/M02-05-evento.md): `App` hace el `map` de `entregables`.
+- [M02-05](../M02-props-lista-evento/M02-05-evento.md): `App` recorre `entregables` con `map`. El botón anota en la consola. `npm run dev` sigue en marcha.
 
-### 1 — El estado y la caja
+### En qué consiste
 
-**Qué agregamos:** en `App.tsx`, el import y el estado al principio de la función, antes del `return`.
+El estado y el input, sin filtrar todavía. El experimento sustituye el estado por un `let` y lo deshace.
+
+### 1 — Estado, etiqueta y caja
+
+**Dónde:** `App.tsx`. El `useState` va dentro de la función, antes del `return`. El input va encima de la `<ul>`.
+
+**Qué haces:**
+
+1. Importa `useState` desde `react`.
+2. Declara el estado en la primera línea del cuerpo de `App`.
+3. Añade label e input.
+4. Guarda y escribe en la caja.
 
 ```tsx
 import { useState } from "react"
 
 const [texto, setTexto] = useState("")
 ```
-
-Encima de la lista:
 
 ```tsx
 <label htmlFor="filtro">Buscar</label>
@@ -33,26 +42,46 @@ Encima de la lista:
 />
 ```
 
-**Con esto conseguimos:** `texto` es `string` porque el estado inicial es `""`. `evento` es `ChangeEvent<HTMLInputElement>` sin anotarlo: lo infiere `onChange`. La lista todavía no mira `texto`.
+**Experimento:** escribe `Este`. Las seis fichas siguen: este paso no filtra. Borra con el teclado. La caja queda vacía.
 
-**Validar:** escribe `Este` en la caja. Las seis fichas siguen. Borra la caja con el teclado: queda vacía. Si la caja no deja de borrar o no acepta letras, `value` y `onChange` no están los dos.
+Ahora sustituye el enlace de la caja, solo para probar:
+
+```tsx
+let copia = ""
+```
+
+`value={copia}` y `onChange={(evento) => { copia = evento.target.value }}`. Escribe una letra.
+
+→ La caja no acumula lo escrito, o se vacía al pintar. React no se entera de un `let`. Restaura `value={texto}` y `setTexto(evento.target.value)`. Borra `copia` si el editor la marca.
+
+Segundo experimento: crea `const [veces, setVeces] = useState(0)` y pon `value={veces}`.
+
+→ Problems: `value` espera `string` y `veces` es `number`. No lo tapes con `any`. Borra `veces` y deja la caja en `texto`.
+
+**Validación:**
+
+- Escribes `Este`, lo lees en la caja y lo borras.
+- Las seis fichas no cambian.
+- `id="filtro"` está en el input. El label dice `htmlFor="filtro"`.
+- Problems vacío. No queda `copia` ni `veces`.
 
 ## Comprueba tu entendimiento
 
-**No es una variable suelta**
-Debajo de `useState`, declara `let copia = ""` y enlaza el input a `copia` con `value={copia}` y un `onChange` que haga `copia = evento.target.value`. Prueba a escribir. Restaura `texto` y `setTexto`.
-→ Con `let`, la caja no acumula lo escrito: React no vuelve a pintar. Con `useState`, cada letra se ve.
+**Los dos cables**
+Quita solo el `onChange` y deja `value={texto}`. Intenta escribir. Restaura el `onChange`.
+
+→ Con `value` y sin `onChange`, la caja no acepta letras: el estado manda y nadie lo actualiza. Con los dos, cada letra se ve.
 
 ## Reto
 
-### 1 — Un estado numérico que no encaja en el input
+### 1 — Un valor inicial visible
 
-Crea `const [veces, setVeces] = useState(0)` y pon `value={veces}` en el input.
+Cambia `useState("")` por `useState("Norte")`. Recarga.
 
 <details>
 <summary>Ver solución</summary>
 
-El editor marca `value`: espera `string` y `veces` es `number`. No lo tapes con `any`. Borra `veces` si no lo usas, y deja el input en `texto`.
+La caja abre con `Norte`. Las fichas siguen siendo seis. Devuelve `useState("")` para que el siguiente laboratorio empiece con la lista completa.
 
 </details>
 
@@ -60,5 +89,6 @@ El editor marca `value`: espera `string` y `veces` es `number`. No lo tapes con 
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| La caja no se edita | Falta `onChange` o no llama a `setTexto` | `onChange={(evento) => setTexto(evento.target.value)}` |
+| La caja no se edita | Falta `onChange` o no llama a `setTexto` | `setTexto(evento.target.value)` |
 | `texto` no se usa | El input no tiene `value={texto}` | Enlaza `value` al estado |
+| El hook está marcado | `useState` quedó después de un `return` | Va al principio de `App` |

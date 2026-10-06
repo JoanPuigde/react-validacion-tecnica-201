@@ -19,4 +19,8 @@ La bandeja de seis fichas no está lenta. El módulo no existe para acelerarla. 
 
 1. [Qué mirar](01-que-mirar.md)
 
+## Demostración guiada
+
+Punto de partida: el filtro responde y marcar cambia una ficha. La página siguiente parte el recorrido en dos momentos. [M04-05](../M04-hooks/M04-05-usememo.md) quita `texto` de las dependencias del filtro y las fichas dejan de moverse. Más tarde, con la lista ya en JSON, `console.count` dentro de `Tarjeta` sube al teclear hasta que `marcar` y el contexto dejan de nacer en cada pintado. El guion está en [Qué mirar](01-que-mirar.md).
+
 → Sigue en **[Qué mirar](01-que-mirar.md)**.

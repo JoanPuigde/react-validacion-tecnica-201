@@ -1,6 +1,6 @@
-# M04 — Hooks
+# Práctica — Hooks sueltos
 
-> Práctica suelta: `children` pertenece a [fundamentos](../M01-fundamentos/05-children.md); el reductor y el hook propio, a [estructura](../M03-apis-y-arquitectura/02-estructura.md); `useMemo`, a [rendimiento](../M04-rendimiento/01-que-mirar.md).
+> Esta carpeta no es el módulo 4. El módulo 4 es [rendimiento](../M04-rendimiento/README.md). Aquí se mezclan laboratorios de tres páginas: [children](../M01-fundamentos/05-children.md) (M04-01 y M04-02), [estructura](../M03-apis-y-arquitectura/02-estructura.md) (M04-03, M04-04, M04-06, M04-07) y [qué mirar](../M04-rendimiento/01-que-mirar.md) (M04-05). Se abren en ese orden, después de [M03-05](../M03-estado-y-flujo/M03-05-reglas.md).
 
 [← Página anterior](../M01-fundamentos/05-children.md) · [Siguiente página →](M04-01-children.md)
 
@@ -18,7 +18,19 @@ Un hook es una función cuyo nombre empieza por `use` y que solo se llama en el 
 
 ## Demostración guiada
 
-La bandeja ya filtra y marca. Los laboratorios no cambian de pantalla: añaden un marco, el foco del buscador, el nombre de quien revisa y, al final, mueven la lista a `useEntregables`.
+El guion de cada idea está en la página de la guía. Aquí, el corte de cada laboratorio.
+
+Punto de partida: el final de M03-05. Buscador, seis fichas, pastilla que cambia, pestaña «Pendientes: 3». Lista en `datos.ts`.
+
+1. [M04-01](M04-01-children.md). Se crea `bandeja/src/componentes/Marco.tsx`. La `<ul>` queda entre `<Marco titulo="Lista">` y `</Marco>`. Encima de las fichas se lee «Lista». Cerrar la etiqueta sin hijos deja el encabezado y vacía la lista.
+2. [M04-02](M04-02-fragmento.md). El `<section>` del marco pasa a un fragmento. El encabezado sigue. En el inspector, el padre del `<h2>` es `<main>`. Dos elementos sueltos en el `return` no compilan.
+3. [M04-03](M04-03-useref.md). `useRef` en `#filtro`. El botón «Ir al buscador» enfoca la caja. Después se escribe `Este` sin volver a pincharla y queda el inventario.
+4. [M04-04](M04-04-contexto.md). Caja `#revisor`, valor inicial «Ana». `Tarjeta` lee el nombre con `useContext` y pinta «Revisor: Ana». Escribir `Luis` lo pone en todas. `TarjetaProps` no gana un campo `revisor`.
+5. [M04-05](M04-05-usememo.md). El filtro va en `useMemo` con `[items, texto]`. Dejar solo `[items]` hace que la caja escriba y las fichas no se muevan. Se restituye `texto`.
+6. [M04-06](M04-06-usereducer.md). `marcar` pasa a `dispatch({ type: "marcar", id })`. Un clic sigue tocando una sola ficha.
+7. [M04-07](M04-07-hook-propio.md). Nace `bandeja/src/hooks/useEntregables.ts`. `App` se queda el filtro. En `App.tsx` no queda `useReducer`. La lista sigue en `datos.ts`.
+
+Dónde queda: el hook existe. [M05-01](../M05-datos/M05-01-fetch.md) sustituye `datos.ts` por `/entregables.json`.
 
 ## Ahora practica tú
 

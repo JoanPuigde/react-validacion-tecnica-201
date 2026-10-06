@@ -32,11 +32,69 @@ En la etiqueta, `class` de HTML pasa a ser `className`. `class` es una palabra r
 
 ## Demostración guiada
 
-En `App.tsx` aparece un objeto `entrega` anotado como `Entregable`. El párrafo deja de ser una frase fija y pasa a leer `{entrega.titulo}`. Al cambiar `proveedor` en el objeto, la ficha cambia al guardar: Vite ha vuelto a pintar.
+Punto de partida: el navegador muestra el título y el párrafo «Revisión de lo que entrega el proveedor.» `npm run dev` sigue en `bandeja/`. No existe `Tarjeta`.
 
-Al poner `estado: "listo"`, el editor subraya el campo y `npm run build` falla en esa línea. Al devolver `"pendiente"`, el aviso desaparece y la pastilla usa la clase `.estado.pendiente` que ya está en la hoja de estilos.
+### 1 — El contrato, sin pintar nada
 
-El mismo objeto, movido a una función `Tarjeta` en `src/componentes/Tarjeta.tsx`, sigue pintando igual. `App` solo la usa. La función no extiende ninguna clase.
+Se crea `bandeja/src/modelo.ts`:
+
+```tsx
+export type EstadoEntregable = "pendiente" | "revisado" | "rechazado"
+
+export interface Entregable {
+  id: string
+  titulo: string
+  proveedor: string
+  estado: EstadoEntregable
+}
+```
+
+La página no cambia: nadie importa el archivo. Cambiar `titulo: string` por `titulo: number` tampoco se ve en el navegador. Se restaura `string` antes de seguir. `estado` se queda en `EstadoEntregable`. Si se deja en `string`, el paso 3 no marca `"listo"`.
+
+### 2 — El objeto en la página
+
+En `bandeja/src/App.tsx` se importa el tipo y se declara el objeto encima de `App`. El párrafo fijo se sustituye por `{entrega.titulo}`.
+
+```tsx
+import type { Entregable } from "./modelo"
+
+const entrega: Entregable = {
+  id: "E-101",
+  titulo: "Informe de accesibilidad",
+  proveedor: "Norte",
+  estado: "pendiente",
+}
+```
+
+Al guardar, el navegador deja la frase de revisión y muestra «Informe de accesibilidad». Cambiar `proveedor` a `"Sur"` no mueve esa línea: el párrafo no lee ese campo. Se restaura `"Norte"`.
+
+### 3 — Un valor que el tipo no admite
+
+En el objeto, `estado` pasa a `"listo"`. La pestaña Problems del editor subraya el campo. El navegador puede seguir mostrando el último pintado bueno: el aviso está en el editor, no en la ficha. Se devuelve `"pendiente"` y Problems queda vacío.
+
+Quitar la línea `proveedor` hace que Problems la pida. Se restaura. La página sigue en «Informe de accesibilidad».
+
+### 4 — Nace Tarjeta
+
+Se crea la carpeta `bandeja/src/componentes/` y el archivo `Tarjeta.tsx`. El objeto se copia ahí. El import del tipo sube un nivel: `../modelo`. La función se llama `Tarjeta`, devuelve un `<article>` y el párrafo sigue siendo `{entrega.titulo}`.
+
+Hasta que `App` no la use, la página no cambia. En `App.tsx` se borran el import de `Entregable` y la constante `entrega`, se importa `Tarjeta` desde `./componentes/Tarjeta` y el `<p>` se sustituye por `<Tarjeta />`. Al guardar, se sigue leyendo «Informe de accesibilidad». El dato ya no está en `App`.
+
+Un import `./modelo` desde `Tarjeta.tsx` no resuelve: el archivo está un nivel más abajo. Se deja `../modelo`.
+
+### 5 — La expresión y la pastilla
+
+Dentro del `<article>`, debajo del título, se añade `<p>{entrega.id} · {entrega.proveedor}</p>`. Se lee `E-101 · Norte`. Cambiar `proveedor` a `"Sur"` y guardar cambia esa línea a `E-101 · Sur`. Se restaura `"Norte"`. Quitar las llaves de `{entrega.id}` pinta la palabra `entrega.id`.
+
+La pastilla usa la clase que ya está en `bandeja/src/estilos.css`:
+
+```tsx
+<p className={`estado ${entrega.estado}`}>{entrega.estado}</p>
+```
+
+Con `"pendiente"` la pastilla es beige. `"revisado"` la pone verde. `"rechazado"`, rosada. Se deja `"pendiente"`. Escribir `class` en vez de `className` lo marca el editor.
+
+Dónde queda: una sola ficha. El objeto `entrega` vive dentro de `bandeja/src/componentes/Tarjeta.tsx`. `App` solo escribe `<Tarjeta />`. La página de props parte de este archivo.
 
 ## Práctica
 

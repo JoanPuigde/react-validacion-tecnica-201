@@ -2,19 +2,29 @@
 
 [← Página anterior](M02-01-props.md) · [Siguiente página →](M02-03-condicional.md)
 
-> Un paso. Una prop que puede no venir, con un texto de reserva.
+> Práctica de [Props](../M01-fundamentos/03-props.md).
 
 ### Objetivo
 
-Añadir `textoBoton` opcional y usarlo en un botón.
+Añadir `textoBoton` opcional, ver el texto de reserva y ver el texto que manda el padre.
 
 ### Prerrequisitos
 
-- [M02-01](M02-01-props.md): `<Tarjeta item={entrega} />` compila.
+- [M02-01](M02-01-props.md): `<Tarjeta item={entrega} />` compila y Problems está vacío.
 
-### 1 — La prop opcional
+### En qué consiste
 
-**Qué agregamos:** en `TarjetaProps` y en la desestructuración.
+La prop nueva puede no venir. El experimento la pasa, la quita y le da un tipo imposible.
+
+### 1 — Parámetro con defecto y botón
+
+**Dónde:** `Tarjeta.tsx`, en la interfaz, en la firma y al final del `<article>`. `App.tsx` no se toca en este paso.
+
+**Qué haces:**
+
+1. Añade `textoBoton?: string` a `TarjetaProps`.
+2. En la desestructuración, escribe `textoBoton = "Anotar"`.
+3. Añade el botón y guarda.
 
 ```tsx
 interface TarjetaProps {
@@ -25,42 +35,40 @@ interface TarjetaProps {
 export default function Tarjeta({ item, textoBoton = "Anotar" }: TarjetaProps) {
 ```
 
-Y el botón, al final del `<article>`:
-
 ```tsx
-<button type="button">{textoBoton}</button>
+<button type="button">{textoBoton} {item.id}</button>
 ```
 
-**Con esto conseguimos:** si nadie pasa `textoBoton`, el botón dice «Anotar». El `?` es el único sitio donde el dato puede faltar, porque hay un valor por defecto.
+**Experimento:** en `App`, añade `textoBoton="Registrar"` en la etiqueta. Guarda. Léelo. Quita el atributo. Guarda.
 
-**Validar:** la ficha muestra el botón «Anotar» sin cambiar `App.tsx`. En `App`, añade `textoBoton="Registrar"` solo en esa etiqueta.
+→ Con el atributo, el botón dice «Registrar E-101». Sin él, «Anotar E-101». `item` sigue siendo obligatorio: borrar `item={entrega}` vuelve a marcar el error. Restáuralo.
 
-→ El botón pasa a «Registrar». Quita el atributo.
+Segundo experimento: pasa `textoBoton={1}`.
 
-→ El botón vuelve a «Anotar». `item` sigue siendo obligatorio: borrar `item={entrega}` vuelve a marcar el error.
+→ Problems pide `string`. Quita ese valor.
+
+**Validación:**
+
+- Sin el atributo, el botón dice «Anotar E-101».
+- Problems vacío.
+- El `= "Anotar"` está en el parámetro, no escrito a mano solo dentro del JSX. Si quitas el defecto y no pasas la prop, el botón queda vacío o el editor marca `string | undefined`.
 
 ## Comprueba tu entendimiento
 
-**El defecto no es un `any`**
-Pasa `textoBoton={1}`.
-→ El editor pide `string`. Quita ese valor.
+**El defecto no cambia el id**
+El botón sigue enseñando `E-101` aunque cambies solo `textoBoton`.
+→ Hay dos trozos: el texto que puede faltar y `{item.id}`, que no tiene defecto porque `item` es obligatorio.
 
 ## Reto
 
-### 1 — Incluir el id en el botón
+### 1 — Otro defecto
 
-Haz que el botón diga `Anotar E-101` usando `textoBoton` e `item.id`, sin cambiar el valor por defecto.
+Cambia el defecto a `"Registrar"` y no pases la prop.
 
 <details>
 <summary>Ver solución</summary>
 
-```tsx
-<button type="button">
-  {textoBoton} {item.id}
-</button>
-```
-
-Con el defecto se lee «Anotar E-101». Con `textoBoton="Registrar"` se lee «Registrar E-101».
+El botón dice «Registrar E-101» sin atributo en `App`. Deja el defecto en `"Anotar"` para el resto de los laboratorios: el botón de más adelante se busca por esa palabra.
 
 </details>
 
@@ -68,4 +76,5 @@ Con el defecto se lee «Anotar E-101». Con `textoBoton="Registrar"` se lee «Re
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| El botón dice vacío | `textoBoton` se usa y el `= "Anotar"` no está en el parámetro | El defecto va en la desestructuración, no dentro del JSX con un `any` |
+| El botón sale vacío | No está el `= "Anotar"` | El defecto va en la desestructuración |
+| `textoBoton` no se usa | El botón sigue con un texto fijo | El contenido del botón incluye `{textoBoton}` |

@@ -27,9 +27,31 @@ El botón de este momento solo anota. No cambia la pastilla. Cambiar el estado e
 
 ## Demostración guiada
 
-Con la consola abierta, al cargar la bandeja no aparece ningún id. Al pulsar «Anotar E-104» se escribe `E-104` una vez. La dirección no cambia y la lista no desaparece. La pastilla de E-104 sigue en `rechazado`: el manejador no ha tocado el objeto.
+Punto de partida: las seis fichas de `datos.ts` están en pantalla. `Tarjeta` recibe `item`. El botón dice «Anotar E-104» en el inventario y todavía no tiene `onClick`. La consola del navegador se abre antes de recargar (F12, pestaña Console).
 
-Al quitar la flecha y dejar los paréntesis, la consola se llena al recargar. Al restituir `() =>`, el silencio vuelve hasta el clic.
+### 1 — El clic escribe el id
+
+En `Tarjeta.tsx`, junto al componente, una función `anotar(id: string): void` que hace `console.log(id)`. El botón queda así:
+
+```tsx
+<button type="button" onClick={() => anotar(item.id)}>
+  {textoBoton} {item.id}
+</button>
+```
+
+Se recarga. La consola no escribe ningún id al cargar. Pulsar «Anotar E-104» escribe `E-104` una vez. Pulsar «Anotar E-101» suma `E-101`. La dirección de la página no cambia y las seis fichas siguen. La pastilla de E-104 sigue en `rechazado`: este manejador no toca el objeto.
+
+### 2 — Los paréntesis disparan al pintar
+
+Se quita la flecha y se deja `onClick={anotar(item.id)}`. Al guardar, la consola escribe los seis id sin haber pulsado nada. El clic ya no añade una línea nueva: la función corrió al pintar.
+
+Se restituye `onClick={() => anotar(item.id)}`. Se recarga. Silencio hasta el clic.
+
+### 3 — El argumento sigue siendo string
+
+Cambiar la llamada a `anotar(item.estado)` y pulsar E-102 escribe `revisado`. Compila porque `estado` también es `string`. Se vuelve a `item.id` y la consola vuelve a escribir `E-102`. El laboratorio se queda con el id.
+
+Dónde queda: seis fichas, botón que espera al clic, pastillas iguales que en `datos.ts`. El buscador todavía no existe. El módulo de estado parte de aquí.
 
 ## Práctica
 

@@ -1,0 +1,26 @@
+{
+  "avisos": {
+    "cargando": "Cargando avisos…",
+    "error": "No se han podido cargar los avisos.",
+    "form": {
+      "enviar": "Publicar",
+      "texto": "Texto",
+      "textoVacio": "Escribe el texto.",
+      "titulo": "Título",
+      "tituloCorto": "El título necesita al menos 3 caracteres."
+    },
+    "titulo": "Avisos",
+    "vacio": "No hay avisos."
+  },
+  "errores": {
+    "noEncontrada": "Esta ruta no existe."
+  },
+  "marca": "Panel",
+  "sesion": {
+    "cargando": "Comprobando la sesión…",
+    "entrar": "Entrar",
+    "entrarTexto": "Entra para ver los avisos.",
+    "error": "Keycloak no responde. ¿Está el contenedor en marcha?",
+    "salir": "Salir"
+  }
+}

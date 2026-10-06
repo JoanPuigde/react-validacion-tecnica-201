@@ -20,12 +20,23 @@ El HTML de entrada es `index.html`. Su script apunta a `/src/main.tsx`. Vite es 
 
 ## Demostración guiada
 
-En la terminal del Codespace, dentro de `bandeja/`, `npm run dev` imprime la URL local. El editor avisa del puerto 5173. En el navegador se lee el título «Bandeja de entregables».
+Punto de partida: el Codespace abierto en la raíz del repo. `bandeja/src/App.tsx` sigue con el título y el párrafo fijo. No se toca ningún fichero de `src/`.
 
-En otra terminal, `npm run build` termina sin error de TypeScript. `dist/` es el resultado de ese empaquetado. No se abre con `dev`: es lo que se publicaría. Para seguir leyendo la guía, el proceso que importa es el de `dev`, que sigue recargando al guardar.
+### 1 — Arrancar
 
-> [!NOTE]
-> Si `node_modules` no está, `npm ci` dentro de `bandeja/` lo reconstruye a partir del lockfile. Es el mismo paso que hace el contenedor al crearse.
+En una terminal, el directorio pasa a `bandeja/`. `npm run dev` imprime una URL local y el puerto 5173. El aviso del editor es ese mismo puerto. En el navegador se lee «Bandeja de entregables» y, debajo, «Revisión de lo que entrega el proveedor.»
+
+Esa terminal se queda abierta. Vite recarga al guardar. Cerrarla apaga la página.
+
+### 2 — Empaquetar
+
+En otra terminal, también dentro de `bandeja/`, `npm run build` corre primero el comprobador de tipos y después escribe `dist/`. Termina sin error. `dist/` no se abre con el puerto 5173: es el paquete. La página del navegador sigue siendo la de `dev`.
+
+### 3 — Si faltan dependencias
+
+Si `npm run dev` dice que no encuentra un módulo, `npm ci` dentro de `bandeja/` reconstruye `node_modules` desde el lockfile. Es el mismo paso del contenedor al crearse. Después se vuelve a lanzar `dev`.
+
+Dónde queda: el título en el 5173, `dev` en marcha, `App.tsx` sin tocar. La página siguiente escribe ahí el primer objeto.
 
 ## Práctica
 

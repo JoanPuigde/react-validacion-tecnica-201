@@ -1,0 +1,37 @@
+{
+  "realm": "curso",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": false,
+  "clients": [
+    {
+      "clientId": "panel",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "rootUrl": "http://localhost:5174",
+      "redirectUris": ["http://localhost:5174/*", "http://127.0.0.1:5174/*"],
+      "webOrigins": ["http://localhost:5174", "http://127.0.0.1:5174"],
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true
+    }
+  ],
+  "users": [
+    {
+      "username": "ana",
+      "enabled": true,
+      "email": "ana@curso.local",
+      "emailVerified": true,
+      "firstName": "Ana",
+      "lastName": "Roca",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ana",
+          "temporary": false
+        }
+      ]
+    }
+  ]
+}

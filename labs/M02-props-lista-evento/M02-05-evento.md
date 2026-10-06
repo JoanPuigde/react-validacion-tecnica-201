@@ -1,20 +1,31 @@
 # M02-05 — El evento
 
-[← Página anterior](M02-04-lista.md) · [Siguiente página →](../M03-estado-y-flujo/README.md)
+[← Página anterior](M02-04-lista.md) · [Siguiente página →](../M03-estado-y-flujo/M03-01-usestate.md)
 
-> Un paso. El clic llama a una función. Cargar la página, no.
+> Práctica de [Eventos](../M01-fundamentos/04-eventos.md).
 
 ### Objetivo
 
-Escribir el id en la consola al pulsar el botón de esa ficha.
+Escribir el id en la consola al pulsar, y comprobar que cargar la página no dispara el manejador.
 
 ### Prerrequisitos
 
-- [M02-04](M02-04-lista.md): hay seis tarjetas.
+- [M02-04](M02-04-lista.md): hay seis tarjetas. El botón dice «Anotar» más el id. La consola del navegador está abierta.
 
-### 1 — La función, sin paréntesis en el onClick
+### En qué consiste
 
-**Qué agregamos:** dentro de `Tarjeta`, antes del `return`.
+Una función tipada y un `onClick` con flecha. El experimento quita la flecha y cuenta líneas al recargar.
+
+### 1 — La función
+
+**Dónde:** `Tarjeta.tsx`, dentro de la función, antes del `return`.
+
+**Qué haces:**
+
+1. Declara `anotar`.
+2. En el botón, sustituye el contenido si hace falta y añade `onClick`.
+3. Guarda.
+4. Recarga la página con la consola abierta y no pulses todavía.
 
 ```tsx
 function anotar(id: string): void {
@@ -22,36 +33,39 @@ function anotar(id: string): void {
 }
 ```
 
-En el botón, el manejador y el texto:
-
 ```tsx
 <button type="button" onClick={() => anotar(item.id)}>
   {textoBoton} {item.id}
 </button>
 ```
 
-**Con esto conseguimos:** `anotar` solo acepta `string` y no devuelve nada. La flecha se ejecuta al pulsar. `void` deja escrito que no hay valor de vuelta.
+**Experimento:** recarga y cuenta las líneas nuevas en la consola antes de pulsar.
 
-**Validar:** abre la consola del navegador. Al cargar no aparece ningún `E-10x`. Pulsa «Anotar E-104».
+→ Cero ids. Pulsa «Anotar E-104». Aparece una línea `E-104`. Pulsa «Anotar E-101». Se suma `E-101`. La pastilla de E-104 sigue en `rechazado`: este botón no modifica el objeto.
 
-→ La consola escribe `E-104` una vez. Pulsa «Anotar E-101».
+Segundo experimento: cambia el `onClick` a `onClick={anotar(item.id)}` y recarga.
 
-→ Se suma `E-101`. La pastilla no cambia: este botón todavía no modifica datos.
+→ La consola escribe los seis id al cargar. El clic ya no es lo que los produce. Restáuralo a `() => anotar(item.id)` y recarga. La consola vuelve a estar en silencio hasta el clic.
 
-> [!WARNING]
-> `onClick={anotar(item.id)}` ejecuta la función al pintar. Verías los seis id al recargar y el clic no serviría. Tiene que ser `() => anotar(item.id)`.
+**Validación:**
+
+- Tras recargar con la flecha puesta, no hay ids en la consola.
+- Un clic escribe exactamente el id de esa ficha, una vez.
+- La dirección de la página no cambia.
+- Problems vacío. `anotar` se usa. Si el editor dice que no se usa, el `onClick` no la llama.
 
 ## Comprueba tu entendimiento
 
-**El tipo del id**
-Cambia la llamada a `anotar(item.estado)` —sigue siendo `string`, así que compila— y pulsa una ficha. Luego restaura `item.id`.
-→ Con `estado`, la consola escribe `pendiente` o `revisado`. Con `id`, vuelve a escribir `E-101`.
+**Qué valor viaja**
+Cambia la llamada a `anotar(item.estado)` y pulsa E-102. Restaura `item.id`.
+
+→ Con `estado`, la consola escribe `revisado`. Con `id`, `E-102`. Las dos son `string`, por eso compilan. El laboratorio se queda con el id.
 
 ## Reto
 
-### 1 — Pasar el evento y leer el tipo
+### 1 — El tipo del evento
 
-Anota también el `type` del evento del ratón, sin usar `any`.
+Pasa también el evento y escribe `evento.type`, sin `any`.
 
 <details>
 <summary>Ver solución</summary>
@@ -66,7 +80,7 @@ function anotar(id: string, evento: React.MouseEvent<HTMLButtonElement>): void {
 onClick={(evento) => anotar(item.id, evento)}
 ```
 
-Al pulsar, la consola muestra `E-101 click`. `evento` llega tipado por `onClick`; no hace falta anotarlo a mano si no lo pasas a otra función.
+Al pulsar se ve `E-101 click`. Puedes dejar solo `anotar(item.id)` para los laboratorios siguientes: el evento no vuelve a hacer falta. Si lo dejas, no estorba.
 
 </details>
 
@@ -74,5 +88,6 @@ Al pulsar, la consola muestra `E-101 click`. `evento` llega tipado por `onClick`
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| Seis líneas en la consola al recargar | Paréntesis en el `onClick` | Flecha: `() => anotar(item.id)` |
-| `anotar` marcado como no usado | El botón no llama a la función | El `onClick` tiene que referenciarla |
+| Seis líneas al recargar | Paréntesis en el `onClick` | `() => anotar(item.id)` |
+| `anotar` no se usa | El botón no tiene `onClick` | La flecha llama a `anotar` |
+| Un clic escribe otro id | La función cierra sobre una variable fija | El argumento es `item.id` de esa ficha |

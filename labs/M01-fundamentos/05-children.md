@@ -35,9 +35,33 @@ Un fragmento agrupa sin inventar un nodo. `<>...</>` (o `<Fragment>`) sirve cuan
 
 ## Demostración guiada
 
-La lista de fichas queda entre `<Marco titulo="Lista">` y `</Marco>`. Sobre las fichas aparece el encabezado «Lista». Al filtrar más adelante, el aviso de «ningún entregable» también cae ahí dentro, porque es children, no un texto fijo del marco.
+Punto de partida: las seis fichas y el botón que escribe el id. Todavía no hay caja «Buscar». `Marco` no existe.
 
-Al sustituir el `<section>` por un fragmento, el encabezado sigue y el inspector deja de mostrar el section. Quitar el fragmento y dejar dos elementos sueltos en el return no compila: un return de TSX tiene un solo nodo raíz.
+Los laboratorios de esta página están en `labs/M04-hooks/` (M04-01 y M04-02). Se abren cuando el filtro ya vive en `App`. La demostración de ahora se hace sobre la lista fija, sin esperar a ese momento.
+
+### 1 — El marco, sin usarlo
+
+Se crea `bandeja/src/componentes/Marco.tsx`. `titulo` es `string`. `children` es `React.ReactNode`. La función devuelve un `<section>` con un `<h2>{titulo}</h2>` y, debajo, `{children}`.
+
+La página no cambia: `App` todavía no importa `Marco`.
+
+### 2 — El título y la lista viajan aparte
+
+En `App.tsx` se envuelve la `<ul>`:
+
+```tsx
+<Marco titulo="Lista">
+  <ul className="lista">{/* el map de las tarjetas */}</ul>
+</Marco>
+```
+
+Sobre las fichas aparece el encabezado «Lista». Cambiar `titulo` a `"Pendientes"` cambia solo ese encabezado. Las fichas siguen siendo las del `map`. Cerrar `<Marco titulo="Lista" />` sin hijos deja el encabezado y vacía la lista: las fichas eran children, no un texto del marco. Se vuelve a abrir la etiqueta y a meter la `<ul>` dentro.
+
+### 3 — El fragmento no añade un nodo
+
+En `Marco`, el `<section>` se sustituye por `<>...</>`. El encabezado «Lista» sigue. En el inspector, el padre del `<h2>` pasa a ser `<main>`. Quitar el fragmento y dejar el `<h2>` y `{children}` como dos elementos sueltos en el `return` no compila: un return de TSX tiene un solo nodo raíz. Se restituye el fragmento, o el `<section>` si se quiere el borde.
+
+Dónde queda: las seis fichas siguen saliendo de `datos.ts`. El botón sigue en la consola. El buscador llega en el módulo de estado. Si `Marco` estorba al seguir los laboratorios de estado, se deja la `<ul>` otra vez suelta en `App`: el concepto ya se vio.
 
 ## Práctica
 

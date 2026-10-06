@@ -19,4 +19,8 @@ El caso que ya viene en el repositorio visita `/` y busca el título. Sirve para
 
 1. [El recorrido y el checklist](01-recorrido.md)
 
+## Demostración guiada
+
+Punto de partida: la bandeja carga `/entregables.json` y `#filtro` filtra. Se para `npm run dev`. En `bandeja/`, `npm run test:e2e`. El caso nuevo escribe `Este`, ve «Inventario de componentes» y no ve «Informe de accesibilidad». Cambiar ese texto a `zzzz` lo pone rojo. El guion, el caso de la pastilla y el checklist están en [el recorrido](01-recorrido.md).
+
 → Sigue en **[El recorrido y el checklist](01-recorrido.md)**.

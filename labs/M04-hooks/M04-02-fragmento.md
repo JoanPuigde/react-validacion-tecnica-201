@@ -2,19 +2,29 @@
 
 [← Página anterior](M04-01-children.md) · [Siguiente página →](M04-03-useref.md)
 
-> Un paso. El marco deja de inventar un `<section>` que no necesitamos.
+> Práctica de [children](../M01-fundamentos/05-children.md).
 
 ### Objetivo
 
-Devolver el título y los hijos como hermanos, sin nodo de más.
+Devolver el título y los hijos como hermanos, sin un `<section>` de más.
 
 ### Prerrequisitos
 
-- [M04-01](M04-01-children.md): `Marco` envuelve la lista en un `<section>`.
+- [M04-01](M04-01-children.md): `Marco` envuelve la lista en un `<section>` y el encabezado dice «Lista».
 
-### 1 — Sustituir el section
+### En qué consiste
 
-**Qué agregamos:** solo el return de `Marco.tsx`.
+Sustituir el nodo. El experimento quita el fragmento para ver el error de JSX y lo restaura. Luego se inspecciona el padre del `<h2>`.
+
+### 1 — Quitar el section
+
+**Dónde:** el `return` de `bandeja/src/componentes/Marco.tsx`. La interfaz no cambia.
+
+**Qué haces:**
+
+1. Sustituye `<section>` y `</section>` por `<>` y `</>`.
+2. Guarda.
+3. Inspecciona el encabezado «Lista» en las herramientas del navegador.
 
 ```tsx
 return (
@@ -25,21 +35,31 @@ return (
 )
 ```
 
-**Con esto conseguimos:** `<> </>` agrupa sin crear un elemento en el documento. El encabezado y la lista pasan a ser hijos directos de `<main>`.
+**Experimento:** borra `<>` y `</>` y deja el `<h2>` y `{children}` como dos hermanos sueltos. Guarda. Lee Problems. Restaura el fragmento.
 
-**Validar:** en las herramientas del navegador, inspecciona «Lista». El padre del `<h2>` es `<main>`, no un `<section>`. Las fichas siguen filtrándose.
+→ Problems habla de JSX adyacente: un `return` de JSX tiene un solo nodo raíz. Con el fragmento, el archivo vuelve a guardar y las fichas siguen.
+
+Segundo experimento: en el inspector, mira el padre del `<h2>`.
+
+→ El padre es `<main>` (o el nodo que envuelve el return de `App`), no un `<section>`. Escribe `Este`: sigue quedando una ficha. El fragmento no toca el filtro.
+
+**Validación:**
+
+- Se lee «Lista» y las seis fichas con la caja vacía.
+- El padre del `<h2>` no es `<section>`.
+- Problems vacío.
 
 ## Comprueba tu entendimiento
 
-**Sigue haciendo falta un padre en el return**
-Quita `<>` y `</>` y deja el `<h2>` y `{children}` como dos hermanos sueltos.
-→ El archivo no compila: un return de JSX tiene un solo nodo raíz. Restaura el fragmento.
+**El fragmento no es una prop**
+`titulo` y `children` siguen en la interfaz.
+→ Solo cambió el nodo que los agrupa. Si borraste `children` de la interfaz, restaura `children: ReactNode`.
 
 ## Reto
 
 ### 1 — La forma larga
 
-Escribe el fragmento como `<Fragment>` importándolo de `react`.
+Escribe el fragmento como `<Fragment>` importándolo de `react`. Inspecciona otra vez. Puedes dejar `<>`.
 
 <details>
 <summary>Ver solución</summary>
@@ -55,7 +75,7 @@ return (
 )
 ```
 
-Inspecciona otra vez: tampoco hay un nodo extra. Puedes dejar la forma corta `<>`.
+Tampoco hay un nodo extra. La forma corta `<>` es la que se queda.
 
 </details>
 
@@ -64,3 +84,4 @@ Inspecciona otra vez: tampoco hay un nodo extra. Puedes dejar la forma corta `<>
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
 | Error de JSX adyacente | Dos elementos sueltos en el return | Envuélvelos en `<>...</>` |
+| Sigue habiendo `<section>` | El return viejo no se sustituyó | El return de `Marco` empieza por `<>` |

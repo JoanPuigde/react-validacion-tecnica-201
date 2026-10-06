@@ -2,7 +2,7 @@
 
 [← Página anterior](M04-05-usememo.md) · [Siguiente página →](M04-07-hook-propio.md)
 
-> Un paso. Marcar deja de ser un `setItems` suelto y pasa a ser una acción con tipo.
+> Práctica de [Estructura](../M03-apis-y-arquitectura/02-estructura.md).
 
 ### Objetivo
 
@@ -10,11 +10,23 @@ Sustituir el `useState` de la lista por `useReducer`, sin cambiar lo que hace el
 
 ### Prerrequisitos
 
-- [M04-05](M04-05-usememo.md): `marcar` usa `setItems` y `visibles` depende de `items`.
+- [M04-05](M04-05-usememo.md): `marcar` usa `setItems`. `visibles` depende de `[items, texto]`.
+
+### En qué consiste
+
+Un tipo de acción y un `switch`. El experimento manda un `type` que no existe y luego marca una ficha de verdad.
 
 ### 1 — La acción y el reductor
 
-**Qué agregamos:** en `App.tsx`, fuera del componente, el tipo y la función. Luego cambia el estado de la lista.
+**Dónde:** `App.tsx`. El tipo y `reducir` van fuera del componente. El hook va donde estaba el `useState` de la lista.
+
+**Qué haces:**
+
+1. Declara `Accion` y `reducir`.
+2. Sustituye `useState(entregables)` de la lista por `useReducer`.
+3. `marcar` hace `dispatch`. Borra `setItems`.
+4. Añade `useReducer` al import.
+5. Guarda.
 
 ```tsx
 import type { Entregable } from "./modelo"
@@ -31,8 +43,6 @@ function reducir(estado: Entregable[], accion: Accion): Entregable[] {
 }
 ```
 
-Dentro de `App`, sustituye `useState(entregables)` de la lista:
-
 ```tsx
 const [items, dispatch] = useReducer(reducir, entregables)
 
@@ -41,25 +51,32 @@ function marcar(id: string): void {
 }
 ```
 
-Quita `setItems`. El import pasa a incluir `useReducer`.
+**Experimento:** dentro de `marcar`, cambia el objeto a `{ type: "borrar", id }`. Guarda.
 
-**Con esto conseguimos:** el cambio de la lista está en un solo `switch`. `Accion` no admite un `type` inventado: `{ type: "borrar" }` no compila.
+→ Problems marca `type`: `"borrar"` no está en `Accion`. No lo tapes con `any`. Déjalo en `"marcar"`.
 
-**Validar:** escribe en el reductor `dispatch({ type: "borrar", id: "E-101" })` dentro de `marcar`, o el objeto suelto. El editor marca `type`. Déjalo en `"marcar"`. Pulsa «Anotar E-103».
+Segundo experimento: recarga, pulsa «Anotar E-103» y lee la pastilla y la pestaña.
 
-→ Esa pastilla pasa a `revisado` y la pestaña baja un pendiente, igual que con `setItems`.
+→ La pastilla de E-103 pasa a `revisado`. La pestaña baja de 3 a 2. E-101 sigue pendiente. Es el mismo resultado que con `setItems`.
+
+**Validación:**
+
+- En `App.tsx` no queda `setItems`.
+- Problems vacío.
+- Un clic cambia solo esa ficha.
+- Al recargar, vuelven los pendientes de `datos.ts`.
 
 ## Comprueba tu entendimiento
 
-**El estado inicial sigue siendo el array**
-Recarga la página.
-→ Vuelven los pendientes del fichero `datos.ts`. El reductor no pide al servidor.
+**El filtro no se entera del nombre de la acción**
+`visibles` sigue dependiendo de `items`.
+→ Escribe `Norte` y marca una ficha de las visibles. La pastilla cambia porque `items` es un array nuevo, no porque el `useMemo` conozca `"marcar"`.
 
 ## Reto
 
 ### 1 — Una acción sin id
 
-Añade al tipo `| { type: "vaciar" }` y un `case` que devuelva `[]`. No hace falta un botón si no quieres dejarlo: si lo añades, comprueba que la lista se vacía y luego borra esa acción para seguir con una sola.
+Añade `| { type: "vaciar" }` y un `case` que devuelva `[]`. Si añades un botón, comprueba que la lista se vacía y luego borra esa acción.
 
 <details>
 <summary>Ver solución</summary>
@@ -71,7 +88,7 @@ case "vaciar":
   return []
 ```
 
-Sin un `default`, TypeScript exige los dos `case` porque el `switch` tiene que devolver `Entregable[]`. Si no vas a vaciar la lista, deja solo `"marcar"`.
+Sin un `default`, TypeScript exige los dos `case` si la función tiene que devolver `Entregable[]`. Para seguir, deja solo `"marcar"`.
 
 </details>
 
@@ -80,4 +97,5 @@ Sin un `default`, TypeScript exige los dos `case` porque el `switch` tiene que d
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
 | `setItems` no existe | Quedó una llamada vieja | Toda la lista pasa por `dispatch` |
-| El switch no devuelve en algún camino | Falta un `case` o un `return` | Cada acción devuelve un array |
+| El switch no cubre un camino | Falta un `return` en el `case` | `"marcar"` devuelve el `map` |
+| Todas pasan a revisado | El `map` no compara `accion.id` | Solo el id de la acción cambia |

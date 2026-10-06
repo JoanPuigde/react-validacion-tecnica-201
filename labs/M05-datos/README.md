@@ -1,6 +1,6 @@
-# M05 — Datos
+# Práctica — Datos, pintado y un caso
 
-> Práctica de [la petición](../M03-apis-y-arquitectura/01-peticion.md), de [qué mirar en el pintado](../M04-rendimiento/01-que-mirar.md) y de [el recorrido](../M05-testing-y-validacion/01-recorrido.md).
+> Esta carpeta no es el módulo 5 entero. El módulo 5 es [el recorrido](../M05-testing-y-validacion/README.md). Aquí están la [petición](../M03-apis-y-arquitectura/01-peticion.md) (M05-01 y M05-02), el cierre de [rendimiento](../M04-rendimiento/01-que-mirar.md) (M05-03 y M05-04) y el caso (M05-05). Se abren después de [M04-07](../M04-hooks/M04-07-hook-propio.md).
 
 [← Página anterior](../M03-apis-y-arquitectura/01-peticion.md) · [Siguiente página →](M05-01-fetch.md)
 
@@ -21,7 +21,17 @@ Vacío es un filtro sin coincidencias. Error es una petición que no salió bien
 
 ## Demostración guiada
 
-`public/entregables.json` tiene los mismos seis entregables. Al terminar el módulo, la bandeja los pide al arrancar, el buscador sigue en `#filtro` y Cypress puede escribir `Este` y ver una sola ficha.
+El guion está en [la petición](../M03-apis-y-arquitectura/01-peticion.md), [qué mirar](../M04-rendimiento/01-que-mirar.md) y [el recorrido](../M05-testing-y-validacion/01-recorrido.md).
+
+Punto de partida: `useEntregables` importa `datos.ts`. `public/entregables.json` ya tiene los seis y la app no lo pide.
+
+1. [M05-01](M05-01-fetch.md). `bandeja/src/api/entregables.ts` comprueba el JSON como `unknown`. El hook parte de `[]` y pide `/entregables.json` en un efecto con `[]`. Network muestra una petición al recargar y ninguna más al teclear. `"listo"` en E-104 rechaza la lista. Se restaura `"rechazado"`.
+2. [M05-02](M05-02-finales.md). «Cargando entregables…» mientras espera. `"/no-esta.json"` muestra «No se pudo cargar la bandeja.» con `role="alert"`. Con la URL buena, `zzzz` muestra «Ningún entregable coincide.» y ese aviso no está.
+3. [M05-03](M05-03-memo.md). `console.count(item.id)` dentro de `Tarjeta`, exportada con `memo`. Una letra en «Buscar» sigue contando: alguna prop nace de nuevo.
+4. [M05-04](M05-04-usecallback.md). `useCallback` en `marcar` y `useMemo` en el valor del contexto, con `[revisor]`. La letra del buscador deja de contar. Escribir en «Revisor» vuelve a contar. Se quita `console.count`.
+5. [M05-05](M05-05-caso.md). Se para `dev`. `npm run test:e2e` en `bandeja/`. El caso escribe `Este`, ve el inventario y no ve «Informe de accesibilidad». `zzzz` lo pone rojo. Se restituye `Este`.
+
+Dónde queda: la bandeja carga el JSON, filtra y Cypress mira el texto, no el estado.
 
 ## Ahora practica tú
 

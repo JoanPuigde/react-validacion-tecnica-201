@@ -2,19 +2,29 @@
 
 [← Página anterior](README.md) · [Siguiente página →](M04-02-fragmento.md)
 
-> Un paso. Un componente pinta lo que le pongas dentro.
+> Práctica de [children](../M01-fundamentos/05-children.md).
 
 ### Objetivo
 
-Envolver la lista en `Marco` y ver el título que le pasas, más lo que va entre sus etiquetas.
+Envolver la lista en `Marco` y comprobar que el título y lo de dentro viajan por sitios distintos.
 
 ### Prerrequisitos
 
-- [M03-05](../M03-estado-y-flujo/M03-05-reglas.md): la lista y el filtro están en `App`, sin hooks después de un `return`.
+- [M03-05](../M03-estado-y-flujo/M03-05-reglas.md): el filtro, la lista y los hooks están en `App`, antes de cualquier `return`.
 
-### 1 — El marco
+### En qué consiste
 
-**Qué agregamos:** `bandeja/src/componentes/Marco.tsx`.
+Un componente con `titulo` y `children`. El experimento cierra la etiqueta sin hijos y la vuelve a abrir.
+
+### 1 — El componente
+
+**Dónde:** archivo nuevo `bandeja/src/componentes/Marco.tsx`. `App.tsx` no se toca todavía.
+
+**Qué haces:**
+
+1. Crea el archivo con la interfaz y la función.
+2. Guarda.
+3. Mira Problems. No esperes un cambio en la página.
 
 ```tsx
 import type { ReactNode } from "react"
@@ -34,7 +44,26 @@ export default function Marco({ titulo, children }: MarcoProps) {
 }
 ```
 
-En `App.tsx`, envuelve el aviso de vacío y la `<ul>`:
+**Experimento:** borra `{children}` del return y guarda.
+
+→ Problems marca `children` como no usado. El archivo existe y la bandeja sigue igual: nadie importa `Marco`. Restaura `{children}` debajo del `<h2>`.
+
+**Validación:**
+
+- `children` es `ReactNode`, no `any`.
+- Problems vacío en `Marco.tsx`.
+- La página sigue sin el encabezado «Lista».
+
+### 2 — Meter la lista dentro
+
+**Dónde:** `App.tsx`. El aviso de vacío y la `<ul>` pasan a estar entre las dos etiquetas de `Marco`.
+
+**Qué haces:**
+
+1. Importa `Marco`.
+2. Envuelve el aviso y la lista.
+3. Guarda.
+4. Escribe `zzzz` y luego vacía la caja.
 
 ```tsx
 import Marco from "./componentes/Marco"
@@ -45,28 +74,37 @@ import Marco from "./componentes/Marco"
 </Marco>
 ```
 
-**Con esto conseguimos:** `children` es lo que escribes entre `<Marco>` y `</Marco>`. El tipo es `ReactNode`: elementos, texto o `null`. No es `any`.
+**Experimento:** cierra la etiqueta en autocierre, `<Marco titulo="Lista" />`, y deja la `<ul>` fuera. Guarda. Vuelve a meter la lista entre la apertura y el cierre.
 
-**Validar:** sobre las fichas aparece el encabezado «Lista». Escribe `zzzz`.
+→ En autocierre se lee «Lista» y las fichas quedan fuera del componente, o el editor se queja si dejaste la `ul` suelta en un sitio inválido. Con los hijos dentro, «Lista» queda encima de las fichas. Con `zzzz`, «Ningún entregable coincide.» queda debajo de «Lista».
 
-→ «Ningún entregable coincide.» queda dentro de esa zona, bajo el encabezado «Lista». Vacía la caja.
+Segundo experimento: quita el atributo `titulo`.
+
+→ Problems pide `titulo`. Restáuralo a `"Lista"`.
+
+**Validación:**
+
+- Encima de las fichas se lee «Lista».
+- Con `zzzz`, la frase de vacío está bajo ese encabezado. Al vaciar la caja, vuelven las seis fichas.
+- `TarjetaProps` no ha cambiado. `Marco` no recibe `item`.
 
 ## Comprueba tu entendimiento
 
-**Sin children no hay lista**
-Cierra `<Marco titulo="Lista" />` en autocierre, sin meter la `ul`.
-→ Se ve «Lista» y ninguna ficha. Vuelve a poner la lista entre la apertura y el cierre.
+**Dos props, dos sitios**
+Cambia `titulo="Lista"` por `titulo="Pendientes de hoy"` sin mover la `ul`.
+
+→ Cambia el `<h2>`. Las fichas siguen. El título es la prop con nombre. Las fichas son `children`. Restaura `"Lista"`.
 
 ## Reto
 
 ### 1 — children opcional
 
-Marca `children?` en la interfaz y no pases hijos.
+Marca `children?` y usa el autocierre, sin hijos.
 
 <details>
 <summary>Ver solución</summary>
 
-Compila, y la sección solo muestra «Lista». Para este curso los hijos son obligatorios: quita el `?` y deja la lista dentro.
+Compila y solo se ve «Lista». En este curso los hijos son obligatorios: quita el `?` y deja el aviso y la `<ul>` dentro de `Marco`.
 
 </details>
 
@@ -76,3 +114,4 @@ Compila, y la sección solo muestra «Lista». Para este curso los hijos son obl
 |---------|----------------|-----------------|
 | `children` no se usa | El return no incluye `{children}` | Píntalo bajo el `<h2>` |
 | El editor pide `titulo` | La etiqueta es `<Marco>` a secas | `<Marco titulo="Lista">` |
+| «Lista» no aparece | `App` no importa el componente | `import Marco from "./componentes/Marco"` |

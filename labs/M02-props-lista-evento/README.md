@@ -1,6 +1,8 @@
-# M02 — Props, lista y evento
+# Práctica — Props, lista y evento
 
-> Práctica de [props](../M01-fundamentos/03-props.md) y [eventos](../M01-fundamentos/04-eventos.md). La guía sigue en fundamentos. Esto es para hacerlo con las manos.
+> Práctica de [props](../M01-fundamentos/03-props.md) y [eventos](../M01-fundamentos/04-eventos.md). Sigue siendo el módulo 1. El módulo 2 del curso es [estado](../M02-estado-y-hooks/README.md), y su práctica está en `labs/M03-estado-y-flujo/`.
+
+`Tarjeta` es `bandeja/src/componentes/Tarjeta.tsx`. Lo crea [M01-03](../M01-tsx-y-componente/M01-03-componente.md). Al empezar esta práctica el objeto `entrega` está escrito dentro de ese archivo y `App` solo pone `<Tarjeta />`.
 
 [← Página anterior](../M01-fundamentos/03-props.md) · [Siguiente página →](M02-01-props.md)
 
@@ -26,7 +28,17 @@ La prop entra como argumento. Quien usa el componente decide el valor. La tarjet
 
 ## Demostración guiada
 
-Al empezar el módulo hay una sola ficha y el objeto vive dentro de `Tarjeta`. Al terminar, la ficha recibe el objeto, la lista sale de un array y el botón espera al clic.
+El guion está en [Props](../M01-fundamentos/03-props.md) y [Eventos](../M01-fundamentos/04-eventos.md). Los laboratorios lo cortan así.
+
+Punto de partida: una ficha, «Informe de accesibilidad», pastilla `pendiente`. El objeto está en `Tarjeta.tsx`, no en `App`.
+
+1. [M02-01](M02-01-props.md). `Tarjeta` pasa a recibir `item: Entregable`. Sin pasarlo, Problems marca `<Tarjeta />` en `App.tsx`. Con `<Tarjeta item={entrega} />` y el objeto otra vez en `App`, la ficha sigue igual y en `Tarjeta.tsx` ya no queda el nombre `entrega`.
+2. [M02-02](M02-02-defecto.md). Sin `textoBoton`, el botón dice «Anotar E-101». Con `textoBoton="Registrar"`, solo cambia esa palabra.
+3. [M02-03](M02-03-condicional.md). «Falta revisión» se ve con `pendiente` y desaparece con `revisado`.
+4. [M02-04](M02-04-lista.md). `bandeja/src/datos.ts` con E-101 … E-106. El `map` pinta seis. `key` es `item.id` en el `<li>`. «Falta revisión» en E-101, E-103 y E-105. `"listo"` en E-104 lo marca Problems en `datos.ts`.
+5. [M02-05](M02-05-evento.md). Consola vacía al cargar. «Anotar E-104» escribe `E-104`. `onClick={anotar(item.id)}` escribe los seis id al pintar. Se deja `() => anotar(item.id)`. La pastilla de E-104 sigue en `rechazado`.
+
+Dónde queda: seis fichas y el clic en la consola. La práctica de estado, carpeta `M03-estado-y-flujo`, parte de aquí.
 
 ## Ahora practica tú
 

@@ -26,9 +26,27 @@ Antipatrones que invalidan la lectura de una entrega:
 
 ## Demostración guiada
 
-Después del movimiento, recargar sigue mostrando las seis fichas, el filtro y el título «Pendientes: N». En `Tarjeta.tsx` no aparece la palabra `fetch`. En `App.tsx` no aparece `useReducer`. Network, al teclear, no repite `entregables.json`.
+Punto de partida: el final del [efecto](../M02-estado-y-hooks/03-efecto.md). `useState`, `marcar` y el `useEffect` del título están en `App.tsx`. La lista sale de `datos.ts`. Todavía no hay `fetch`. Los laboratorios de esta página están en `labs/M04-hooks/` y van antes que los de la petición: M05-01 necesita el hook que se crea aquí.
 
-`datos.ts` puede seguir en el proyecto. El hook ya no lo importa. La fuente es el JSON.
+### 1 — El foco
+
+En [M04-03](../M04-hooks/M04-03-useref.md) un `useRef<HTMLInputElement>(null)` apunta al input `#filtro`. Un botón «Ir al buscador» llama a `campo.current?.focus()`. Se pulsa fuera de la caja y luego el botón. El cursor entra en «Buscar». Escribir `Este` sin volver a pinchar la caja deja el inventario. Quitar el `?.` marca Problems: `current` puede ser `null`. Se restaura.
+
+### 2 — Un dato que no baja por props
+
+En [M04-04](../M04-hooks/M04-04-contexto.md) el nombre del revisor vive en un contexto. `Tarjeta` lo lee. No se añade `revisor` a `TarjetaProps`. Cambiar el nombre en la caja de revisor cambia el texto de las fichas. El filtro no se entera: no lee ese valor.
+
+### 3 — Marcar pasa a ser una acción
+
+En [M04-06](../M04-hooks/M04-06-usereducer.md) `useState(entregables)` se sustituye por `useReducer`. La acción es `{ type: "marcar", id }`. El botón sigue diciendo «Hecho» solo en la ficha pulsada. E-103, si no se pulsa, sigue pendiente.
+
+### 4 — Sale de App
+
+En [M04-07](../M04-hooks/M04-07-hook-propio.md) se crea `bandeja/src/hooks/useEntregables.ts`. Se mudan ahí el reductor, `marcar`, `pendientes` y el efecto del título. Empieza con `entregables` de `datos.ts` y devuelve `{ items, marcar }`. `App` se queda el filtro y el `map`.
+
+Si el reductor se deja en los dos archivos, hay dos listas y marcar no coincide con lo pintado. Se borra la copia de `App`. Recargar muestra las seis, el filtro y «Pendientes: 3». En `App.tsx` no aparece `useReducer`. En `Tarjeta.tsx` no aparece `fetch`: la petición todavía no existe.
+
+Dónde queda: `useEntregables` importa `datos.ts`. La página de la petición sustituye ese import por `/entregables.json`.
 
 ## Práctica
 

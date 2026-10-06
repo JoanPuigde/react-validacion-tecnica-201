@@ -20,4 +20,10 @@ Hasta ahora la lista vive en el paquete. En una entrega real llega por HTTP. La 
 1. [La petición y los tres finales](01-peticion.md)
 2. [Estructura](02-estructura.md)
 
+## Demostración guiada
+
+Punto de partida: el final del módulo de estado. Buscador, pastilla, pestaña «Pendientes: 3», lista en `bandeja/src/datos.ts`. `public/entregables.json` ya está y la app no lo pide.
+
+Los laboratorios no siguen el orden de estas dos páginas. Primero se saca la lista de `App` ([estructura](02-estructura.md), carpeta `M04-hooks`, desde M04-03). Después el hook deja `datos.ts` y pide el JSON ([petición](01-peticion.md), carpeta `M05-datos`, M05-01 y M05-02). El guion de cada gesto está en esas páginas.
+
 → Sigue en **[La petición y los tres finales](01-peticion.md)**.

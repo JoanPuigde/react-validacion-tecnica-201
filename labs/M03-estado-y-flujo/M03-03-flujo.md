@@ -2,25 +2,30 @@
 
 [← Página anterior](M03-02-derivado.md) · [Siguiente página →](M03-04-useeffect.md)
 
-> Un paso. El clic sube al padre. El padre entrega una lista nueva.
+> Práctica de [Flujo de datos](../M02-estado-y-hooks/02-flujo.md).
 
 ### Objetivo
 
-Cambiar `estado` a `"revisado"` al pulsar, sin mutar el objeto viejo.
+Cambiar `estado` a `"revisado"` desde el padre, sin mutar el objeto viejo.
 
 ### Prerrequisitos
 
-- [M03-02](M03-02-derivado.md): `visibles` sale de `entregables` y de `texto`.
+- [M03-02](M03-02-derivado.md): `visibles` sale de `entregables` y de `texto`. El botón todavía llama a `anotar`.
 
-### 1 — La lista pasa a estado
+### En qué consiste
 
-**Qué agregamos:** en `App.tsx`.
+La lista pasa a estado. La función baja a la tarjeta. El experimento muta el objeto para ver que a veces no hay repintado, y lo deshace.
 
-```tsx
-const [items, setItems] = useState(entregables)
-```
+### 1 — La lista y la función en el padre
 
-`visibles` tiene que filtrar `items`, no `entregables`.
+**Dónde:** `App.tsx`. `visibles` tiene que filtrar `items`, no `entregables`.
+
+**Qué haces:**
+
+1. `const [items, setItems] = useState(entregables)`.
+2. Cambia el `filter` para que parta de `items`.
+3. Declara `marcar` y pásala en el `map`: `alMarcar={marcar}`.
+4. Guarda sin tocar todavía `Tarjeta`.
 
 ```tsx
 function marcar(id: string): void {
@@ -32,25 +37,26 @@ function marcar(id: string): void {
 }
 ```
 
-En el `map`:
+**Experimento:** mira Problems.
 
-```tsx
-<Tarjeta item={item} alMarcar={marcar} />
-```
+→ `Tarjeta` no acepta `alMarcar`. El aviso es la señal de que el padre ya envía la función. No borres el atributo.
 
-**Con esto conseguimos:** `marcar` crea un objeto nuevo solo para ese id. El resto de la lista se reaprovecha. `...item` copia los campos y `estado` los sustituye.
+**Validación:**
 
-**Validar:** guarda. `Tarjeta` aún no acepta `alMarcar`, así que el editor marca la prop de más. Ese aviso es la señal de que el padre ya envía la función y el hijo todavía no la declara.
+- Problems habla de la prop `alMarcar`, no de un fallo de sintaxis.
+- `visibles` filtra `items`.
 
-### 2 — El hijo deja de escribir en la consola
+### 2 — El hijo deja la consola
 
-**Qué agregamos:** en `TarjetaProps`.
+**Dónde:** `Tarjeta.tsx`.
 
-```tsx
-alMarcar: (id: string) => void
-```
+**Qué haces:**
 
-En la desestructuración, recibe `alMarcar`. Borra `anotar`. El botón queda:
+1. Añade a `TarjetaProps`: `alMarcar: (id: string) => void`.
+2. Recíbela en la desestructuración.
+3. Borra `anotar`.
+4. El botón llama a `alMarcar(item.id)` y el texto depende de `item.estado`.
+5. Guarda.
 
 ```tsx
 <button type="button" onClick={() => alMarcar(item.id)}>
@@ -58,30 +64,52 @@ En la desestructuración, recibe `alMarcar`. Borra `anotar`. El botón queda:
 </button>
 ```
 
-**Con esto conseguimos:** la tarjeta no conoce `setItems`. Solo conoce una función.
+**Experimento:** pulsa «Anotar E-101». Mira pastilla, frase «Falta revisión» y texto del botón. Recarga.
 
-**Validar:** el aviso de la prop desaparece. Pulsa «Anotar E-101».
+→ La pastilla pasa a `revisado`, la frase desaparece en esa ficha y el botón dice «Hecho E-101». E-103 sigue pendiente. Al recargar, E-101 vuelve a pendiente: el estado salió de `useState(entregables)` y la recarga lo reinicia.
 
-→ La pastilla de E-101 pasa a `revisado`, «Falta revisión» desaparece en esa ficha y el botón dice «Hecho E-101». E-103 sigue pendiente. Recarga la página.
+Segundo experimento: dentro de `marcar`, sustituye el objeto nuevo por una mutación.
 
-→ E-101 vuelve a pendiente: el estado sale del array inicial en cada carga. Todavía no hay servidor.
+```tsx
+lista.forEach((item) => {
+  if (item.id === id) item.estado = "revisado"
+})
+return lista
+```
+
+Pulsa otra ficha pendiente. Si la pastilla no cambia, era esto: la misma referencia de array. Restaura el `map` con `{ ...item, estado: "revisado" }` y pulsa de nuevo.
+
+**Validación:**
+
+- Problems vacío.
+- Un clic cambia solo esa ficha.
+- Tras recargar, los pendientes del archivo vuelven.
+- En `Tarjeta.tsx` no queda `console.log` ni `anotar`.
 
 ## Comprueba tu entendimiento
 
-**No se muta el objeto**
-Dentro de `marcar`, prueba `item.estado = "revisado"` y `return item` para todos, en lugar del objeto nuevo. Pulsa una ficha. Deshaz el cambio y deja el `map` con `{ ...item, estado: "revisado" }`.
-→ Mutar el objeto a veces no vuelve a pintar, porque la referencia del array no cambió. El `map` con objeto nuevo sí cambia la pastilla.
+**El filtro no borra la marca**
+Escribe `Norte`, marca E-101 y no borres la caja.
+
+→ E-101 sigue visible, en `revisado`. E-103 sigue pendiente al lado. El filtro no mira el estado salvo que lo hayas metido en el `blob`.
 
 ## Reto
 
-### 1 — El filtro sobrevive a la marca
+### 1 — Marcar todas por un fallo de comparación
 
-Escribe `Norte`, marca E-101 y no borres la caja.
-→ E-101 sigue en pantalla, ahora `revisado`, porque el filtro mira título, proveedor e id, no el estado. E-103 sigue pendiente a su lado.
+Quita la condición `item.id === id` y devuelve siempre el objeto con `estado: "revisado"`. Pulsa una ficha. Deshazlo.
+
+<details>
+<summary>Ver solución</summary>
+
+Todas las pastillas pasan a `revisado`. El `map` tiene que devolver `item` tal cual cuando el id no coincide, y el objeto nuevo solo cuando coincide.
+
+</details>
 
 ## Errores frecuentes
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| Todas las fichas pasan a revisado | El `map` no compara `item.id === id` | Solo el id pulsado lleva el estado nuevo; el resto devuelve `item` |
-| `alMarcar is not a function` | La prop no se pasa en el `map` | `<Tarjeta item={item} alMarcar={marcar} />` |
+| Todas pasan a revisado | El `map` no compara el id | Solo el id pulsado cambia |
+| `alMarcar is not a function` | No se pasa en el `map` | `<Tarjeta item={item} alMarcar={marcar} />` |
+| La pastilla no cambia | Mutas el objeto y devuelves el mismo array | `{ ...item, estado: "revisado" }` |

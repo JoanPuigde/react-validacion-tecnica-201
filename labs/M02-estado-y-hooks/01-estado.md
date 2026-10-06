@@ -31,9 +31,43 @@ El array original no se vacía al filtrar. Vacío de coincidencias es `visibles.
 
 ## Demostración guiada
 
-La bandeja gana una caja «Buscar». Escribir `Este` deja solo «Inventario de componentes». Borrar el texto devuelve las seis fichas. `zzzz` muestra la frase de ninguna coincidencia y el array de `datos.ts` sigue teniendo seis objetos.
+Punto de partida: `App.tsx` importa `entregables` de `datos.ts` y los recorre con `map`. Seis fichas. El botón anota en la consola. No hay input.
 
-Una variable `let` enganchada al input no acumula letras: React no vuelve a pintar. `useState` sí.
+### 1 — La caja que React recuerda
+
+Dentro de `App`, antes del `return`, `const [texto, setTexto] = useState("")`. El import es `import { useState } from "react"`. Encima de la `<ul>`:
+
+```tsx
+<label htmlFor="filtro">Buscar</label>
+<input
+  id="filtro"
+  value={texto}
+  onChange={(evento) => setTexto(evento.target.value)}
+/>
+```
+
+Se escribe `Este`. Las seis fichas siguen: este paso no filtra. La caja muestra `Este`. Borrar con el teclado la deja vacía. El `map` todavía recorre `entregables`.
+
+### 2 — El let no pinta
+
+Se sustituye el estado, solo para verlo, por `let copia = ""` y el input pasa a `value={copia}` con `onChange` que hace `copia = evento.target.value`. Al teclear, la caja no acumula letras: React no vuelve a llamar a `App`. Se restaura `useState`, `value={texto}` y `setTexto`. La caja vuelve a guardar lo escrito.
+
+### 3 — Lo visible se calcula
+
+Justo después del `useState`:
+
+```tsx
+const visibles = entregables.filter((item) => {
+  const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+  return blob.includes(texto.toLowerCase())
+})
+```
+
+El `map` pasa a recorrer `visibles`. Encima de la lista, `{visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}`.
+
+`Este` deja una ficha: «Inventario de componentes» (E-104, proveedor Este). Borrar el texto devuelve las seis. `zzzz` deja la frase y ninguna ficha. `datos.ts` no se ha tocado: siguen seis objetos. `Norte` deja E-101 y E-103.
+
+Dónde queda: la caja controlada y la lista filtrada. El botón sigue escribiendo en la consola. La pastilla no cambia. Eso es la página de flujo.
 
 ## Práctica
 

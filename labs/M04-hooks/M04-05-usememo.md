@@ -2,7 +2,7 @@
 
 [← Página anterior](M04-04-contexto.md) · [Siguiente página →](M04-06-usereducer.md)
 
-> Un paso. `visibles` se recalcula solo cuando cambian la lista o el texto. Si te dejas una dependencia, el filtro miente.
+> Práctica de [Qué mirar](../M04-rendimiento/01-que-mirar.md).
 
 ### Objetivo
 
@@ -10,11 +10,22 @@ Envolver el filtro en `useMemo` y ver qué pasa al quitar `texto` de las depende
 
 ### Prerrequisitos
 
-- [M04-04](M04-04-contexto.md): `visibles` es un `const` calculado en cada pintado.
+- [M04-04](M04-04-contexto.md): `visibles` se calcula en cada pintado a partir de `items` y `texto`. Las fichas muestran el revisor.
+
+### En qué consiste
+
+El mismo filtro, con dependencias. El experimento miente en el array y luego lo corrige. No se busca que la página vaya más rápida.
 
 ### 1 — Memorizar el cálculo
 
-**Qué agregamos:** sustituye el `const visibles = items.filter(...)` por esto.
+**Dónde:** `App.tsx`. Sustituye el `const visibles = items.filter(...)`.
+
+**Qué haces:**
+
+1. Añade `useMemo` al import.
+2. Envuelve el filtro.
+3. Deja las dependencias en `[items, texto]`.
+4. Guarda y escribe `Este`.
 
 ```tsx
 import { useEffect, useMemo, useRef, useState } from "react"
@@ -29,31 +40,53 @@ const visibles = useMemo(
 )
 ```
 
-**Con esto conseguimos:** el mismo array mientras `items` y `texto` no cambien. Con seis fichas no vas a notar velocidad. Lo que importa es el array de dependencias.
+**Experimento:** escribe `Este`, borra, escribe `zzzz` y vacía.
 
-**Validar:** escribe `Este`. Sigue quedando solo el inventario. Borra y vuelven las seis.
+→ Con `Este`, el inventario. Al borrar, seis. Con `zzzz`, «Ningún entregable coincide.». El resultado es el mismo que con el `const` de antes.
+
+**Validación:**
+
+- Problems vacío. Si el editor avisa de una dependencia que falta, el array no es `[items, texto]`.
+- `visibles` se usa en el aviso y en el `map`.
 
 ### 2 — Quitar una dependencia y devolverla
 
-**Qué agregamos:** deja el array en `[items]` un momento. Escribe en la caja.
+**Dónde:** el array del `useMemo`, solo un momento.
 
-**Con esto conseguimos:** ver el fallo. `texto` cambió y el cálculo no se repite. El editor, si tienes el aviso de dependencias, también lo señala.
+**Qué haces:**
 
-**Validar:** la caja muestra lo que escribes y las fichas no se filtran. Vuelve a poner `[items, texto]`.
+1. Déjalo en `[items]`.
+2. Guarda, recarga y escribe en la caja.
+3. Anota si las fichas se mueven.
+4. Vuelve a `[items, texto]`.
+5. Recarga y escribe `Este`.
 
-→ `Este` deja otra vez una sola ficha.
+**Experimento:** con `[items]`, la caja muestra las letras y las fichas no se filtran. El aviso del editor, si está activo, señala que `texto` se usa y no está en el array.
+
+→ Al restaurar `[items, texto]`, `Este` deja otra vez una sola ficha.
+
+Segundo experimento: deja `[texto]` y quita `items`. Filtra `Norte` y marca una ficha visible.
+
+→ La pastilla puede no cambiar, porque `items` ya no despierta el cálculo. Restaura las dos dependencias y marca otra vez: la pastilla pasa a `revisado`.
+
+**Validación:**
+
+- El array final es `[items, texto]`.
+- `Este` deja el inventario.
+- Marcar una ficha visible cambia su pastilla.
+- El input del revisor sigue en «Ana» o en lo que hayas escrito.
 
 ## Comprueba tu entendimiento
 
-**Marcar sí cambia items**
-Con las dos dependencias, filtra `Norte` y marca una ficha de las que se ven.
-→ La pastilla cambia, porque `items` es dependencia y `visibles` se recalcula.
+**useMemo no filtra solo**
+El `return` del callback sigue siendo el `filter`.
+→ Si borras el `filter` y devuelves `items` siempre, `Este` deja de funcionar aunque las dependencias estén bien. El cálculo y el array son las dos piezas.
 
 ## Reto
 
 ### 1 — Memorizar el número de pendientes
 
-`pendientes` puede salir de otro `useMemo` que dependa de `items`. El efecto sigue dependiendo de `[pendientes]`.
+`pendientes` puede salir de otro `useMemo` que dependa de `[items]`. El efecto del título sigue en `[pendientes]`.
 
 <details>
 <summary>Ver solución</summary>
@@ -65,7 +98,7 @@ const pendientes = useMemo(
 )
 ```
 
-Marca una ficha: la pestaña baja igual que antes. No aporta nada con seis elementos; el sitio donde sí duele olvidar una dependencia es el filtro del paso 2.
+Marca una ficha: la pestaña baja igual que antes. Con seis elementos no se nota velocidad. El sitio donde duele olvidar una dependencia es el filtro del paso 2.
 
 </details>
 
@@ -73,5 +106,6 @@ Marca una ficha: la pestaña baja igual que antes. No aporta nada con seis eleme
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| El filtro va retrasado o no va | Falta `texto` o `items` en el array | `[items, texto]` |
+| El filtro no responde al teclear | Falta `texto` en el array | `[items, texto]` |
+| La pastilla no cambia al marcar | Falta `items` en el array | Las dos dependencias |
 | `useMemo is not defined` | El import no lo incluye | Añádelo junto a `useState` |

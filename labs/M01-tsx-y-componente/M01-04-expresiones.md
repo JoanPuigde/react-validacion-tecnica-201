@@ -2,19 +2,29 @@
 
 [← Página anterior](M01-03-componente.md) · [Siguiente página →](M01-05-clase.md)
 
-> Un paso. Entre llaves va JavaScript, no otra cadena escrita a mano.
+> Práctica de [TSX](../M01-fundamentos/02-tsx.md).
 
 ### Objetivo
 
-Mostrar identificador y proveedor desde el objeto, en el mismo párrafo.
+Pintar `id` y `proveedor` desde el objeto, y ver la diferencia entre una expresión y un texto fijo.
 
 ### Prerrequisitos
 
-- [M01-03](M01-03-componente.md): `Tarjeta` pinta `entrega.titulo`.
+- [M01-03](M01-03-componente.md): `Tarjeta` pinta `{entrega.titulo}` dentro de un `<article>`. El objeto está en `Tarjeta.tsx`.
 
-### 1 — Añadir una expresión
+### En qué consiste
 
-**Qué agregamos:** un párrafo nuevo dentro del `<article>` de `Tarjeta.tsx`. No sustituyas el del título.
+Un párrafo nuevo. El experimento quita las llaves para ver el nombre del campo en pantalla, y las devuelve.
+
+### 1 — El párrafo con dos expresiones
+
+**Dónde:** `bandeja/src/componentes/Tarjeta.tsx`, dentro del `<article>`, debajo del párrafo del título. No borres ese párrafo.
+
+**Qué haces:**
+
+1. Añade este bloque.
+2. Guarda.
+3. Mira la ficha, no el editor.
 
 ```tsx
 <p>
@@ -22,32 +32,39 @@ Mostrar identificador y proveedor desde el objeto, en el mismo párrafo.
 </p>
 ```
 
-**Con esto conseguimos:** dos campos del objeto en la interfaz. Las llaves evaluán la expresión. El punto medio es texto fijo, fuera de las llaves.
+El punto medio va fuera de las llaves: es texto fijo. `entrega.id` y `entrega.proveedor` van cada uno en su expresión.
 
-**Validar:** bajo «Informe de accesibilidad» se lee `E-101 · Norte`. Cambia en el objeto `proveedor: "Norte"` por `proveedor: "Sur"`, guarda.
+**Experimento:** quita las llaves del id y deja la palabra `entrega.id` como texto. Guarda.
 
-→ La ficha pasa a `E-101 · Sur`. Devuelve `"Norte"`.
+→ La ficha muestra la palabra `entrega.id`, no `E-101`. Vuelve a poner `{entrega.id}`.
+
+Segundo experimento: en el objeto, cambia `proveedor: "Norte"` por `proveedor: "Sur"`. Guarda. Mira la segunda línea. Devuelve `"Norte"`.
+
+→ La segunda línea pasa a `E-101 · Sur` y, al restaurar, a `E-101 · Norte`. El título «Informe de accesibilidad» no se mueve: es otra expresión.
+
+**Validación:**
+
+- Bajo el título del entregable se lee `E-101 · Norte`.
+- No se leen las llaves en la página.
+- Problems no marca `entrega.id` como no usado.
 
 ## Comprueba tu entendimiento
 
-**Sin llaves no hay dato**
-Quita un momento las llaves y deja `entrega.id` como texto.
-→ La página muestra la palabra `entrega.id`, no `E-101`. Vuelve a poner las llaves.
+**Una sola expresión puede juntar los dos**
+Sustituye el párrafo del título por `{`${entrega.id} — ${entrega.titulo}`}`.
+
+→ Se lee `E-101 — Informe de accesibilidad`. Puedes dejar esa línea. El párrafo de id y proveedor sigue debajo.
 
 ## Reto
 
-### 1 — Juntar título e id en una sola expresión
+### 1 — Una expresión que no es un campo
 
-En el párrafo del título, muestra `E-101 — Informe de accesibilidad` usando una template string.
+Debajo, añade `<p>{entrega.id.length}</p>`.
 
 <details>
 <summary>Ver solución</summary>
 
-```tsx
-<p>{`${entrega.id} — ${entrega.titulo}`}</p>
-```
-
-La ficha enseña esa línea. El párrafo de id y proveedor puede quedarse.
+Se ve `5`, la longitud de `"E-101"`. Es JavaScript dentro de las llaves, no un campo nuevo de la interfaz. Borra ese párrafo al terminar para no dejar un número suelto en la ficha. Si lo dejas, no rompe nada.
 
 </details>
 
@@ -55,4 +72,5 @@ La ficha enseña esa línea. El párrafo de id y proveedor puede quedarse.
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| Se ve `{entrega.id}` con las llaves en pantalla | Las llaves quedaron dentro de un string | Tiene que ser JSX: `{entrega.id}`, no `"{entrega.id}"` |
+| Se ve `{entrega.id}` con llaves | Las llaves quedaron dentro de un string | Tiene que ser JSX: `{entrega.id}`, no `"{entrega.id}"` |
+| La segunda línea no cambia al editar `proveedor` | Estás editando otro archivo | El objeto está en `Tarjeta.tsx` |

@@ -2,19 +2,28 @@
 
 [← Página anterior](M01-01-entorno.md) · [Siguiente página →](M01-03-componente.md)
 
-> Un paso. El dato queda descrito y el editor avisa si no encaja.
+> Práctica de [TSX](../M01-fundamentos/02-tsx.md).
 
 ### Objetivo
 
-Declarar `Entregable` y usar un objeto de ese tipo en `App.tsx`.
+Declarar `Entregable` y comprobar que el editor rechaza un objeto que no encaja.
 
 ### Prerrequisitos
 
-- [M01-01](M01-01-entorno.md): la página está abierta y Vite sigue en marcha.
+- [M01-01](M01-01-entorno.md): `npm run dev` en marcha y el título visible.
 
-### 1 — Crear el contrato
+### En qué consiste
 
-**Qué agregamos:** el archivo `bandeja/src/modelo.ts`.
+Primero el contrato, sin usarlo. Después un objeto de ese tipo pintado en la página. El experimento consiste en romper el objeto y leer el aviso, no en dejarlo roto.
+
+### 1 — El contrato, solo
+
+**Dónde:** archivo nuevo `bandeja/src/modelo.ts`. No toques `App.tsx` todavía.
+
+**Qué haces:**
+
+1. Crea el archivo.
+2. Pega este contenido y guarda.
 
 ```tsx
 export type EstadoEntregable = "pendiente" | "revisado" | "rechazado"
@@ -27,13 +36,24 @@ export interface Entregable {
 }
 ```
 
-**Con esto conseguimos:** un nombre para el dato. `estado` solo admite esas tres cadenas.
+**Experimento:** en la interfaz, cambia `titulo: string` por `titulo: number`. No hay nadie que la use, así que la página no se entera. Restaura `string` antes del paso 2.
 
-**Validar:** el archivo guarda sin aviso. Todavía no cambia la página: nadie importa la interfaz.
+**Validación:**
 
-### 2 — Usar un objeto y romperlo a propósito
+- El archivo guarda sin subrayado rojo.
+- La página sigue igual: nadie importa `modelo.ts`.
+- `estado` es el tipo `EstadoEntregable`, no `string` suelto. Si lo dejas en `string`, `"listo"` colará y el experimento del paso 2 no sirve.
 
-**Qué agregamos:** en `src/App.tsx`, el import y una constante. Sustituye el return para pintar el título del objeto.
+### 2 — Un objeto de ese tipo en la página
+
+**Dónde:** `bandeja/src/App.tsx`. El `h1` se queda. Sustituye el párrafo fijo.
+
+**Qué haces:**
+
+1. Añade el import de tipo en la primera línea.
+2. Declara `entrega` encima de la función.
+3. Cambia el `<p>` para que lea `entrega.titulo`.
+4. Guarda.
 
 ```tsx
 import type { Entregable } from "./modelo"
@@ -55,31 +75,36 @@ export default function App() {
 }
 ```
 
-**Con esto conseguimos:** el párrafo deja de ser la frase fija y pasa a ser el título del objeto.
+**Experimento:** cambia solo `estado: "pendiente"` por `estado: "listo"`. Guarda. Abre la pestaña Problems del editor. No mires solo el navegador: Vite puede seguir mostrando el último compilado.
 
-**Validar:** la página dice «Informe de accesibilidad». Ahora cambia `estado: "pendiente"` por `estado: "listo"`, guarda y mira el editor.
+→ Problems marca `estado`. `"listo"` no está en `EstadoEntregable`. Devuelve `"pendiente"`. El aviso desaparece.
 
-→ TypeScript marca `estado`: `"listo"` no está en `EstadoEntregable`. La página puede seguir mostrando lo último que compiló. Devuelve `"pendiente"` antes de seguir. El aviso desaparece.
+Segundo experimento, con el objeto ya válido: quita la línea `proveedor` y guarda.
 
-> [!WARNING]
-> No uses `any` para callar el aviso. Si el error se va porque el campo pasa a `any`, el laboratorio no está hecho.
+→ Problems pide `proveedor`. Restáurala. La página sigue en «Informe de accesibilidad».
+
+**Validación:**
+
+- El párrafo del navegador es «Informe de accesibilidad», no la frase «Revisión de lo que entrega el proveedor.»
+- Problems está vacío con el objeto restaurado.
+- No hay `any` en `modelo.ts` ni en `App.tsx`. Si el aviso de `"listo"` desapareció porque cambiaste el campo a `any`, deshazlo.
 
 ## Comprueba tu entendimiento
 
-**Un campo de más no es el problema; uno mal tipado, sí**
-Vuelve a dejar el objeto como al principio. Quita la línea `proveedor` un momento.
-→ El editor pide `proveedor`. Al restaurarla, el aviso se va y la página sigue en «Informe de accesibilidad».
+**El id es texto**
+Pon `id: 101` sin comillas. Mira Problems. Vuelve a `"E-101"`.
+→ Problems dice que `number` no se puede asignar a `string`. Con las comillas, el aviso se va y la página no cambia de título.
 
 ## Reto
 
-### 1 — El id no es un número
+### 1 — Un campo que la interfaz no nombra
 
-Pasa `id: 101` sin comillas.
+Añade `urgente: true` dentro del objeto.
 
 <details>
 <summary>Ver solución</summary>
 
-TypeScript marca `id` porque la interfaz pide `string`. Déjalo en `"E-101"`.
+Problems marca `urgente` como propiedad que no existe en `Entregable`. No amplíes la interfaz para callarlo. Borra esa línea.
 
 </details>
 
@@ -87,5 +112,6 @@ TypeScript marca `id` porque la interfaz pide `string`. Déjalo en `"E-101"`.
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| `entrega` está declarado y no se usa | El párrafo sigue con texto fijo | El `<p>` tiene que ser `{entrega.titulo}` |
-| No aparece el aviso al poner `"listo"` | El archivo no es `.tsx` o no guardaste | Guarda `App.tsx` y lee el problema en la pestaña Problems |
+| `entrega` declarado y no usado | El `<p>` sigue con texto fijo | Tiene que ser `{entrega.titulo}` |
+| La página no cambia y Problems está vacío | No guardaste, o miras otra pestaña del editor | Guarda `App.tsx` y lee Problems |
+| `"listo"` no marca nada | `estado` en la interfaz es `string` | Tiene que ser `EstadoEntregable` |

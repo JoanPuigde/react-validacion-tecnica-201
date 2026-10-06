@@ -2,19 +2,30 @@
 
 [← Página anterior](M03-03-flujo.md) · [Siguiente página →](M03-05-reglas.md)
 
-> Un paso. Después de pintar, el título de la pestaña copia un número que ya calculaste.
+> Práctica de [useEffect y las reglas](../M02-estado-y-hooks/03-efecto.md).
 
 ### Objetivo
 
-Mostrar en la pestaña cuántos entregables siguen en `"pendiente"`.
+Llevar el número de pendientes al título de la pestaña, y ver qué pasa si el array de dependencias miente.
 
 ### Prerrequisitos
 
-- [M03-03](M03-03-flujo.md): `marcar` cambia `estado` en `items`.
+- [M03-03](M03-03-flujo.md): `marcar` cambia `estado` en `items`. Hay tres pendientes al recargar: E-101, E-103 y E-105.
 
-### 1 — El efecto y su dependencia
+### En qué consiste
 
-**Qué agregamos:** en `App.tsx`, junto a los demás cálculos.
+Un efecto. El experimento vacía las dependencias, filtra y marca, y anota qué cambia y qué no.
+
+### 1 — El efecto
+
+**Dónde:** `App.tsx`, junto al cálculo de `visibles`. El import de React pasa a incluir `useEffect`.
+
+**Qué haces:**
+
+1. Calcula `pendientes` a partir de `items`, no de `visibles`.
+2. Añade el efecto con `[pendientes]`.
+3. Guarda.
+4. Mira el texto de la pestaña del navegador, no el `<h1>`.
 
 ```tsx
 import { useEffect, useState } from "react"
@@ -26,28 +37,33 @@ useEffect(() => {
 }, [pendientes])
 ```
 
-**Con esto conseguimos:** el título del documento se entera del número después de pintar. El array `[pendientes]` vuelve a lanzar el efecto solo cuando ese número cambia. Filtrar no lo cambia.
+**Experimento:**
 
-**Validar:** la pestaña dice «Pendientes: 3». Escribe `Sur` en «Buscar».
+1. Escribe `Sur` en «Buscar». Lee la pestaña y cuenta fichas.
+2. Borra el filtro. Marca E-101. Lee la pestaña.
+3. Cambia el array a `[]`, guarda, recarga y marca E-103. Lee la pestaña.
+4. Devuelve `[pendientes]`, recarga y marca otra vez.
 
-→ La pestaña sigue en 3. Hay dos fichas en pantalla. Marca E-101 (borra el filtro si no la ves).
+→ Con `Sur` hay dos fichas y la pestaña sigue en «Pendientes: 3». Filtrar no cambia `estado`. Al marcar E-101, la pestaña baja a 2. Con `[]`, la pestaña se queda en 3 aunque la pastilla cambie. Con `[pendientes]`, vuelve a acompañar a la marca.
 
-→ La pestaña pasa a «Pendientes: 2».
+**Validación:**
 
-> [!TIP]
-> Si dejas el array vacío, `[]`, el título se queda en el primer 3 aunque marques. Pruébalo y devuelve `[pendientes]`.
+- Al recargar, la pestaña dice «Pendientes: 3».
+- El `<h1>` sigue siendo «Bandeja de entregables».
+- `pendientes` no sale de `visibles`. Si lo contaras sobre la lista filtrada, escribir `Sur` cambiaría el título.
+- Problems vacío. `useEffect` está importado.
 
 ## Comprueba tu entendimiento
 
-**El efecto no calcula la lista**
-`visibles` sigue siendo un `const`, no sale de dentro del efecto.
-→ El filtro responde al teclear aunque el efecto solo mire `pendientes`.
+**El efecto no pinta la lista**
+`visibles` sigue siendo un `const` fuera del efecto.
+→ El filtro responde al teclear aunque el efecto solo escriba en `document.title`.
 
 ## Reto
 
 ### 1 — La limpieza
 
-Devuelve una función que deje el título en «Bandeja de entregables» y escriba `limpieza` en la consola. Marca otro pendiente.
+Devuelve una función que escriba `limpieza` en la consola y deje el título en «Bandeja de entregables». Marca un pendiente y lee la consola. Puedes dejar la limpieza.
 
 <details>
 <summary>Ver solución</summary>
@@ -71,4 +87,5 @@ Al marcar, la consola escribe `limpieza` y enseguida el efecto vuelve a poner «
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
 | `useEffect is not defined` | El import no lo nombra | `import { useEffect, useState } from "react"` |
-| El título no baja al marcar | `pendientes` cuenta otra cosa, o el array de dependencias está vacío | Cuenta `item.estado === "pendiente"` y depende de `[pendientes]` |
+| El título no baja al marcar | Dependencias `[]`, o cuentas otra lista | `[pendientes]` y `item.estado === "pendiente"` sobre `items` |
+| Miras el h1 y no ves el número | El título es el de la pestaña | Lee la pestaña del navegador |

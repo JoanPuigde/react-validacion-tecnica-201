@@ -32,11 +32,25 @@ El checklist, para esta bandeja y para otra entrega:
 
 ## Demostración guiada
 
-Con la bandeja cargando el JSON y el buscador en `#filtro`, un caso escribe `Este`, ve «Inventario de componentes» y no ve «Informe de accesibilidad». Otro abre el artículo de ese informe, pulsa el botón que contiene «Anotar» y lee `revisado` en la pastilla.
+Punto de partida: la bandeja pide `/entregables.json`. El buscador tiene `id="filtro"` y su etiqueta es «Buscar». El botón de una ficha pendiente contiene «Anotar». `npm run dev` no puede estar usando el 5173: el script de Cypress arranca el suyo. Se para con Ctrl+C.
 
-`npm run test:e2e` los ejecuta junto al caso del título. Cambiar el texto a `zzzz` hace fallar el del inventario: el filtro no lo pinta, y el caso lo dice. Al restituir `Este`, vuelve a pasar.
+El caso que ya viene visita `/` y busca el título. No mira el filtro.
 
-El checklist se recorre en la misma bandeja: la URL mala enseña el aviso, `zzzz` enseña el vacío, Network no repite la petición al teclear, y pulsar la etiqueta «Buscar» lleva el foco a la caja.
+### 1 — El filtro, visto desde fuera
+
+En `bandeja/cypress/e2e/bandeja.cy.js`, dentro del `describe`, después del caso del título, un caso escribe `Este` en `#filtro`, ve «Inventario de componentes» y no ve «Informe de accesibilidad». En `bandeja/`, `npm run test:e2e`. Pasan el del título y este.
+
+Se cambia el texto escrito a `zzzz`. El caso falla buscando «Inventario de componentes»: el filtro no lo pinta. Cypress no mira `useState`. Mira el texto de la página. Se restituye `Este` y el caso vuelve a pasar.
+
+### 2 — La pastilla, no el botón
+
+Otro caso abre el artículo que contiene «Informe de accesibilidad», pulsa el botón que contiene «Anotar» y lee `revisado` en `.estado`. Al cargar, E-101 está pendiente y el botón dice «Anotar E-101». Tras el clic, la pastilla es `revisado`. Si el caso solo comprueba que el botón existe, pasa aunque la pastilla no cambie. Este caso lee la pastilla.
+
+### 3 — El checklist, en la misma bandeja
+
+Con `dev` otra vez en el 5173: la URL del fetch en `"/no-esta.json"` enseña «No se pudo cargar la bandeja.» Se restituye la URL buena. `zzzz` enseña «Ningún entregable coincide.» sin `role="alert"`. En Network, teclear en «Buscar» no repite `entregables.json`. Pulsar la etiqueta «Buscar» lleva el foco a `#filtro`.
+
+Dónde queda: los casos se quedan en el archivo. Borrar el caso al corregir un fallo deja la entrega como al principio.
 
 ## Práctica
 
