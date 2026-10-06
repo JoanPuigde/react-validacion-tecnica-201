@@ -1,6 +1,8 @@
 # M03 — Estado y flujo
 
-[← Página anterior](../M02-props-lista-evento/M02-05-evento.md) · [Siguiente página →](M03-01-usestate.md)
+> Práctica de [estado](../M02-estado-y-hooks/01-estado.md), [flujo](../M02-estado-y-hooks/02-flujo.md) y [efecto](../M02-estado-y-hooks/03-efecto.md). No es el recorrido del curso.
+
+[← Página anterior](../M02-estado-y-hooks/01-estado.md) · [Siguiente página →](M03-01-usestate.md)
 
 > [!NOTE]
 > El array deja de ser una constante pintada tal cual. El estado vive en el padre. La tarjeta avisa.

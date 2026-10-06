@@ -1,6 +1,8 @@
 # M01 — TSX y el componente
 
-[← Página anterior](../../README.md) · [Siguiente página →](M01-01-entorno.md)
+> Práctica del [módulo de fundamentos](../M01-fundamentos/README.md). La guía del curso no pasa por aquí. Estas páginas se abren cuando toca asimilar un concepto con las manos.
+
+[← Página anterior](../M01-fundamentos/02-tsx.md) · [Siguiente página →](M01-01-entorno.md)
 
 > [!NOTE]
 > Este módulo se sigue laboratorio a laboratorio. La teoría de cada idea está en el propio laboratorio, en el momento de añadirla.

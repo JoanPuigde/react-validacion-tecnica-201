@@ -1,6 +1,8 @@
 # M05 — Datos
 
-[← Página anterior](../M04-hooks/M04-07-hook-propio.md) · [Siguiente página →](M05-01-fetch.md)
+> Práctica de [la petición](../M03-apis-y-arquitectura/01-peticion.md), de [qué mirar en el pintado](../M04-rendimiento/01-que-mirar.md) y de [el recorrido](../M05-testing-y-validacion/01-recorrido.md).
+
+[← Página anterior](../M03-apis-y-arquitectura/01-peticion.md) · [Siguiente página →](M05-01-fetch.md)
 
 > [!NOTE]
 > La lista deja de nacer en `datos.ts` y pasa a llegar por HTTP. Los dos últimos laboratorios solo comprueban el pintado de más y un recorrido automático. No cambian de tema: cierran la bandeja.

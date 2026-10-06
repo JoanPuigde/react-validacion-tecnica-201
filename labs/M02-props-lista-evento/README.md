@@ -1,6 +1,8 @@
 # M02 — Props, lista y evento
 
-[← Página anterior](../M01-tsx-y-componente/M01-05-clase.md) · [Siguiente página →](M02-01-props.md)
+> Práctica de [props](../M01-fundamentos/03-props.md) y [eventos](../M01-fundamentos/04-eventos.md). La guía sigue en fundamentos. Esto es para hacerlo con las manos.
+
+[← Página anterior](../M01-fundamentos/03-props.md) · [Siguiente página →](M02-01-props.md)
 
 > [!NOTE]
 > Se sigue en la misma `Tarjeta`. Cada laboratorio añade una prop, una condición, la lista o el clic.

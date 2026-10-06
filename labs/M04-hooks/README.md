@@ -1,6 +1,8 @@
 # M04 — Hooks
 
-[← Página anterior](../M03-estado-y-flujo/M03-05-reglas.md) · [Siguiente página →](M04-01-children.md)
+> Práctica suelta: `children` pertenece a [fundamentos](../M01-fundamentos/05-children.md); el reductor y el hook propio, a [estructura](../M03-apis-y-arquitectura/02-estructura.md); `useMemo`, a [rendimiento](../M04-rendimiento/01-que-mirar.md).
+
+[← Página anterior](../M01-fundamentos/05-children.md) · [Siguiente página →](M04-01-children.md)
 
 > [!NOTE]
 > Cada laboratorio añade un hook o una prop de React. El anterior sigue en el archivo.
