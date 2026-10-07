@@ -2,7 +2,7 @@
 
 [← Página anterior](README.md) · [Siguiente página →](J01-02-spa.md)
 
-> Laboratorio de [Introducción a React](README.md).
+Un componente es una función cuyo nombre empieza en mayúscula y que devuelve interfaz. `App` es el componente de entrada. `main.tsx` busca el nodo `#raiz` de `index.html` y pinta ahí `<App />`. El título que se lee en la página sale del `<h1>` de `App`, no del HTML.
 
 ### Objetivo
 
@@ -10,7 +10,30 @@ Ver que el título de la página sale del componente `App`, no del HTML.
 
 ### Código de partida
 
-El repo ya tiene la bandeja. `npm run dev` en `bandeja/` y el puerto 5173. No hace falta otro archivo.
+En `bandeja/`, `npm run dev`. Abre `http://localhost:5173`.
+
+`bandeja/index.html` tiene el nodo y el script. El título del `<head>` no es el de la página:
+
+```html
+<div id="raiz"></div>
+<script type="module" src="/src/main.tsx"></script>
+```
+
+`bandeja/src/main.tsx` monta `App` en ese nodo:
+
+```tsx
+createRoot(raiz).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+```
+
+`bandeja/src/App.tsx` pinta el título que se lee:
+
+```tsx
+<h1>Bandeja de entregables</h1>
+```
 
 ### 1 — Del HTML al componente
 

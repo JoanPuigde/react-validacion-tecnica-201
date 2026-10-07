@@ -2,7 +2,7 @@
 
 [← Página anterior](J03-09-responsabilidades.md) · [Siguiente página →](J03-11-antipatrones.md)
 
-> Laboratorio de [Componente reutilizable](README.md).
+`Tarjeta` es una función. Seis fichas salen de un `map`, no de seis copias. `textoBoton` cambia el rótulo sin tocar el componente. `item` es obligatorio: sin esa prop no compila.
 
 ### Objetivo
 
@@ -10,7 +10,88 @@ Ver que seis fichas salen de un solo `Tarjeta`, y que una prop opcional cambia e
 
 ### Código de partida
 
-`bandeja/src/componentes/Tarjeta.tsx` es una función con `item` obligatorio y `textoBoton` opcional, defecto `"Anotar"`. `App` la usa dentro de un `map`. Si tu ficha está escrita seis veces en `App`, borra esas copias y deja el `map` de [J03-06](J03-06-fetch.md).
+Pega estos dos archivos y recarga `http://localhost:5173`. Hay seis fichas y una caja «Buscar». El botón de una pendiente dice «Anotar» y, al pulsarlo, «Hecho».
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useState } from "react"
+import { entregables } from "./datos"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>(entregables)
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
+
+Hay un solo archivo `Tarjeta.tsx`. El `map` lo usa seis veces.
 
 ### En qué consiste
 

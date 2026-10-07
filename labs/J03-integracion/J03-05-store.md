@@ -2,7 +2,7 @@
 
 [← Página anterior](J03-04-reducer.md) · [Siguiente página →](J03-06-fetch.md)
 
-> Laboratorio de [useStore](README.md).
+`useStore` es un hook de este curso, no una librería. Junta el reductor de la lista y el nombre del revisor en un contexto. `App` y `Tarjeta` lo leen. Fuera de `TiendaProveedor` el hook lanza.
 
 ### Objetivo
 
@@ -10,7 +10,88 @@ Leer la lista, `marcar` y el revisor con `useStore()`, sin `useReducer` ni `useC
 
 ### Código de partida
 
-Hay un reductor `marcar` y un contexto de revisor, de [J03-04](J03-04-reducer.md) y [J03-01](J03-01-contexto.md). Si falta uno, esos laboratorios traen el código. `Tarjeta` todavía puede recibir `alMarcar` por props: este paso se lo quita.
+Pega estos dos archivos y recarga `http://localhost:5173`. Hay seis fichas y una caja «Buscar». El botón de una pendiente dice «Anotar» y, al pulsarlo, «Hecho».
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useState } from "react"
+import { entregables } from "./datos"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>(entregables)
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
+
+Esta página sustituye esos dos archivos. No hace falta tener ya el contexto ni el reductor: el archivo de la tienda, más abajo, los trae.
 
 ### 1 — La tienda
 

@@ -2,7 +2,7 @@
 
 [← Página anterior](README.md) · [Siguiente página →](J03-02-hoc.md)
 
-> Laboratorio de [useContext](README.md).
+El contexto entrega un valor a los componentes de dentro sin pasarlo por cada prop. Quien provee decide el valor. Quien llama a `useContext` lo lee. Si no hay proveedor, el valor es `null` y el hook propio avisa.
 
 ### Objetivo
 
@@ -10,7 +10,88 @@ Llevar el nombre de quien revisa a las fichas sin añadirlo a las props.
 
 ### Código de partida
 
-`App` tiene la caja «Buscar», `items` y `marcar`. `Tarjeta` recibe `item` y `alMarcar`. Si no es así, pega el `App.tsx` de [J02-02](../J02-estado/J02-02-usestate.md) y la función de [J01-06](../J01-fundamentos/J01-06-props.md).
+Pega estos dos archivos y recarga `http://localhost:5173`. Hay seis fichas y una caja «Buscar». El botón de una pendiente dice «Anotar» y, al pulsarlo, «Hecho».
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useState } from "react"
+import { entregables } from "./datos"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>(entregables)
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
+
+`TarjetaProps` no tiene `revisor`. El párrafo «Revisor:» todavía no está.
 
 ### 1 — El proveedor y la lectura
 

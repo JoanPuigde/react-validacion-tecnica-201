@@ -2,7 +2,7 @@
 
 [← Página anterior](J02-02-usestate.md) · [Siguiente página →](J02-04-ciclo.md)
 
-> Laboratorio de [useEffect](README.md).
+`useEffect` corre después de pintar, y otra vez cuando cambian las dependencias. Sirve para hablar con algo de fuera: el título de la pestaña. No sirve para calcular `visibles`. Eso sigue siendo un `const`. `[]` significa solo al montar. Si `pendientes` cambia y no está en el array, el título se queda en el primer número.
 
 ### Objetivo
 
@@ -10,7 +10,86 @@ Llevar el número de pendientes al título de la pestaña, y ver qué pasa si la
 
 ### Código de partida
 
-`App.tsx` es el de [J02-02](J02-02-usestate.md): caja, `items`, `visibles`, `marcar`. No tiene `useEffect`. Si el tuyo no coincide, pega ese archivo. La pestaña dice «Bandeja de entregables».
+La pestaña dice «Bandeja de entregables». No hay `useEffect`. Pega `App.tsx`. `Tarjeta` es la de abajo.
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useState } from "react"
+import { entregables } from "./datos"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>(entregables)
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
 
 ### 1 — El título de la pestaña
 

@@ -2,7 +2,7 @@
 
 [← Página anterior](J05-04-entregable.md) · [Siguiente página →](J05-06-riesgos.md)
 
-> Laboratorio de [Checklist](README.md).
+El checklist es una lista corta que se puede repetir en otra entrega. Cada fila es una acción y lo que se ve. El caso de Cypress cubre el título y el filtro de `Este`. No cubre el foco ni la recarga.
 
 ### Objetivo
 
@@ -10,7 +10,104 @@ Recorrer la lista de la guía y marcar qué fila cubre el caso de Cypress y cuá
 
 ### Código de partida
 
-La bandeja en el 5173. `bandeja.cy.js` tiene el caso del título y el de `Este`. Si falta el de `Este`, pégalo desde [J05-03](J05-03-cypress.md).
+Pega estos dos archivos y recarga `http://localhost:5173`. Hay seis fichas y una caja «Buscar». El botón de una pendiente dice «Anotar» y, al pulsarlo, «Hecho».
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useState } from "react"
+import { entregables } from "./datos"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>(entregables)
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
+
+`bandeja/cypress/e2e/bandeja.cy.js` tiene el título y el filtro. Si falta el de `Este`, sustituye el archivo por este:
+
+```js
+describe("bandeja", () => {
+  it("muestra el título", () => {
+    cy.visit("/")
+    cy.contains("h1", "Bandeja de entregables")
+  })
+
+  it("filtra por Este", () => {
+    cy.visit("/")
+    cy.get("#filtro").type("Este")
+    cy.contains("Inventario de componentes")
+    cy.contains("Informe de accesibilidad").should("not.exist")
+  })
+})
+```
 
 ### 1 — La tabla, en la bandeja
 
@@ -52,5 +149,5 @@ Si la lista sale de `/entregables.json`, teclea con Network abierto.
 
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
-| `Norte` no quita fichas | El `map` no recorre `visibles` | El filtro de [J02-02](../J02-estado/J02-02-usestate.md) |
+| `Norte` no quita fichas | El `map` no recorre `visibles` | El `map` de `App.tsx`, el de esta página, recorre `visibles` |
 | La marca sobrevive | Hay otro mecanismo de guardado | En esta bandeja, recargar restaura el origen |

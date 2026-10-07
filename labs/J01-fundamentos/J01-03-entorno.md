@@ -2,7 +2,7 @@
 
 [← Página anterior](J01-02-spa.md) · [Siguiente página →](J01-04-jsx.md)
 
-> Laboratorio de [Entorno](README.md).
+Node ejecuta las herramientas. npm lanza los scripts de `package.json`. Vite sirve la bandeja en el puerto 5173 y, con `build`, deja el paquete en `dist/`. `npm run dev` recarga al guardar. Si el 5173 está ocupado, Vite se detiene.
 
 ### Objetivo
 
@@ -10,7 +10,14 @@ Arrancar Vite en el puerto 5173 y dejar un `build` que pase el comprobador de ti
 
 ### Código de partida
 
-El directorio `bandeja/`. Si faltan dependencias, `npm ci` dentro de `bandeja/`.
+El directorio es `bandeja/`. Si faltan dependencias, `npm ci` dentro de `bandeja/`.
+
+Los scripts que vas a lanzar están en `bandeja/package.json`:
+
+```json
+"dev": "vite --host 0.0.0.0 --port 5173 --strictPort",
+"build": "tsc -p tsconfig.app.json --noEmit && vite build"
+```
 
 ### 1 — Dev y build
 

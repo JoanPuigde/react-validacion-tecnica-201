@@ -2,7 +2,7 @@
 
 [← Página anterior](J01-05-componentes.md) · [Siguiente página →](J01-07-eventos.md)
 
-> Laboratorio de [Props](README.md).
+Una prop es un argumento. `item` es obligatorio. `textoBoton` puede faltar: el defecto es `"Anotar"`. La prop viaja de `App` a `Tarjeta`. La ficha no importa `datos.ts`. `key` va en el `<li>` del `map` y es `item.id`.
 
 ### Objetivo
 
@@ -10,7 +10,56 @@ Ver que `item` es obligatorio, que `textoBoton` tiene defecto y que `key` es el 
 
 ### Código de partida
 
-`Tarjeta` recibe `item`. El botón usa `textoBoton`, con defecto `"Anotar"`. Si tu componente no tiene esa interfaz, sustituye `Tarjeta.tsx` por esta función y deja en `App` el `map` con `item={item}` y `alMarcar={marcar}`.
+Pega estos dos archivos y recarga `http://localhost:5173`. Hay seis fichas y una caja «Buscar». El botón de una pendiente dice «Anotar» y, al pulsarlo, «Hecho».
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useState } from "react"
+import { entregables } from "./datos"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>(entregables)
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
 
 ```tsx
 import type { Entregable } from "../modelo"

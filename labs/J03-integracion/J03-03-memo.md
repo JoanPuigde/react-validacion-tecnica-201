@@ -2,7 +2,7 @@
 
 [← Página anterior](J03-02-hoc.md) · [Siguiente página →](J03-04-reducer.md)
 
-> Laboratorio de [Memo](README.md).
+`memo` se salta la ficha si sus props son la misma referencia. Hace falta que `marcar` sea un `useCallback`: si la función es nueva, `memo` no se salta nada. Si el proveedor se pinta con otro objeto `{ revisor, setRevisor }`, quien lee el contexto se ejecuta aunque el nombre no haya cambiado. `useMemo` con `[revisor]` deja esa referencia quieta.
 
 ### Objetivo
 
@@ -10,9 +10,146 @@ Ver cuándo `memo` se salta `Tarjeta`, y cuándo un valor nuevo del contexto lo 
 
 ### Código de partida
 
-[J03-02](J03-02-hoc.md) está hecho. `Tarjeta` termina en `export default conRevisor(Tarjeta)`. `marcar` en `App` todavía es una `function`. Si no tienes el HOC, ese laboratorio trae el archivo.
+El export de la ficha es `conRevisor(Tarjeta)`. `marcar` en `App` todavía es una `function`, no un `useCallback`. El proveedor entrega `{ revisor, setRevisor }` escrito en el JSX, sin `useMemo`. Pega estos archivos si no es así. La caja del revisor y el filtro siguen en `App` como en la página del HOC: `App` es el de esa partida, con `function marcar`.
 
-Abre la consola del navegador (F12, pestaña Consola). `console.log` se ve con el nivel por defecto. Cada vez que la ficha se ejecuta, escribe su id.
+`bandeja/src/hoc/conRevisor.tsx`
+
+```tsx
+import type { ComponentType } from "react"
+import { useSesion } from "../contexto/Sesion"
+
+export function conRevisor<P extends { revisor: string }>(
+  Componente: ComponentType<P>,
+) {
+  function Envuelto(props: Omit<P, "revisor">) {
+    const { revisor } = useSesion()
+    const completas = { ...props, revisor } as P
+    return <Componente {...completas} />
+  }
+  return Envuelto
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+import { conRevisor } from "../hoc/conRevisor"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+  revisor: string
+}
+
+function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+  revisor,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p>Revisor: {revisor}</p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+
+export default conRevisor(Tarjeta)
+```
+
+`bandeja/src/contexto/Sesion.tsx`
+
+```tsx
+import { createContext, useContext, useState, type ReactNode } from "react"
+
+interface Sesion {
+  revisor: string
+  setRevisor: (nombre: string) => void
+}
+
+const SesionContexto = createContext<Sesion | null>(null)
+
+export function SesionProveedor({ children }: { children: ReactNode }) {
+  const [revisor, setRevisor] = useState("Ana")
+  return (
+    <SesionContexto.Provider value={{ revisor, setRevisor }}>
+      {children}
+    </SesionContexto.Provider>
+  )
+}
+
+export function useSesion(): Sesion {
+  const sesion = useContext(SesionContexto)
+  if (!sesion) throw new Error("useSesion fuera del proveedor")
+  return sesion
+}
+```
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useState } from "react"
+import { entregables } from "./datos"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+import { useSesion } from "./contexto/Sesion"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>(entregables)
+  const { revisor, setRevisor } = useSesion()
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="revisor">Revisor</label>
+      <input
+        id="revisor"
+        value={revisor}
+        onChange={(evento) => setRevisor(evento.target.value)}
+      />
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
 
 ### 1 — La ficha se ejecuta al teclear
 

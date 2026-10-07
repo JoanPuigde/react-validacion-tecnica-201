@@ -2,7 +2,7 @@
 
 [← Página anterior](J05-02-vision.md) · [Siguiente página →](J05-04-entregable.md)
 
-> Laboratorio de [Cypress](README.md).
+El caso nuevo escribe en `#filtro`. El id del input tiene que ser `filtro`. El script se lanza con `npm run dev` parado, porque Cypress usa el puerto 5173.
 
 ### Objetivo
 
@@ -10,7 +10,65 @@ Añadir el caso que escribe `Este` y verlo fallar cuando el texto no está.
 
 ### Código de partida
 
-`bandeja/cypress/e2e/bandeja.cy.js` tiene el caso del título. El input de la bandeja tiene `id="filtro"`. `npm run dev` está parado.
+El input tiene `id="filtro"`. `npm run dev` está parado.
+
+`bandeja/cypress/e2e/bandeja.cy.js`
+
+```js
+describe("bandeja", () => {
+  it("muestra el título", () => {
+    cy.visit("/")
+    cy.contains("h1", "Bandeja de entregables")
+  })
+})
+```
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useState } from "react"
+import { entregables } from "./datos"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>(entregables)
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
 
 ### 1 — El caso del filtro
 

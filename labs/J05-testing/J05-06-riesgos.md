@@ -2,7 +2,7 @@
 
 [← Página anterior](J05-05-checklist.md) · [Siguiente página →](../../README.md)
 
-> Laboratorio de [Riesgos](README.md).
+Un riesgo es un fallo que el caso no cubre y que puede volver. Quitar `toLowerCase` rompe el caso de `Este`. Un botón que siempre dice «Anotar» no lo rompe, porque ese caso no mira la pastilla.
 
 ### Objetivo
 
@@ -10,7 +10,106 @@ Romper el filtro, ver el caso rojo, arreglarlo sin borrar el caso, y nombrar un 
 
 ### Código de partida
 
-El `it` de `Este` está en `bandeja.cy.js`. `npm run dev` parado antes de `npm run test:e2e`. El filtro usa `texto.toLowerCase()`.
+El filtro usa `texto.toLowerCase()`. El botón dice «Hecho» cuando `item.estado === "revisado"`.
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useState } from "react"
+import { entregables } from "./datos"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>(entregables)
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
+
+`bandeja/cypress/e2e/bandeja.cy.js`
+
+```js
+describe("bandeja", () => {
+  it("muestra el título", () => {
+    cy.visit("/")
+    cy.contains("h1", "Bandeja de entregables")
+  })
+
+  it("filtra por Este", () => {
+    cy.visit("/")
+    cy.get("#filtro").type("Este")
+    cy.contains("Inventario de componentes")
+    cy.contains("Informe de accesibilidad").should("not.exist")
+  })
+})
+```
+
+`npm run dev` parado antes de `npm run test:e2e`.
 
 ### 1 — El fallo que el caso ve
 
@@ -61,7 +160,17 @@ Un caso borrado al corregir, y un fallo fuera del texto que el caso busca.
 
 ### 1 — El caso de la pastilla, si no está
 
-Pega el `it` «marca el informe» de [J05-03](J05-03-cypress.md). Deja el botón sin «Hecho» y lanza el script. Restaura el botón.
+Añade este caso, deja el botón siempre en «Anotar» y lanza el script. El caso falla. Restaura el ternario del botón y el caso pasa.
+
+```js
+it("marca el informe", () => {
+  cy.visit("/")
+  cy.contains("article", "Informe de accesibilidad").within(() => {
+    cy.contains("button", "Anotar").click()
+    cy.get(".estado").should("have.text", "revisado")
+  })
+})
+```
 
 <details>
 <summary>Ver solución</summary>

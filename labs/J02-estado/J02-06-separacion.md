@@ -2,7 +2,7 @@
 
 [← Página anterior](J02-05-flujo.md) · [Siguiente página →](../J03-integracion/README.md)
 
-> Laboratorio de [Lógica y presentación](README.md).
+`Tarjeta` sabe cómo se ve una ficha. No sabe cuál es la lista ni qué título debe llevar la pestaña. Esa lógica sale de `App` a `useLista`. El hook lee `datos.ts`. La petición HTTP es otro tema.
 
 ### Objetivo
 
@@ -10,7 +10,92 @@ Sacar `items`, `marcar` y el título de la pestaña a `useLista`, y dejar en `Ap
 
 ### Código de partida
 
-`App` tiene `texto`, `items`, `visibles`, `marcar` y el efecto de «Pendientes». La lista sale de `datos.ts`, no de `fetch`. Si falta el efecto, añádelo como en [J02-03](J02-03-useeffect.md).
+La lista sale de `datos.ts`, no de `fetch`. La pestaña dice «Pendientes: 3». Pega `App.tsx` si falta el efecto.
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useEffect, useState } from "react"
+import { entregables } from "./datos"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>(entregables)
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  const pendientes = items.filter((item) => item.estado === "pendiente").length
+
+  useEffect(() => {
+    document.title = `Pendientes: ${pendientes}`
+  }, [pendientes])
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
 
 ### 1 — El hook de la lista
 

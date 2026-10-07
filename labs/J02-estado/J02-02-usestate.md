@@ -2,7 +2,7 @@
 
 [← Página anterior](J02-01-state.md) · [Siguiente página →](J02-03-useeffect.md)
 
-> Laboratorio de [useState](README.md).
+`texto` es el valor de ahora y `setTexto` pide el siguiente. La caja muestra `texto` y, al escribir, llama a `setTexto`. `visibles` se calcula con `items` y `texto`. No es otro estado: si se guarda aparte, la caja y las fichas se separan.
 
 ### Objetivo
 
@@ -10,7 +10,9 @@ Tener la caja y el filtro en estado, y la lista visible calculada.
 
 ### Código de partida
 
-Si tu `App.tsx` ya filtra, pasa al experimento. Si no, sustituye `bandeja/src/App.tsx` por este archivo. `Tarjeta` es la de [J01-06](../J01-fundamentos/J01-06-props.md).
+Pega estos dos archivos y recarga `http://localhost:5173`. Hay seis fichas y una caja «Buscar». El botón de una pendiente dice «Anotar» y, al pulsarlo, «Hecho».
+
+`bandeja/src/App.tsx`
 
 ```tsx
 import { useState } from "react"
@@ -56,6 +58,40 @@ export default function App() {
   )
 }
 ```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
+
+Si la caja ya filtra, sigue al experimento. Si no, estos dos archivos dejan la bandeja en ese punto.
 
 ### 1 — Filtrar sin un segundo estado
 

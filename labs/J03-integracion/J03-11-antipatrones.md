@@ -2,7 +2,7 @@
 
 [← Página anterior](J03-10-reutilizable.md) · [Siguiente página →](../J04-rendimiento/README.md)
 
-> Laboratorio de [Antipatrones](README.md).
+Mutar el mismo objeto y devolver el mismo array a veces no repinta. Guardar `visibles` en otro estado separa la caja de las fichas. Leer el JSON como `any` apaga el guarda.
 
 ### Objetivo
 
@@ -10,7 +10,176 @@ Provocar tres fallos de arquitectura, leerlos y dejar el código como estaba.
 
 ### Código de partida
 
-La lista llega por `useEntregables`. `marcar` copia el objeto con `{ ...item, estado: "revisado" }`. `visibles` es un `const` calculado en `App`. Si tu archivo no es ese, el hook está entero en [J03-08](J03-08-estructura.md).
+La lista llega por `useEntregables`. `marcar` copia el objeto. `visibles` es un `const` en `App`. Pega estos archivos si no es así.
+
+`bandeja/src/api/entregables.ts`
+
+```tsx
+import type { Entregable, EstadoEntregable } from "../modelo"
+
+function esEstado(valor: unknown): valor is EstadoEntregable {
+  return valor === "pendiente" || valor === "revisado" || valor === "rechazado"
+}
+
+function esEntregable(valor: unknown): valor is Entregable {
+  if (typeof valor !== "object" || valor === null) return false
+  const candidato = valor as Record<string, unknown>
+  return (
+    typeof candidato.id === "string" &&
+    typeof candidato.titulo === "string" &&
+    typeof candidato.proveedor === "string" &&
+    esEstado(candidato.estado)
+  )
+}
+
+export async function cargarEntregables(): Promise<Entregable[]> {
+  const respuesta = await fetch("/entregables.json")
+  if (!respuesta.ok) throw new Error(`Respuesta ${respuesta.status}`)
+  const datos: unknown = await respuesta.json()
+  if (!Array.isArray(datos) || !datos.every(esEntregable)) {
+    throw new Error("El JSON no es una lista de entregables")
+  }
+  return datos
+}
+```
+
+`bandeja/src/hooks/useEntregables.ts`
+
+```tsx
+import { useEffect, useState } from "react"
+import { cargarEntregables } from "../api/entregables"
+import type { Entregable } from "../modelo"
+
+export function useEntregables() {
+  const [items, setItems] = useState<Entregable[]>([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState("")
+
+  const pendientes = items.filter((item) => item.estado === "pendiente").length
+
+  useEffect(() => {
+    document.title = `Pendientes: ${pendientes}`
+  }, [pendientes])
+
+  useEffect(() => {
+    let vivo = true
+    setCargando(true)
+    setError("")
+    cargarEntregables()
+      .then((lista) => {
+        if (vivo) setItems(lista)
+      })
+      .catch((causa: unknown) => {
+        console.error(causa)
+        if (vivo) setError("No se pudo cargar la bandeja.")
+      })
+      .finally(() => {
+        if (vivo) setCargando(false)
+      })
+    return () => {
+      vivo = false
+    }
+  }, [])
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return { items, cargando, error, marcar }
+}
+```
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useState } from "react"
+import Tarjeta from "./componentes/Tarjeta"
+import { useEntregables } from "./hooks/useEntregables"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const { items, cargando, error, marcar } = useEntregables()
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  if (cargando) {
+    return (
+      <main>
+        <h1>Bandeja de entregables</h1>
+        <p>Cargando entregables…</p>
+      </main>
+    )
+  }
+
+  if (error) {
+    return (
+      <main>
+        <h1>Bandeja de entregables</h1>
+        <p role="alert">{error}</p>
+      </main>
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
 
 ### En qué consiste
 

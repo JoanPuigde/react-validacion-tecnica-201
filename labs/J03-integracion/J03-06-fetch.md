@@ -2,7 +2,7 @@
 
 [← Página anterior](J03-05-store.md) · [Siguiente página →](J03-07-finales.md)
 
-> Laboratorio de [Consumo de API](README.md).
+`fetch` devuelve una promesa. Hasta comprobarlo, el JSON es `unknown`. Un guarda mira campo a campo y solo entonces el valor es `Entregable[]`. La petición va en un efecto con `[]`, no en el cuerpo del componente.
 
 ### Objetivo
 
@@ -10,7 +10,9 @@ Cargar `/entregables.json` y aceptar la respuesta solo si cada elemento es un `E
 
 ### Código de partida
 
-Si tu `App.tsx` no tiene buscador, `marcar` y la pestaña «Pendientes: 3», sustituye `bandeja/src/App.tsx` por este archivo. `Tarjeta.tsx`, `datos.ts` y `modelo.ts` se quedan. `public/entregables.json` ya está.
+La lista todavía sale de `datos.ts`. La pestaña dice «Bandeja de entregables» hasta que pegues el `App` de abajo, que ya calcula «Pendientes: 3» y aún no llama a `fetch`. `public/entregables.json` ya está. Ábrelo en `http://localhost:5173/entregables.json`: son los seis objetos, y la app no los pide.
+
+`bandeja/src/App.tsx`
 
 ```tsx
 import { useEffect, useState } from "react"
@@ -63,7 +65,37 @@ export default function App() {
 }
 ```
 
-Abre `http://localhost:5173/entregables.json`. Son los mismos seis. La app todavía no los pide.
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
 
 ### En qué consiste
 

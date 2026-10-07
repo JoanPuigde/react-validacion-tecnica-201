@@ -2,7 +2,7 @@
 
 [← Página anterior](J02-04-ciclo.md) · [Siguiente página →](J02-06-separacion.md)
 
-> Laboratorio de [Flujo de datos](README.md).
+El estado baja. El aviso sube. `Tarjeta` no llama a `setItems`. Recibe `alMarcar` y la llama con el id. El padre copia el objeto de ese id. La pastilla lee `item.estado`. El botón dice «Hecho» cuando ese campo es `revisado`.
 
 ### Objetivo
 
@@ -10,7 +10,86 @@ Dejar el estado en el padre y el aviso en la ficha, y comprobar que solo cambia 
 
 ### Código de partida
 
-`Tarjeta` tiene `alMarcar: (id: string) => void` y el botón llama a `alMarcar(item.id)`. `App` tiene `marcar` y pasa `alMarcar={marcar}`. Si no, pega la función de [J02-02](J02-02-usestate.md) y la prop de [J01-06](../J01-fundamentos/J01-06-props.md).
+Pega estos dos archivos y recarga `http://localhost:5173`. Hay seis fichas y una caja «Buscar». El botón de una pendiente dice «Anotar» y, al pulsarlo, «Hecho».
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useState } from "react"
+import { entregables } from "./datos"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>(entregables)
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
 
 ### 1 — Baja el dato, sube el id
 

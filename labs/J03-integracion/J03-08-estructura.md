@@ -2,7 +2,7 @@
 
 [← Página anterior](J03-07-finales.md) · [Siguiente página →](J03-09-responsabilidades.md)
 
-> Laboratorio de [Estructura del proyecto](README.md).
+La petición vive en `api/`. La lista, la carga, el error y `marcar` viven en `useEntregables`. `App` calcula el filtro y pinta. `Tarjeta` pinta una ficha.
 
 ### Objetivo
 
@@ -10,7 +10,163 @@ Dejar la petición, la lista y el título de la pestaña en `useEntregables`, y 
 
 ### Código de partida
 
-`App.tsx` pide el JSON, distingue carga, error y vacío, y filtra. Si no es así, el archivo de partida es el resultado de [J03-07](J03-07-finales.md): pega el efecto con `cargando` y `error` y los dos `return`. `api/entregables.ts` existe.
+`App` pide el JSON, distingue carga, error y vacío, y filtra. El hook todavía no existe. Pega la API y `App` si no es así.
+
+`bandeja/src/api/entregables.ts`
+
+```tsx
+import type { Entregable, EstadoEntregable } from "../modelo"
+
+function esEstado(valor: unknown): valor is EstadoEntregable {
+  return valor === "pendiente" || valor === "revisado" || valor === "rechazado"
+}
+
+function esEntregable(valor: unknown): valor is Entregable {
+  if (typeof valor !== "object" || valor === null) return false
+  const candidato = valor as Record<string, unknown>
+  return (
+    typeof candidato.id === "string" &&
+    typeof candidato.titulo === "string" &&
+    typeof candidato.proveedor === "string" &&
+    esEstado(candidato.estado)
+  )
+}
+
+export async function cargarEntregables(): Promise<Entregable[]> {
+  const respuesta = await fetch("/entregables.json")
+  if (!respuesta.ok) throw new Error(`Respuesta ${respuesta.status}`)
+  const datos: unknown = await respuesta.json()
+  if (!Array.isArray(datos) || !datos.every(esEntregable)) {
+    throw new Error("El JSON no es una lista de entregables")
+  }
+  return datos
+}
+```
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useEffect, useState } from "react"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+import { cargarEntregables } from "./api/entregables"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState("")
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  const pendientes = items.filter((item) => item.estado === "pendiente").length
+
+  useEffect(() => {
+    document.title = `Pendientes: ${pendientes}`
+  }, [pendientes])
+
+  useEffect(() => {
+    let vivo = true
+    setCargando(true)
+    setError("")
+    cargarEntregables()
+      .then((lista) => {
+        if (vivo) setItems(lista)
+      })
+      .catch((causa: unknown) => {
+        console.error(causa)
+        if (vivo) setError("No se pudo cargar la bandeja.")
+      })
+      .finally(() => {
+        if (vivo) setCargando(false)
+      })
+    return () => {
+      vivo = false
+    }
+  }, [])
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  if (cargando) {
+    return (
+      <main>
+        <h1>Bandeja de entregables</h1>
+        <p>Cargando entregables…</p>
+      </main>
+    )
+  }
+
+  if (error) {
+    return (
+      <main>
+        <h1>Bandeja de entregables</h1>
+        <p role="alert">{error}</p>
+      </main>
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
 
 ### En qué consiste
 

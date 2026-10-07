@@ -2,7 +2,7 @@
 
 [← Página anterior](J03-06-fetch.md) · [Siguiente página →](J03-08-estructura.md)
 
-> Laboratorio de [Loading, error y vacío](README.md).
+Cargar, fallar y no encontrar coincidencias son tres finales distintos. «Cargando entregables…» no es el aviso de error. «Ningún entregable coincide.» tampoco. El aviso de error lleva `role="alert"`. Los hooks van antes de esos `return`.
 
 ### Objetivo
 
@@ -10,7 +10,137 @@ Pintar una frase de espera, un aviso de error y el vacío del filtro, cada uno p
 
 ### Código de partida
 
-Hace falta el `fetch` de [J03-06](J03-06-fetch.md): `bandeja/src/api/entregables.ts` existe y `App` lo llama en un efecto con `[]`. Si no es así, termina ese laboratorio, que trae el archivo entero. La página, al recargar, muestra las seis fichas.
+Al recargar se ven las seis fichas. Hay una petición a `entregables.json`. Todavía no hay frase de carga ni aviso de error. Pega estos dos archivos si no es así.
+
+`bandeja/src/api/entregables.ts`
+
+```tsx
+import type { Entregable, EstadoEntregable } from "../modelo"
+
+function esEstado(valor: unknown): valor is EstadoEntregable {
+  return valor === "pendiente" || valor === "revisado" || valor === "rechazado"
+}
+
+function esEntregable(valor: unknown): valor is Entregable {
+  if (typeof valor !== "object" || valor === null) return false
+  const candidato = valor as Record<string, unknown>
+  return (
+    typeof candidato.id === "string" &&
+    typeof candidato.titulo === "string" &&
+    typeof candidato.proveedor === "string" &&
+    esEstado(candidato.estado)
+  )
+}
+
+export async function cargarEntregables(): Promise<Entregable[]> {
+  const respuesta = await fetch("/entregables.json")
+  if (!respuesta.ok) throw new Error(`Respuesta ${respuesta.status}`)
+  const datos: unknown = await respuesta.json()
+  if (!Array.isArray(datos) || !datos.every(esEntregable)) {
+    throw new Error("El JSON no es una lista de entregables")
+  }
+  return datos
+}
+```
+
+`bandeja/src/App.tsx`
+
+```tsx
+import { useEffect, useState } from "react"
+import type { Entregable } from "./modelo"
+import Tarjeta from "./componentes/Tarjeta"
+import { cargarEntregables } from "./api/entregables"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const [items, setItems] = useState<Entregable[]>([])
+
+  const visibles = items.filter((item) => {
+    const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+    return blob.includes(texto.toLowerCase())
+  })
+
+  const pendientes = items.filter((item) => item.estado === "pendiente").length
+
+  useEffect(() => {
+    document.title = `Pendientes: ${pendientes}`
+  }, [pendientes])
+
+  useEffect(() => {
+    let vivo = true
+    cargarEntregables()
+      .then((lista) => {
+        if (vivo) setItems(lista)
+      })
+      .catch((causa: unknown) => {
+        console.error(causa)
+      })
+    return () => {
+      vivo = false
+    }
+  }, [])
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return (
+    <main>
+      <h1>Bandeja de entregables</h1>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => setTexto(evento.target.value)}
+      />
+      {visibles.length === 0 ? <p>Ningún entregable coincide.</p> : null}
+      <ul className="lista">
+        {visibles.map((item) => (
+          <li key={item.id}>
+            <Tarjeta item={item} alMarcar={marcar} />
+          </li>
+        ))}
+      </ul>
+    </main>
+  )
+}
+```
+
+`bandeja/src/componentes/Tarjeta.tsx`
+
+```tsx
+import type { Entregable } from "../modelo"
+
+interface TarjetaProps {
+  item: Entregable
+  textoBoton?: string
+  alMarcar: (id: string) => void
+}
+
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  return (
+    <article>
+      <p>{item.titulo}</p>
+      <p>
+        {item.id} · {item.proveedor}
+      </p>
+      <p className={`estado ${item.estado}`}>{item.estado}</p>
+      {item.estado === "pendiente" ? <p>Falta revisión</p> : null}
+      <button type="button" onClick={() => alMarcar(item.id)}>
+        {item.estado === "revisado" ? "Hecho" : textoBoton} {item.id}
+      </button>
+    </article>
+  )
+}
+```
 
 ### En qué consiste
 

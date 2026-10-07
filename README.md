@@ -6,11 +6,11 @@ La aplicación de la semana es la [bandeja de entregables](bandeja/README.md), e
 
 Componentes funcionales, ficheros `.tsx`, interfaces propias. Sin `any` y sin clases.
 
-Cada punto enlaza su laboratorio. El laboratorio trae el código de partida: se pega si el archivo no coincide, y se hace solo ese punto. La guía de la jornada tiene la teoría. En la jornada 3, la demostración se sigue en un archivo aparte.
+Cada punto es una página. Esa página es la demostración: explica el tema y trae el código de partida, para pegarlo y seguir sin depender de otra. El README de la jornada es solo el índice.
 
 ## Jornada 1 — Fundamentos de React
 
-Objetivo: construir la base desde cero. Guía: [teoría y demostración](labs/J01-fundamentos/README.md).
+Objetivo: construir la base desde cero. Índice: [jornada 1](labs/J01-fundamentos/README.md).
 
 - [Introducción a React](labs/J01-fundamentos/J01-01-react.md)
 - [SPA y aplicación tradicional](labs/J01-fundamentos/J01-02-spa.md)
@@ -28,7 +28,7 @@ Laboratorios:
 
 ## Jornada 2 — Estado, hooks y flujo de datos
 
-Objetivo: entender el comportamiento de la aplicación. Guía: [teoría y demostración](labs/J02-estado/README.md).
+Objetivo: entender el comportamiento de la aplicación. Índice: [jornada 2](labs/J02-estado/README.md).
 
 - [State](labs/J02-estado/J02-01-state.md)
 - [useState](labs/J02-estado/J02-02-usestate.md)
@@ -45,7 +45,7 @@ Laboratorios:
 
 ## Jornada 3 — Integración, arquitectura y buenas prácticas
 
-Objetivo: trabajar con datos reales y evaluar la estructura. Guía: [teoría](labs/J03-integracion/README.md). Demostración para seguirla: [paso a paso](labs/J03-integracion/demostracion.md).
+Objetivo: trabajar con datos reales y evaluar la estructura. Índice: [jornada 3](labs/J03-integracion/README.md).
 
 - [useContext](labs/J03-integracion/J03-01-contexto.md)
 - [HOC](labs/J03-integracion/J03-02-hoc.md)
@@ -67,7 +67,7 @@ Laboratorios:
 
 ## Jornada 4 — Rendimiento y herramientas de análisis
 
-Objetivo: detectar problemas de rendimiento. Guía: [teoría y demostración](labs/J04-rendimiento/README.md).
+Objetivo: detectar problemas de rendimiento. Índice: [jornada 4](labs/J04-rendimiento/README.md).
 
 - [Qué impacta en el rendimiento](labs/J04-rendimiento/J04-01-impacto.md)
 - [Re-renderizados](labs/J04-rendimiento/J04-02-rerender.md)
@@ -89,7 +89,7 @@ Laboratorios:
 
 ## Jornada 5 — Testing, validación y mejora
 
-Objetivo: validar un entregable y corregir lo que falle. Guía: [teoría y demostración](labs/J05-testing/README.md).
+Objetivo: validar un entregable y corregir lo que falle. Índice: [jornada 5](labs/J05-testing/README.md).
 
 - [Estrategia de testing](labs/J05-testing/J05-01-estrategia.md)
 - [Testing en React](labs/J05-testing/J05-02-vision.md)
