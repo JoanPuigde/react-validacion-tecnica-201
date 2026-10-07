@@ -1,6 +1,6 @@
-# J03-06 — Consumo de API
+# J03-07 — Consumo de API
 
-[← Página anterior](J03-05-store.md) · [Siguiente página →](J03-07-finales.md)
+[← Página anterior](J03-06-ciclo.md) · [Siguiente página →](J03-08-finales.md)
 
 `fetch` devuelve una promesa. Hasta comprobarlo, el JSON es `unknown`. Un guarda mira campo a campo y solo entonces el valor es `Entregable[]`. La petición va en un efecto con `[]`, no en el cuerpo del componente.
 

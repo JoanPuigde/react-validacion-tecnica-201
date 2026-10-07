@@ -49,21 +49,27 @@ Objetivo: trabajar con datos reales y evaluar la estructura. Índice: [jornada 3
 
 - [useContext](labs/J03-integracion/J03-01-contexto.md)
 - [HOC](labs/J03-integracion/J03-02-hoc.md)
-- [Memo](labs/J03-integracion/J03-03-memo.md)
+- [Memo y useMemo](labs/J03-integracion/J03-03-memo.md)
 - [useReducer](labs/J03-integracion/J03-04-reducer.md)
 - [useStore](labs/J03-integracion/J03-05-store.md)
-- [Consumo de API](labs/J03-integracion/J03-06-fetch.md)
-- [Loading, error y vacío](labs/J03-integracion/J03-07-finales.md)
-- [Estructura del proyecto](labs/J03-integracion/J03-08-estructura.md)
-- [Separación de responsabilidades](labs/J03-integracion/J03-09-responsabilidades.md)
-- [Componente reutilizable](labs/J03-integracion/J03-10-reutilizable.md)
-- [Antipatrones](labs/J03-integracion/J03-11-antipatrones.md)
+- [Ciclo: reducer, store y API](labs/J03-integracion/J03-06-ciclo.md)
+- [Consumo de API](labs/J03-integracion/J03-07-fetch.md)
+- [Loading, error y vacío](labs/J03-integracion/J03-08-finales.md)
+- [Estructura del proyecto](labs/J03-integracion/J03-09-estructura.md)
+- [Separación de responsabilidades](labs/J03-integracion/J03-10-responsabilidades.md)
+- [Componente reutilizable](labs/J03-integracion/J03-11-reutilizable.md)
+- [Antipatrones](labs/J03-integracion/J03-12-antipatrones.md)
 
 Laboratorios:
 
-- Consumo de API — [J03-06](labs/J03-integracion/J03-06-fetch.md)
-- Refactor de la estructura — [J03-08](labs/J03-integracion/J03-08-estructura.md)
-- Arquitectura — [J03-09](labs/J03-integracion/J03-09-responsabilidades.md)
+- HOC — [J03-02](labs/J03-integracion/J03-02-hoc.md)
+- useMemo — [J03-03](labs/J03-integracion/J03-03-memo.md)
+- useReducer — [J03-04](labs/J03-integracion/J03-04-reducer.md)
+- useStore — [J03-05](labs/J03-integracion/J03-05-store.md)
+- Ciclo reducer, store y API — [J03-06](labs/J03-integracion/J03-06-ciclo.md)
+- Consumo de API — [J03-07](labs/J03-integracion/J03-07-fetch.md)
+- Refactor de la estructura — [J03-09](labs/J03-integracion/J03-09-estructura.md)
+- Arquitectura — [J03-10](labs/J03-integracion/J03-10-responsabilidades.md)
 
 ## Jornada 4 — Rendimiento y herramientas de análisis
 

@@ -1,6 +1,6 @@
 # Jornada 4 — Rendimiento y herramientas de análisis
 
-[← Página anterior](../J03-integracion/J03-11-antipatrones.md) · [Siguiente página →](J04-01-impacto.md)
+[← Página anterior](../J03-integracion/J03-12-antipatrones.md) · [Siguiente página →](J04-01-impacto.md)
 
 - [Qué impacta en el rendimiento](J04-01-impacto.md)
 - [Re-renderizados](J04-02-rerender.md)

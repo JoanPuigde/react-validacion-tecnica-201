@@ -1,4 +1,4 @@
-# J03-03 — Memo
+# J03-03 — Memo y useMemo
 
 [← Página anterior](J03-02-hoc.md) · [Siguiente página →](J03-04-reducer.md)
 

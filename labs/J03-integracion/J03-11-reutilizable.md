@@ -1,6 +1,6 @@
-# J03-10 — Componente reutilizable
+# J03-11 — Componente reutilizable
 
-[← Página anterior](J03-09-responsabilidades.md) · [Siguiente página →](J03-11-antipatrones.md)
+[← Página anterior](J03-10-responsabilidades.md) · [Siguiente página →](J03-12-antipatrones.md)
 
 `Tarjeta` es una función. Seis fichas salen de un `map`, no de seis copias. `textoBoton` cambia el rótulo sin tocar el componente. `item` es obligatorio: sin esa prop no compila.
 

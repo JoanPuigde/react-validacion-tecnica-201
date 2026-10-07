@@ -1,6 +1,6 @@
-# J03-08 — Estructura del proyecto
+# J03-09 — Estructura del proyecto
 
-[← Página anterior](J03-07-finales.md) · [Siguiente página →](J03-09-responsabilidades.md)
+[← Página anterior](J03-08-finales.md) · [Siguiente página →](J03-10-responsabilidades.md)
 
 La petición vive en `api/`. La lista, la carga, el error y `marcar` viven en `useEntregables`. `App` calcula el filtro y pinta. `Tarjeta` pinta una ficha.
 

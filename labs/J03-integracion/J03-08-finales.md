@@ -1,6 +1,6 @@
-# J03-07 — Loading, error y vacío
+# J03-08 — Loading, error y vacío
 
-[← Página anterior](J03-06-fetch.md) · [Siguiente página →](J03-08-estructura.md)
+[← Página anterior](J03-07-fetch.md) · [Siguiente página →](J03-09-estructura.md)
 
 Cargar, fallar y no encontrar coincidencias son tres finales distintos. «Cargando entregables…» no es el aviso de error. «Ningún entregable coincide.» tampoco. El aviso de error lleva `role="alert"`. Los hooks van antes de esos `return`.
 

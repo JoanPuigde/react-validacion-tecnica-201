@@ -1,6 +1,6 @@
-# J03-11 — Antipatrones
+# J03-12 — Antipatrones
 
-[← Página anterior](J03-10-reutilizable.md) · [Siguiente página →](../J04-rendimiento/README.md)
+[← Página anterior](J03-11-reutilizable.md) · [Siguiente página →](../J04-rendimiento/README.md)
 
 Mutar el mismo objeto y devolver el mismo array a veces no repinta. Guardar `visibles` en otro estado separa la caja de las fichas. Leer el JSON como `any` apaga el guarda.
 

@@ -1,6 +1,6 @@
-# J03-09 — Separación de responsabilidades
+# J03-10 — Separación de responsabilidades
 
-[← Página anterior](J03-08-estructura.md) · [Siguiente página →](J03-10-reutilizable.md)
+[← Página anterior](J03-09-estructura.md) · [Siguiente página →](J03-11-reutilizable.md)
 
 `App` decide qué fichas se ven. El hook decide cuál es la lista y cuándo llega. `Tarjeta` decide cómo se pinta una ficha y avisa con `alMarcar`. Ninguno hace el trabajo de otro.
 

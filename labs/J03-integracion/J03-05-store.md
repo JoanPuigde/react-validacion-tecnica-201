@@ -1,6 +1,6 @@
 # J03-05 — useStore
 
-[← Página anterior](J03-04-reducer.md) · [Siguiente página →](J03-06-fetch.md)
+[← Página anterior](J03-04-reducer.md) · [Siguiente página →](J03-06-ciclo.md)
 
 `useStore` es un hook de este curso, no una librería. Junta el reductor de la lista y el nombre del revisor en un contexto. `App` y `Tarjeta` lo leen. Fuera de `TiendaProveedor` el hook lanza.
 
