@@ -1,0 +1,127 @@
+# J03-08 — Estructura del proyecto
+
+[← Página anterior](J03-07-finales.md) · [Siguiente página →](J03-09-responsabilidades.md)
+
+> Laboratorio de [Estructura del proyecto](README.md).
+
+### Objetivo
+
+Dejar la petición, la lista y el título de la pestaña en `useEntregables`, y en `App` solo el filtro y el JSX.
+
+### Código de partida
+
+`App.tsx` pide el JSON, distingue carga, error y vacío, y filtra. Si no es así, el archivo de partida es el resultado de [J03-07](J03-07-finales.md): pega el efecto con `cargando` y `error` y los dos `return`. `api/entregables.ts` existe.
+
+### En qué consiste
+
+Mover el bloque, no reescribir la bandeja. Al final el árbol coincide con el de la guía.
+
+### 1 — El hook
+
+**Dónde:** archivo nuevo `bandeja/src/hooks/useEntregables.ts`.
+
+**Qué haces:**
+
+1. Crea el archivo con este contenido.
+2. En `App.tsx`, borra `items`, `cargando`, `error`, los dos efectos y `marcar`.
+3. Sustituye la cabecera de `App` por la de abajo.
+4. Los `return` de carga, error y lista se quedan.
+5. Recarga.
+
+```tsx
+import { useEffect, useState } from "react"
+import { cargarEntregables } from "../api/entregables"
+import type { Entregable } from "../modelo"
+
+export function useEntregables() {
+  const [items, setItems] = useState<Entregable[]>([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState("")
+
+  const pendientes = items.filter((item) => item.estado === "pendiente").length
+
+  useEffect(() => {
+    document.title = `Pendientes: ${pendientes}`
+  }, [pendientes])
+
+  useEffect(() => {
+    let vivo = true
+    setCargando(true)
+    setError("")
+    cargarEntregables()
+      .then((lista) => {
+        if (vivo) setItems(lista)
+      })
+      .catch((causa: unknown) => {
+        console.error(causa)
+        if (vivo) setError("No se pudo cargar la bandeja.")
+      })
+      .finally(() => {
+        if (vivo) setCargando(false)
+      })
+    return () => {
+      vivo = false
+    }
+  }, [])
+
+  function marcar(id: string): void {
+    setItems((lista) =>
+      lista.map((item) =>
+        item.id === id ? { ...item, estado: "revisado" } : item,
+      ),
+    )
+  }
+
+  return { items, cargando, error, marcar }
+}
+```
+
+```tsx
+import { useState } from "react"
+import Tarjeta from "./componentes/Tarjeta"
+import { useEntregables } from "./hooks/useEntregables"
+
+export default function App() {
+  const [texto, setTexto] = useState("")
+  const { items, cargando, error, marcar } = useEntregables()
+```
+
+El `filter` de `visibles` y los tres `return` no se mueven.
+
+**Experimento:** deja una copia de `useEffect` de la petición también en `App`. Recarga y mira Network.
+
+→ Dos peticiones a `entregables.json`. Borra la copia de `App`. Vuelve a haber una.
+
+**Validación:**
+
+- El árbol tiene `api/entregables.ts`, `hooks/useEntregables.ts`, `componentes/Tarjeta.tsx` y `App.tsx`.
+- En `App.tsx` no aparece `useEffect` ni `fetch`.
+- Al recargar: seis fichas, filtro, pestaña «Pendientes: 3».
+- Problems vacío.
+
+## Comprueba tu entendimiento
+
+**Qué archivo abre un revisor**
+Para saber de dónde sale la lista, abre un archivo.
+→ `hooks/useEntregables.ts`. `App.tsx` solo calcula `visibles`.
+
+## Reto
+
+### 1 — El import que no resuelve
+
+En el hook, cambia `../api/entregables` por `./api/entregables`. Lee el aviso. Restáuralo.
+
+<details>
+<summary>Ver solución</summary>
+
+El hook está dentro de `hooks/`. La API está un nivel arriba. El import es `../api/entregables`.
+
+</details>
+
+## Errores frecuentes
+
+| Síntoma | Causa probable | Cómo arreglarlo |
+|---------|----------------|-----------------|
+| La pestaña no tiene número | El efecto del título se quedó en `App` y `pendientes` ya no existe | El efecto vive en el hook |
+| Doble petición | El efecto está en los dos archivos | Solo el del hook |
+| `cargarEntregables` no se encuentra | El import no sube de carpeta | `../api/entregables` |
