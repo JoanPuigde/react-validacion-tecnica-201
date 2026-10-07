@@ -4,6 +4,8 @@
 
 El reductor recibe la lista de ahora y una acción, y devuelve la lista siguiente. La acción es `{ type: "marcar", id }`. `marcar` deja de escribir el `map` y solo hace `dispatch`.
 
+## Demostración
+
 ### Objetivo
 
 Cambiar la lista con una acción `{ type: "marcar", id }` en vez de un `setItems` escrito a mano.
@@ -141,3 +143,39 @@ Tras marcar, «Restaurar» devuelve las seis al estado del archivo. `marcar` no 
 | `setItems` no existe | El resto del archivo aún lo llama | La lista solo cambia con `dispatch` |
 | Un clic marca otra ficha | El `dispatch` cierra sobre un id fijo | `dispatch({ type: "marcar", id })` con el argumento |
 | El `switch` no cubre el tipo | Falta el `case` o sobra un `return` implícito | Cada `type` de `Accion` tiene su `case` y devuelve la lista |
+
+## Laboratorio
+
+La demostración despachó `{ type: "marcar", id }`. Aquí añades otra acción que vacía la lista.
+
+### Objetivo
+
+Un botón «Vaciar» que despacha `{ type: "vaciar" }` y el reductor devuelve `[]`.
+
+### Código de partida
+
+`App` usa `useReducer(reducir, entregables)` y `marcar` hace `dispatch({ type: "marcar", id })`. Si todavía es `setItems`, termina antes la demostración de esta página: el archivo del reductor está arriba.
+
+### Qué haces
+
+1. Amplía el tipo y añade el `case`.
+2. Un botón despacha la acción. No llama a `setItems`.
+3. Marca E-101. Pulsa «Vaciar». No queda ninguna ficha.
+4. Recarga. Vuelven las seis, porque el estado inicial es `entregables`.
+
+```tsx
+type Accion = { type: "marcar"; id: string } | { type: "vaciar" }
+```
+
+```tsx
+case "vaciar":
+  return []
+```
+
+```tsx
+<button type="button" onClick={() => dispatch({ type: "vaciar" })}>
+  Vaciar
+</button>
+```
+
+→ Tras vaciar, el párrafo de «ningún entregable» o la lista vacía. E-103 no se queda en pantalla. El reductor no ha llamado a `fetch`.

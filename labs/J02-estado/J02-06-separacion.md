@@ -4,6 +4,8 @@
 
 `Tarjeta` sabe cómo se ve una ficha. No sabe cuál es la lista ni qué título debe llevar la pestaña. Esa lógica sale de `App` a `useLista`. El hook lee `datos.ts`. La petición HTTP es otro tema.
 
+## Demostración
+
 ### Objetivo
 
 Sacar `items`, `marcar` y el título de la pestaña a `useLista`, y dejar en `App` el filtro y el JSX.
@@ -181,3 +183,44 @@ El hook no devuelve interfaz. `className` vive en `Tarjeta`. El hook devuelve da
 |---------|----------------|-----------------|
 | No encuentra `datos` | El import no sube de carpeta | Desde `hooks/` es `../datos` |
 | Dos listas | El `useState` sigue en `App` | Solo el del hook |
+
+## Laboratorio
+
+La demostración sacó la lista a `useLista`. Aquí sacas solo la caja a otro componente. La lista no se mueve.
+
+### Objetivo
+
+`Buscador` pinta la etiqueta y el input. No conoce `items`.
+
+### Código de partida
+
+`App` tiene `texto`, `setTexto` y el input `#filtro`. `useLista`, si existe, se queda.
+
+### Qué haces
+
+1. Crea `bandeja/src/componentes/Buscador.tsx`.
+2. Sustituye el `<label>` y el `<input>` de `App` por `<Buscador texto={texto} alCambiar={setTexto} />`.
+3. Escribe `Norte`. El filtro responde.
+4. Busca `items` en `Buscador.tsx`. No está.
+
+```tsx
+interface BuscadorProps {
+  texto: string
+  alCambiar: (valor: string) => void
+}
+
+export default function Buscador({ texto, alCambiar }: BuscadorProps) {
+  return (
+    <>
+      <label htmlFor="filtro">Buscar</label>
+      <input
+        id="filtro"
+        value={texto}
+        onChange={(evento) => alCambiar(evento.target.value)}
+      />
+    </>
+  )
+}
+```
+
+→ `Norte` sigue filtrando. `Buscador` no importa `datos.ts` ni llama a `setItems`. El estado del texto sigue en `App`.

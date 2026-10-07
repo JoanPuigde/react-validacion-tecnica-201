@@ -4,6 +4,8 @@
 
 `texto` es el valor de ahora y `setTexto` pide el siguiente. La caja muestra `texto` y, al escribir, llama a `setTexto`. `visibles` se calcula con `items` y `texto`. No es otro estado: si se guarda aparte, la caja y las fichas se separan.
 
+## Demostración
+
 ### Objetivo
 
 Tener la caja y el filtro en estado, y la lista visible calculada.
@@ -139,3 +141,43 @@ El número baja y el array de `datos.ts` no. Es un cálculo, no otro estado.
 |---------|----------------|-----------------|
 | La caja no se puede editar | Falta `onChange` o el `value` es un `let` | `value={texto}` y `setTexto` |
 | El filtro no quita fichas | El `map` sigue en `entregables` | `visibles.map` |
+
+## Laboratorio
+
+La demostración filtró por texto. Aquí filtras por estado, con otro control, y el resultado sigue siendo un `const`.
+
+### Objetivo
+
+Una lista desplegable que deje solo `pendiente`, `revisado` o `rechazado`.
+
+### Código de partida
+
+`visibles` ya sale de `items` y `texto`. No lo metas en otro `useState`.
+
+### Qué haces
+
+1. Añade `const [modo, setModo] = useState("todos")`.
+2. Encadena el filtro. El `map` sigue recorriendo `visibles`.
+3. Elige `pendiente`. Cuentan E-101, E-103 y E-105.
+4. Vuelve a `todos`.
+
+```tsx
+<label htmlFor="modo">Estado</label>
+<select id="modo" value={modo} onChange={(evento) => setModo(evento.target.value)}>
+  <option value="todos">todos</option>
+  <option value="pendiente">pendiente</option>
+  <option value="revisado">revisado</option>
+  <option value="rechazado">rechazado</option>
+</select>
+```
+
+```tsx
+const porTexto = items.filter((item) => {
+  const blob = `${item.titulo} ${item.proveedor} ${item.id}`.toLowerCase()
+  return blob.includes(texto.toLowerCase())
+})
+
+const visibles = porTexto.filter((item) => modo === "todos" || item.estado === modo)
+```
+
+→ `pendiente` deja tres fichas. `Norte` dentro de ese modo deja solo las pendientes de Norte. No hay un `useState` para `visibles`.

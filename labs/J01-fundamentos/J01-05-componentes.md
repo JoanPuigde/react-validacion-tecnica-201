@@ -4,6 +4,8 @@
 
 `Tarjeta` es una función en su propio archivo. `App` la usa y no dibuja la ficha. Las seis salen de un `map` sobre el mismo componente. No hay clases: la función no extiende `Component`.
 
+## Demostración
+
 ### Objetivo
 
 Comprobar que las seis fichas salen de una función `Tarjeta`, y que `App` solo la usa.
@@ -137,3 +139,30 @@ Borra el import de `Tarjeta` y deja el `<Tarjeta />` en el `map`. Lee el aviso. 
 |---------|----------------|-----------------|
 | Seis funciones copiadas | El marcado está repetido en `App` | Un `map` y un solo archivo |
 | No resuelve `modelo` | El import no sube de carpeta | `../modelo` |
+
+## Laboratorio
+
+La demostración usó una sola `Tarjeta` en el `map`. Aquí partes la pastilla en otro componente.
+
+### Objetivo
+
+Que `Tarjeta` no dibuje la pastilla: la dibuja `Pastilla`.
+
+### Código de partida
+
+`Tarjeta` tiene `<p className={\`estado ${item.estado}\`}>{item.estado}</p>`.
+
+### Qué haces
+
+1. Crea `bandeja/src/componentes/Pastilla.tsx`.
+2. En `Tarjeta`, sustituye ese `<p>` por `<Pastilla estado={item.estado} />`.
+3. Recarga. Las pastillas se leen igual.
+4. Puedes dejar `Pastilla`.
+
+```tsx
+export default function Pastilla({ estado }: { estado: string }) {
+  return <p className={`estado ${estado}`}>{estado}</p>
+}
+```
+
+→ Sigue habiendo un `map` y un solo `Tarjeta.tsx`. La palabra `pendiente` sale de `Pastilla`, no de un `<p>` escrito en `Tarjeta`.

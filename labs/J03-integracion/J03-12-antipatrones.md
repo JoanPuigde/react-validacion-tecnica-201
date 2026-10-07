@@ -4,6 +4,8 @@
 
 Mutar el mismo objeto y devolver el mismo array a veces no repinta. Guardar `visibles` en otro estado separa la caja de las fichas. Leer el JSON como `any` apaga el guarda.
 
+## Demostración
+
 ### Objetivo
 
 Provocar tres fallos de arquitectura, leerlos y dejar el código como estaba.
@@ -286,3 +288,33 @@ La lista va un pintado por detrás de la caja, o pide otra vuelta. El filtro se 
 | La pastilla no vuelve | La mutación sigue en `marcar` | Restaura el `map` con `{ ...item, estado: "revisado" }` |
 | El filtro sigue muerto | Quedó `useState(items)` | `const visibles = items.filter(...)` |
 | `"listo"` entra | `datos` sigue en `any` | `const datos: unknown` |
+
+## Laboratorio
+
+La demostración mutó el objeto, duplicó `visibles` y apagó el guarda con `any`. Aquí el fallo es la `key`.
+
+### Objetivo
+
+Usar el índice como `key`, filtrar, y ver que React reutiliza la ficha equivocada. Después volver a `item.id`.
+
+### Código de partida
+
+El `map` está en `App` con `key={item.id}`. Hay caja de filtro.
+
+### Qué haces
+
+1. En `Tarjeta`, añade un `useState("")` y un input «Nota», solo para este ejercicio.
+2. Escribe `hola` en la nota de la primera ficha.
+3. Cambia la `key` a `index`. Escribe `zzzz` y borra. Mira en qué ficha quedó `hola`.
+4. Restaura `key={item.id}`. Repite. `hola` sigue en la primera ficha, la del informe.
+5. Borra el input de la nota.
+
+```tsx
+{visibles.map((item, index) => (
+  <li key={index}>
+    <Tarjeta item={item} alMarcar={marcar} />
+  </li>
+))}
+```
+
+→ Con el índice, la nota se pega a la posición y no al entregable. Con `item.id`, la nota viaja con E-101. La `key` definitiva es `item.id`.

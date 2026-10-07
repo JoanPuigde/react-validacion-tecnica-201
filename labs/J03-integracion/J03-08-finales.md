@@ -4,6 +4,8 @@
 
 Cargar, fallar y no encontrar coincidencias son tres finales distintos. «Cargando entregables…» no es el aviso de error. «Ningún entregable coincide.» tampoco. El aviso de error lleva `role="alert"`. Los hooks van antes de esos `return`.
 
+## Demostración
+
 ### Objetivo
 
 Pintar una frase de espera, un aviso de error y el vacío del filtro, cada uno por su lado.
@@ -244,3 +246,43 @@ La consola habla de hooks: en la primera pintura `cargando` es `true` y ese `use
 | Pantalla en blanco al fallar | No está el `return` de `error` | El aviso va antes del return de la lista |
 | `zzzz` muestra el aviso de red | El vacío usa la misma frase que el `catch` | El filtro pinta «Ningún entregable coincide.» |
 | `Rendered more hooks` | Hay un hook debajo de `if (cargando)` | Súbelo, o bórralo si era el experimento |
+
+## Laboratorio
+
+La demostración separó carga, error de red y vacío del filtro. Aquí el 403 es una frase distinta del error genérico.
+
+### Objetivo
+
+Si la respuesta es 403, el aviso dice «No tienes permiso para ver la bandeja.» Si es otro fallo, se queda la frase de siempre.
+
+### Código de partida
+
+`App` ya tiene `cargando`, `error` y los dos `return`. `cargarEntregables` lanza si `respuesta.ok` es falso.
+
+### Qué haces
+
+1. Haz que `cargarEntregables` lance un error con el status, o lee `respuesta.status` antes de lanzar y despacha el mensaje en `App`.
+2. La forma corta: en el `catch`, si el mensaje contiene `403`, guardas la frase de permiso.
+3. Fuerza el 403 sin servidor: en `cargarEntregables`, si la URL es la buena, lanza `new Error("Respuesta 403")` un momento.
+4. Recarga. Lees la frase de permiso, no «No se pudo cargar la bandeja.».
+5. Quita ese `throw`. Vuelve el JSON.
+
+```tsx
+if (!respuesta.ok) throw new Error(`Respuesta ${respuesta.status}`)
+```
+
+```tsx
+.catch((causa: unknown) => {
+  console.error(causa)
+  const mensaje = causa instanceof Error ? causa.message : ""
+  if (vivo) {
+    setError(
+      mensaje.includes("403")
+        ? "No tienes permiso para ver la bandeja."
+        : "No se pudo cargar la bandeja.",
+    )
+  }
+})
+```
+
+→ Con el 403 forzado, la frase es la de permiso y no hay fichas. `zzzz` en la caja, con la URL buena, sigue siendo el vacío del filtro, sin `role="alert"`.

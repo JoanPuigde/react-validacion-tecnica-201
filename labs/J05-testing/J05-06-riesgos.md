@@ -4,6 +4,8 @@
 
 Un riesgo es un fallo que el caso no cubre y que puede volver. Quitar `toLowerCase` rompe el caso de `Este`. Un botón que siempre dice «Anotar» no lo rompe, porque ese caso no mira la pastilla.
 
+## Demostración
+
 ### Objetivo
 
 Romper el filtro, ver el caso rojo, arreglarlo sin borrar el caso, y nombrar un fallo que el caso no ve.
@@ -186,3 +188,24 @@ Si el caso lee `.estado` y la pastilla sí cambia, pasa aunque el botón diga «
 | Sigue rojo | El `toLowerCase` no volvió, o `dev` ocupa el puerto | Restaura la línea y relanza con el puerto libre |
 | El caso pasa con el filtro roto | El `it` escribe `este` en minúsculas | El caso escribe `Este` |
 | Borraste el caso | Salió con el experimento | Vuelve a pegar el `it` de J05-03 |
+
+## Laboratorio
+
+La demostración quitó `toLowerCase` y dejó el botón siempre en «Anotar». Aquí rompes una frase que ningún caso mira.
+
+### Objetivo
+
+Cambiar el aviso de vacío y ver que `npm run test:e2e` sigue pasando si no hay un caso de `zzzz`.
+
+### Código de partida
+
+Los `it` del título y de `Este`. El de `zzzz`, si lo añadiste en el laboratorio de Cypress, quítalo un momento para este ejercicio y déjalo aparte. El párrafo vacío dice «Ningún entregable coincide.».
+
+### Qué haces
+
+1. En `App`, esa frase pasa a «No hay resultados».
+2. `npm run test:e2e`.
+3. En el navegador, `zzzz` muestra la frase nueva.
+4. Restaura «Ningún entregable coincide.». Si tenías el caso de `zzzz`, vuelve a pegarlo.
+
+→ El script pasa. La pantalla, con `zzzz`, no dice lo que decía el entregable. El caso de `Este` no ha protegido esa frase. Por eso esa fila vive en el checklist aunque el script esté verde.

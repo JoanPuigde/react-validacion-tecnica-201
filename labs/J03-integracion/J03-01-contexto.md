@@ -4,6 +4,8 @@
 
 El contexto entrega un valor a los componentes de dentro sin pasarlo por cada prop. Quien provee decide el valor. Quien llama a `useContext` lo lee. Si no hay proveedor, el valor es `null` y el hook propio avisa.
 
+## Demostración
+
 ### Objetivo
 
 Llevar el nombre de quien revisa a las fichas sin añadirlo a las props.
@@ -196,3 +198,61 @@ El objeto del `value` no cumple `Sesion`. O añades `turno: 1` en los dos sitios
 | `useSesion fuera del proveedor` | `App` quedó fuera de `SesionProveedor` | El proveedor envuelve `<App />` en `main.tsx` |
 | El editor pide `revisor` en `<Tarjeta>` | Lo metiste en `TarjetaProps` | Quítalo de la interfaz. Se lee con `useSesion` |
 | Solo cambia una ficha | Escribiste el nombre a mano en una ficha | El párrafo es `{revisor}` del contexto |
+
+## Laboratorio
+
+La demostración llevó el nombre del revisor a las fichas. Aquí el contexto lleva un aviso a la cabecera, no a `Tarjeta`.
+
+### Objetivo
+
+Un contexto `Aviso` que `App` escribe y un componente `Franja` lee. `Tarjeta` no lo importa.
+
+### Código de partida
+
+Si tienes `Sesion` del revisor, no lo uses para esto. Este archivo es otro.
+
+### Qué haces
+
+1. Crea `bandeja/src/contexto/Aviso.tsx`.
+2. Envuelve `<App />` con `<AvisoProveedor>` en `main.tsx`. Si ya hay otro proveedor, este va por dentro.
+3. Crea `Franja` y ponlo bajo el `<h1>`. La caja del aviso puede vivir en `App`, que también está dentro del proveedor.
+4. Escribe `Cierra a las 14`. La franja cambia. `Tarjeta.tsx` no menciona `useAviso`.
+
+```tsx
+import { createContext, useContext, useState, type ReactNode } from "react"
+
+interface Aviso {
+  texto: string
+  setTexto: (valor: string) => void
+}
+
+const AvisoContexto = createContext<Aviso | null>(null)
+
+export function AvisoProveedor({ children }: { children: ReactNode }) {
+  const [texto, setTexto] = useState("Sin aviso")
+  return (
+    <AvisoContexto.Provider value={{ texto, setTexto }}>
+      {children}
+    </AvisoContexto.Provider>
+  )
+}
+
+export function useAviso(): Aviso {
+  const aviso = useContext(AvisoContexto)
+  if (!aviso) throw new Error("useAviso fuera del proveedor")
+  return aviso
+}
+```
+
+```tsx
+import { useAviso } from "../contexto/Aviso"
+
+export default function Franja() {
+  const { texto } = useAviso()
+  return <p>Aviso: {texto}</p>
+}
+```
+
+En `App`, la caja usa `setTexto` de `useAviso`. No la pases por props a `Franja`.
+
+→ La franja dice «Aviso: Cierra a las 14». Las fichas no han ganado una prop nueva.

@@ -4,6 +4,8 @@
 
 `App` decide qué fichas se ven. El hook decide cuál es la lista y cuándo llega. `Tarjeta` decide cómo se pinta una ficha y avisa con `alMarcar`. Ninguno hace el trabajo de otro.
 
+## Demostración
+
 ### Objetivo
 
 Comprobar que el hook no filtra, que la ficha no pide, y que `App` no guarda la lista.
@@ -232,3 +234,24 @@ El botón pasa a «Hecho» y la pastilla sigue diciendo `ok`. La ficha ha dejado
 |---------|----------------|-----------------|
 | Petición por letra | El `fetch` de prueba sigue en `Tarjeta` | Bórralo. La petición vive en `api/entregables.ts` |
 | El filtro no responde | `visibles` se calcula en el hook y no recibe `texto` | El `filter` está en `App`, después de `useState("")` |
+
+## Laboratorio
+
+La demostración sacó un `fetch` de `Tarjeta`. Aquí el fallo es otro: la ficha decide qué lista existe.
+
+### Objetivo
+
+Ver que `Tarjeta` no puede filtrar la bandeja, y devolver el filtro a `App`.
+
+### Código de partida
+
+`App` calcula `visibles`. `Tarjeta` recibe un `item`. No hay `fetch` en la ficha.
+
+### Qué haces
+
+1. Pasa un momento la caja a `Tarjeta`: un `useState("")` dentro de la ficha y un input.
+2. Escribe `Norte` en la primera ficha.
+3. Las otras cinco siguen en pantalla. Cada ficha tiene su propia caja.
+4. Borra ese estado y ese input de `Tarjeta`. La caja única vuelve a `App`.
+
+→ Una caja por ficha no es la bandeja. Al restituir el input de `App`, `Norte` esconde las fichas que no coinciden. `Tarjeta` otra vez solo pinta el `item` que le llega.

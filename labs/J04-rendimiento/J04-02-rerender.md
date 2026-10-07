@@ -4,6 +4,8 @@
 
 `memo` se salta el render si las props son iguales. La comparación se rompe si `marcar` es una función nueva en cada pintado. `useCallback` con `[]` deja esa función quieta.
 
+## Demostración
+
 ### Objetivo
 
 Hacer que teclear deje de ejecutar las fichas cuyo `item` no cambió.
@@ -161,3 +163,34 @@ La flecha es nueva en cada pintado. El contador vuelve a subir. La prop tiene qu
 |---------|----------------|-----------------|
 | Siguen contando todas | `memo` no está aplicado, o la prop es una flecha nueva | `export default memo(Tarjeta)` y `alMarcar={marcar}` |
 | `useCallback` no está definido | Falta en el import | `import { useCallback, useState } from "react"` dentro del archivo que declara `marcar` |
+
+## Laboratorio
+
+La demostración aplicó `memo` a `Tarjeta` y `useCallback` a `marcar`. Aquí el hijo que no debe saltarse es otro: recibe el texto de la caja.
+
+### Objetivo
+
+`Resumen` se vuelve a ejecutar al teclear porque su prop `texto` cambia. `Tarjeta`, con `memo` y `useCallback`, no.
+
+### Código de partida
+
+`export default memo(Tarjeta)` y `marcar` en `useCallback`. Si no están, la demostración de esta página los deja. Quita `console.count` de `Tarjeta` y pon `console.log`.
+
+### Qué haces
+
+1. Crea `Resumen.tsx` que hace `console.log("resumen")` y pinta `texto`.
+2. Ponlo en `App` con `texto={texto}`. No lo envuelvas en `memo`.
+3. Limpia la consola. Escribe una letra.
+4. Envuelve `memo(Resumen)`. Escribe otra letra. Sigue saliendo, porque `texto` es otro.
+5. Borra `Resumen` al terminar, o déjalo.
+
+```tsx
+function Resumen({ texto }: { texto: string }) {
+  console.log("resumen")
+  return <p>Texto: {texto}</p>
+}
+
+export default Resumen
+```
+
+→ «resumen» sale al teclear. Los id de las fichas no, si `memo` y `useCallback` siguen bien puestos. `memo(Resumen)` no calla el log: la prop cambió.

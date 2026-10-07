@@ -4,6 +4,8 @@
 
 El estado baja. El aviso sube. `Tarjeta` no llama a `setItems`. Recibe `alMarcar` y la llama con el id. El padre copia el objeto de ese id. La pastilla lee `item.estado`. El botón dice «Hecho» cuando ese campo es `revisado`.
 
+## Demostración
+
 ### Objetivo
 
 Dejar el estado en el padre y el aviso en la ficha, y comprobar que solo cambia el id pulsado.
@@ -137,3 +139,46 @@ Varias fichas comparten `pendiente`. El padre no distingue cuál fue. El aviso v
 |---------|----------------|-----------------|
 | No cambia ninguna | `alMarcar` no está en la etiqueta | `alMarcar={marcar}` |
 | Cambian todas | El `map` no compara el id | `item.id === id` |
+
+## Laboratorio
+
+La demostración subió el id para marcar como revisado. Aquí sube el id para otro destino.
+
+### Objetivo
+
+Un segundo botón, «Rechazar», que avisa al padre y el padre pone `rechazado`.
+
+### Código de partida
+
+`Tarjeta` llama a `alMarcar(item.id)`. `marcar` en `App` copia el objeto con `estado: "revisado"`.
+
+### Qué haces
+
+1. Añade `alRechazar: (id: string) => void` a las props y un botón.
+2. En `App`, `rechazar` es otro `setItems`. Pásalo en el `map`.
+3. Pulsa «Rechazar» en E-103. La pastilla dice `rechazado`. E-101 sigue pendiente.
+4. Puedes dejar el botón.
+
+```tsx
+alRechazar: (id: string) => void
+```
+
+```tsx
+<button type="button" onClick={() => alRechazar(item.id)}>
+  Rechazar {item.id}
+</button>
+```
+
+```tsx
+function rechazar(id: string): void {
+  setItems((lista) =>
+    lista.map((item) =>
+      item.id === id ? { ...item, estado: "rechazado" } : item,
+    ),
+  )
+}
+```
+
+`Tarjeta` no llama a `setItems`. Solo avisa.
+
+→ E-103 queda `rechazado`. «Anotar E-101» sigue pasando esa ficha a `revisado`. Son dos avisos distintos.

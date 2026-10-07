@@ -4,6 +4,8 @@
 
 `fetch` devuelve una promesa. Hasta comprobarlo, el JSON es `unknown`. Un guarda mira campo a campo y solo entonces el valor es `Entregable[]`. La petición va en un efecto con `[]`, no en el cuerpo del componente.
 
+## Demostración
+
 ### Objetivo
 
 Cargar `/entregables.json` y aceptar la respuesta solo si cada elemento es un `Entregable`.
@@ -215,3 +217,45 @@ Network dispara una petición por cada letra. El cuerpo del componente corre en 
 | Sigue el array de `datos.ts` | El import y el `useState(entregables)` siguen | Estado inicial `[]` y el efecto llama a `cargarEntregables` |
 | Una petición por letra | El `fetch` no está en el efecto, o el efecto no tiene `[]` | Efecto con `[]` |
 | `"listo"` entra | El JSON se leyó como `any` | `const datos: unknown` |
+
+## Laboratorio
+
+La demostración pidió la lista. Aquí pides un JSON de una sola frase, con otra función.
+
+### Objetivo
+
+Cargar `/aviso.json` y pintar su texto. La lista de entregables no sale de ese archivo.
+
+### Código de partida
+
+`cargarEntregables` y el efecto de la lista ya están. Si no, la demostración de esta página los trae.
+
+### Qué haces
+
+1. Crea `bandeja/public/aviso.json`.
+2. En `api/entregables.ts`, añade `cargarAviso`. El cuerpo es `unknown` hasta comprobar `texto`.
+3. En `App`, un estado `aviso` y un efecto con `[]` que lo guarda.
+4. Pinta `{aviso}` bajo el título. Recarga. En Red hay dos peticiones: el JSON de la lista y `aviso.json`.
+5. Escribe en «Buscar». No se repite `aviso.json`.
+
+```json
+{ "texto": "Cierre de bandeja a las 14 h." }
+```
+
+```tsx
+export async function cargarAviso(): Promise<string> {
+  const respuesta = await fetch("/aviso.json")
+  if (!respuesta.ok) throw new Error(`Respuesta ${respuesta.status}`)
+  const datos: unknown = await respuesta.json()
+  if (
+    typeof datos !== "object" ||
+    datos === null ||
+    typeof (datos as { texto?: unknown }).texto !== "string"
+  ) {
+    throw new Error("El aviso no tiene texto")
+  }
+  return (datos as { texto: string }).texto
+}
+```
+
+→ Se lee «Cierre de bandeja a las 14 h.». Las seis fichas siguen viniendo de `entregables.json`.

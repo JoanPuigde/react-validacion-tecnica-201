@@ -14,6 +14,8 @@ El círculo, con la bandeja:
 6. El reductor guarda la lista o el aviso. La pantalla lo pinta.
 7. Un clic hace `dispatch({ type: "marcar", id })`. El reductor copia esa ficha. La pastilla cambia.
 
+## Demostración
+
 ### Objetivo
 
 Cerrar ese círculo con `useReducer` y `useStore`, y con una petición que solo despacha objetos.
@@ -505,3 +507,47 @@ En `pedir`, cambia el primer `dispatch({ type: "cargar" })` por `dispatch(async 
 | Dos peticiones al recargar | El `fetch` de prueba sigue en el reductor, o `pedir` está en `App` y en la tienda | Solo el `pedir` del proveedor |
 | `useStore fuera de TiendaProveedor` | `<App />` quedó fuera | El proveedor envuelve `<App />` en `main.tsx` |
 | El reductor no cubre el `type` | Falta un `case` | `"cargar"`, `"listo"`, `"fallo"` y `"marcar"` devuelven estado |
+
+## Laboratorio
+
+La demostración cerró el círculo una vez, al montar. Aquí das otra vuelta a mano, con un botón que vuelve a pedir el JSON.
+
+### Objetivo
+
+«Actualizar» llama a `pedir` otra vez. El reductor sigue sin `fetch`. `dispatch` sigue recibiendo objetos.
+
+### Código de partida
+
+La tienda de la demostración: `pedir`, `useReducer`, `useStore`, y el efecto que pide al montar. Si no está, el paso 5 de esta página trae el archivo.
+
+### Qué haces
+
+1. `pedir` ya está. En el proveedor, crea `actualizar` con `useCallback` que llama a `void pedir(dispatch)`.
+2. Añádelo a la interfaz, al `useMemo` y a lo que devuelve `useStore`.
+3. En `App`, cuando ya hay fichas, un botón «Actualizar».
+4. Abre la Red. Pulsa el botón. Sale otra petición a `entregables.json`. La lista se vuelve a pintar.
+5. No metas `fetch` en el `case "cargar"`.
+
+```tsx
+const actualizar = useCallback(() => {
+  void pedir(dispatch)
+}, [])
+```
+
+```tsx
+interface Tienda {
+  estado: EstadoBandeja
+  marcar: (id: string) => void
+  actualizar: () => void
+}
+```
+
+```tsx
+const { estado, marcar, actualizar } = useStore()
+```
+
+```tsx
+<button type="button" onClick={actualizar}>Actualizar</button>
+```
+
+→ Cada clic del botón es una petición. El reductor solo ve `"cargar"` y luego `"listo"`. No hay una función dentro de `dispatch`.

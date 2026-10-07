@@ -4,6 +4,8 @@
 
 Una prop es un argumento. `item` es obligatorio. `textoBoton` puede faltar: el defecto es `"Anotar"`. La prop viaja de `App` a `Tarjeta`. La ficha no importa `datos.ts`. `key` va en el `<li>` del `map` y es `item.id`.
 
+## Demostración
+
 ### Objetivo
 
 Ver que `item` es obligatorio, que `textoBoton` tiene defecto y que `key` es el id.
@@ -137,3 +139,40 @@ El índice es `number` y compila. No se deja: al filtrar, la posición de una fi
 |---------|----------------|-----------------|
 | El botón sale vacío | No está `= "Anotar"` | El defecto va en el parámetro |
 | Aviso de `key` | `key` quedó dentro de `Tarjeta` | `key={item.id}` en el `<li>` |
+
+## Laboratorio
+
+La demostración cambió `textoBoton`. Aquí añades otra prop, de tipo distinto.
+
+### Objetivo
+
+Marcar visualmente solo las fichas pendientes, con un booleano.
+
+### Código de partida
+
+`Tarjeta` recibe `item` y `textoBoton?`. `App` la usa en el `map`.
+
+### Qué haces
+
+1. Añade `urgente?: boolean` a `TarjetaProps` y a los parámetros.
+2. Si `urgente` es verdadero, un párrafo «Urgente».
+3. En el `map`, pásalo solo cuando el estado es `pendiente`.
+4. Quita la prop. El párrafo desaparece. Puedes dejarla.
+
+```tsx
+urgente?: boolean
+```
+
+```tsx
+{urgente ? <p>Urgente</p> : null}
+```
+
+```tsx
+<Tarjeta
+  item={item}
+  alMarcar={marcar}
+  urgente={item.estado === "pendiente"}
+/>
+```
+
+→ E-101, E-103 y E-105 dicen «Urgente». E-102 no. Sin la prop, ninguna lo dice. `textoBoton` no ha cambiado.

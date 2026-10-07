@@ -4,6 +4,8 @@
 
 `onClick` recibe una función. `onClick={alMarcar(item.id)}` la ejecutaría al pintar. La que espera al clic es `() => alMarcar(item.id)`. `type="button"` deja la intención explícita. El clic avisa al padre. El padre cambia la pastilla.
 
+## Demostración
+
 ### Objetivo
 
 Ver que el clic espera a la flecha, y que el manejador es una prop que sube al padre.
@@ -145,3 +147,40 @@ Al pulsar, la consola escribe `click` y la pastilla cambia. Puedes dejar solo `(
 | La pastilla cambia al cargar | El `onClick` llama a la función al pintar | `() => alMarcar(item.id)` |
 | Un clic no hace nada | Falta `alMarcar` en la etiqueta | `alMarcar={marcar}` en el `map` |
 | Cambia otra ficha | La función cierra sobre un id fijo | El argumento es `item.id` de esa ficha |
+
+## Laboratorio
+
+La demostración arregló el `onClick` del botón de anotar. Aquí el evento es otro: el ratón entra en la ficha.
+
+### Objetivo
+
+Cambiar el borde de la ficha al pasar el ratón, sin usar el botón.
+
+### Código de partida
+
+El botón sigue con `onClick={() => alMarcar(item.id)}` y `type="button"`.
+
+### Qué haces
+
+1. En `Tarjeta`, añade un estado local solo para este ejercicio.
+2. El `<article>` escucha `onMouseEnter` y `onMouseLeave`.
+3. Pasa el ratón por una ficha y por el fondo de la página.
+4. Borra el estado y los dos eventos. El botón de anotar se queda.
+
+```tsx
+import { useState } from "react"
+```
+
+```tsx
+const [encima, setEncima] = useState(false)
+```
+
+```tsx
+<article
+  onMouseEnter={() => setEncima(true)}
+  onMouseLeave={() => setEncima(false)}
+  style={encima ? { outline: "2px solid #333" } : undefined}
+>
+```
+
+→ El borde aparece al entrar y se va al salir. Pulsar «Anotar» sigue marcando. `onMouseEnter={setEncima(true)}` sin flecha marcaría el borde al pintar: no lo dejes así.

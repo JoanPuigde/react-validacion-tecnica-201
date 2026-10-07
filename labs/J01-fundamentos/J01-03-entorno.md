@@ -4,6 +4,8 @@
 
 Node ejecuta las herramientas. npm lanza los scripts de `package.json`. Vite sirve la bandeja en el puerto 5173 y, con `build`, deja el paquete en `dist/`. `npm run dev` recarga al guardar. Si el 5173 está ocupado, Vite se detiene.
 
+## Demostración
+
 ### Objetivo
 
 Arrancar Vite en el puerto 5173 y dejar un `build` que pase el comprobador de tipos.
@@ -64,3 +66,28 @@ En `datos.ts`, pon `estado: "listo"` en E-104. Lanza `npm run build`. Restaura `
 |---------|----------------|-----------------|
 | No encuentra un módulo | No hay `node_modules` | `npm ci` en `bandeja/` y otra vez `dev` |
 | El puerto no es 5173 | Otro proceso lo ocupa | Ciérralo. Vite está con `--strictPort` |
+
+## Laboratorio
+
+La demostración arrancó `dev` y `build`. Aquí añades un script que solo comprueba tipos.
+
+### Objetivo
+
+Tener un script `comprobar` que no sirve la página ni crea `dist/`.
+
+### Código de partida
+
+Terminal en `bandeja/`. `npm run dev` puede estar parado.
+
+### Qué haces
+
+1. En `package.json`, dentro de `"scripts"`, añade la línea.
+2. `npm run comprobar`.
+3. Mira si apareció `dist/`.
+4. Puedes dejar el script.
+
+```json
+"comprobar": "tsc -p tsconfig.app.json --noEmit"
+```
+
+→ El comando termina sin error y no crea `dist/`. `npm run dev` sigue siendo el que abre el 5173.

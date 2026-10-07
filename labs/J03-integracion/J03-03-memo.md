@@ -4,6 +4,8 @@
 
 `memo` se salta la ficha si sus props son la misma referencia. Hace falta que `marcar` sea un `useCallback`: si la función es nueva, `memo` no se salta nada. Si el proveedor se pinta con otro objeto `{ revisor, setRevisor }`, quien lee el contexto se ejecuta aunque el nombre no haya cambiado. `useMemo` con `[revisor]` deja esa referencia quieta.
 
+## Demostración
+
 ### Objetivo
 
 Ver cuándo `memo` se salta `Tarjeta`, y cuándo un valor nuevo del contexto lo impide.
@@ -288,3 +290,39 @@ Deja `marcar` otra vez como `function`, con `memo` puesto. Escribe una letra.
 | Teclear sigue escribiendo ids | `marcar` no está en `useCallback`, o el `memo` no envuelve el export | `useCallback` con `[]` y `memo(conRevisor(Tarjeta))` |
 | «Tocar» no escribe ids y aún no hay `useMemo` | El `value` ya era una constante | Vuelve a `value={{ revisor, setRevisor }}` para el experimento |
 | El revisor no cambia | El `useMemo` tiene `[]` | La dependencia es `[revisor]` |
+
+## Laboratorio
+
+La demostración memorizó el valor del contexto y la ficha. Aquí `useMemo` guarda un texto calculado, el resumen de la caja.
+
+### Objetivo
+
+Pintar «3 fichas para Norte» sin recalcular mal cuando cambias el filtro.
+
+### Código de partida
+
+`App` tiene `visibles` y `texto`. No hace falta el contexto ni `memo` para este ejercicio.
+
+### Qué haces
+
+1. Importa `useMemo`.
+2. Pega `resumen` y el párrafo bajo la caja.
+3. Escribe `Norte`. El párrafo baja a las fichas de ese proveedor.
+4. Quita `texto` de las dependencias. Escribe `Sur`. El párrafo miente. Restaura `[visibles, texto]`.
+
+```tsx
+import { useMemo, useState } from "react"
+```
+
+```tsx
+const resumen = useMemo(
+  () => `${visibles.length} fichas para ${texto || "todo"}`,
+  [visibles, texto],
+)
+```
+
+```tsx
+<p>{resumen}</p>
+```
+
+→ Con `Norte` se lee «2 fichas para Norte» (Informe y Manual). Sin `texto` en el array, la caja dice Sur y el párrafo sigue hablando de Norte. Se restituye la dependencia.

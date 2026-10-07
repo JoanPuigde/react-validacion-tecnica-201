@@ -4,6 +4,8 @@
 
 Un componente es una función cuyo nombre empieza en mayúscula y que devuelve interfaz. `App` es el componente de entrada. `main.tsx` busca el nodo `#raiz` de `index.html` y pinta ahí `<App />`. El título que se lee en la página sale del `<h1>` de `App`, no del HTML.
 
+## Demostración
+
 ### Objetivo
 
 Ver que el título de la página sale del componente `App`, no del HTML.
@@ -80,3 +82,40 @@ Añade bajo el `<h1>` un `<p>Hola</p>`. Guarda. Quítalo.
 |---------|----------------|-----------------|
 | La página no cambia | Miras `index.html` | El título está en `App.tsx` |
 | `No está el nodo #raiz` | El `id` del `div` no coincide | `id="raiz"`, como en `main.tsx` |
+
+## Laboratorio
+
+La demostración cambió el título. Aquí el título se queda. Añades un segundo componente.
+
+### Objetivo
+
+Pintar un pie de página desde otra función, no desde `index.html`.
+
+### Código de partida
+
+`App` sigue con `<h1>Bandeja de entregables</h1>`. `index.html` no tiene ese texto ni un pie.
+
+### Qué haces
+
+1. Crea `bandeja/src/componentes/Pie.tsx`.
+2. En `App`, impórtalo y ponlo debajo de la lista.
+3. Mira el HTML del documento: el pie no está en `index.html`.
+4. Borra `<Pie />` un momento. El pie desaparece. Vuelve a ponerlo.
+
+```tsx
+export default function Pie() {
+  return <p>Seis entregables en la bandeja.</p>
+}
+```
+
+```tsx
+import Pie from "./componentes/Pie"
+```
+
+```tsx
+<Pie />
+```
+
+→ El pie se lee bajo las fichas. En `index.html` no aparece «Seis entregables». Quitar `<Pie />` lo quita de la página.
+
+**Validación:** `Pie` es una función en su archivo. El `<h1>` sigue siendo «Bandeja de entregables».

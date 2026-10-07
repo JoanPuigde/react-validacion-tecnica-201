@@ -4,6 +4,8 @@
 
 `useStore` es un hook de este curso, no una librería. Junta el reductor de la lista y el nombre del revisor en un contexto. `App` y `Tarjeta` lo leen. Fuera de `TiendaProveedor` el hook lanza.
 
+## Demostración
+
 ### Objetivo
 
 Leer la lista, `marcar` y el revisor con `useStore()`, sin `useReducer` ni `useContext` en `App` ni en `Tarjeta`.
@@ -201,3 +203,40 @@ Llama a `useStore()` también dentro de `reducir`.
 | `useStore fuera de TiendaProveedor` | El proveedor no envuelve `<App />` | Está en `main.tsx`, dentro de `StrictMode` |
 | `alMarcar` no existe | La prop se borró y el botón aún la nombra | El botón llama a `marcar` de `useStore()` |
 | Dos listas | `useState(entregables)` sigue en `App` | `items` sale solo de `useStore()` |
+
+## Laboratorio
+
+La demostración leyó la lista y el revisor con `useStore`. Aquí el store guarda un número que no es una ficha: cuántos avisos llevas.
+
+### Objetivo
+
+`avisos` y `sumar` viven en la tienda. El `<h1>` los lee. `Tarjeta` no recibe esa prop.
+
+### Código de partida
+
+`useStore` ya devuelve `items` y `marcar`. Si no existe `tienda.tsx`, la demostración de esta página trae el archivo entero: pégalo antes.
+
+### Qué haces
+
+1. En la interfaz `Tienda` y en el proveedor, añade `avisos` con `useState(0)` y `sumar`.
+2. Mételos en el `useMemo`.
+3. En `App`, lee `avisos` y `sumar`. Un botón «Aviso» llama a `sumar`.
+4. Pulsa dos veces. El título cambia. `TarjetaProps` no tiene `avisos`.
+
+```tsx
+const [avisos, setAvisos] = useState(0)
+const sumar = useCallback(() => setAvisos((n) => n + 1), [])
+```
+
+El `useMemo` incluye `avisos` y `sumar`.
+
+```tsx
+const { avisos, sumar } = useStore()
+```
+
+```tsx
+<h1>Bandeja de entregables ({avisos})</h1>
+<button type="button" onClick={sumar}>Aviso</button>
+```
+
+→ Dos clics dejan «Bandeja de entregables (2)». Marcar E-101 no sube ese número. `sumar` no está en las props de `Tarjeta`.

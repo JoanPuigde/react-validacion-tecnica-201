@@ -4,6 +4,8 @@
 
 La petición vive en `api/`. La lista, la carga, el error y `marcar` viven en `useEntregables`. `App` calcula el filtro y pinta. `Tarjeta` pinta una ficha.
 
+## Demostración
+
 ### Objetivo
 
 Dejar la petición, la lista y el título de la pestaña en `useEntregables`, y en `App` solo el filtro y el JSX.
@@ -281,3 +283,34 @@ El hook está dentro de `hooks/`. La API está un nivel arriba. El import es `..
 | La pestaña no tiene número | El efecto del título se quedó en `App` y `pendientes` ya no existe | El efecto vive en el hook |
 | Doble petición | El efecto está en los dos archivos | Solo el del hook |
 | `cargarEntregables` no se encuentra | El import no sube de carpeta | `../api/entregables` |
+
+## Laboratorio
+
+La demostración movió la petición a `useEntregables`. Aquí el título de la pestaña sale a otro hook, y la petición no lo acompaña.
+
+### Objetivo
+
+`useTitulo(pendientes)` solo escribe `document.title`. No llama a `fetch`.
+
+### Código de partida
+
+`useEntregables` existe y todavía contiene el efecto del título. Si no existe, la demostración de esta página trae el archivo.
+
+### Qué haces
+
+1. Crea `bandeja/src/hooks/useTitulo.ts`.
+2. Quita el efecto del título de `useEntregables`. Calcula `pendientes` en `App` o déjalo en el hook y pásalo.
+3. Llama a `useTitulo` desde `App` o desde `useEntregables`, una sola vez.
+4. Marca E-101. La pestaña baja. En `useTitulo.ts` no está la palabra `fetch`.
+
+```tsx
+import { useEffect } from "react"
+
+export function useTitulo(pendientes: number): void {
+  useEffect(() => {
+    document.title = `Pendientes: ${pendientes}`
+  }, [pendientes])
+}
+```
+
+→ La pestaña dice «Pendientes: 3» al recargar y baja al marcar. La petición sigue en `useEntregables` o en `api/`, no en `useTitulo.ts`.

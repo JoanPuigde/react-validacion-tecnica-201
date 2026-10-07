@@ -4,6 +4,8 @@
 
 Una variable normal dentro de `App` se pierde en el siguiente pintado. El estado es un valor que React recuerda. Al pedir el siguiente, React vuelve a ejecutar la función. No se muta el array a mano. Se entrega un array nuevo. Si no, la pastilla puede no cambiar.
 
+## Demostración
+
 ### Objetivo
 
 Ver que una variable normal no vuelve a pintar, y que mutar el mismo array tampoco.
@@ -143,3 +145,28 @@ El mismo array, aunque tenga un elemento más, puede no pintarse. Se entrega un 
 |---------|----------------|-----------------|
 | La caja no escribe | Sigues en el `let` | `useState` y `setTexto` |
 | La pastilla no cambia | La mutación sigue | `{ ...item, estado: "revisado" }` |
+
+## Laboratorio
+
+La demostración comparó un `let` de la caja con el `useState`. Aquí el estado nuevo es un contador de clics.
+
+### Objetivo
+
+Contar cuántas veces se pulsa «Anotar», en un estado distinto de la lista.
+
+### Código de partida
+
+`marcar` copia el objeto con `setItems`. La caja sigue en `useState`.
+
+### Qué haces
+
+1. Añade `const [veces, setVeces] = useState(0)`.
+2. Dentro de `marcar`, después de `setItems`, llama a `setVeces((n) => n + 1)`.
+3. Pinta `{veces}` bajo el título.
+4. Sustituye un momento `useState` por `let veces = 0` y `veces = veces + 1`. Pulsa. Restaura el `useState`.
+
+```tsx
+<p>Clics: {veces}</p>
+```
+
+→ Con el estado, cada clic sube el número y la pastilla cambia. Con el `let`, la pastilla puede cambiar y el número no se queda. Restaura `useState`.

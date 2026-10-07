@@ -4,6 +4,8 @@
 
 Validar es recorrer la pantalla como quien recibe el código. El caso automático cubre un flujo. El resto se mira: la pastilla, el foco de la etiqueta, el vacío y, si la lista viene por HTTP, la red.
 
+## Demostración
+
 ### Objetivo
 
 Recorrer la bandeja como quien la recibe y anotar una frase que no coincide.
@@ -139,3 +141,24 @@ El foco no entra en la caja. `htmlFor` coincide con `id="filtro"`. Al restaurarl
 |---------|----------------|-----------------|
 | No hay fichas | `dev` está parado o el `fetch` apunta a una URL mala | `npm run dev` y la URL `/entregables.json` si ya la usas |
 | El foco no entra | `htmlFor` no coincide con el `id` | Los dos dicen `filtro` |
+
+## Laboratorio
+
+La demostración recorrió la bandeja con el ratón: vacío, foco, marca y recarga. Aquí el recorrido es solo con teclado.
+
+### Objetivo
+
+Llegar a la caja con Tab, escribir `Norte` y leer las fichas, sin pulsar el botón.
+
+### Código de partida
+
+`npm run dev` en el 5173. La caja tiene `<label htmlFor="filtro">`.
+
+### Qué haces
+
+1. Recarga. No uses el ratón.
+2. Pulsa Tab hasta que el foco esté en la caja. Si el foco no llega, pulsa la etiqueta «Buscar» una sola vez y anótalo como fallo del recorrido.
+3. Escribe `Norte`.
+4. Comprueba que no está «Pruebas de carga» y sí «Informe de accesibilidad».
+
+→ `Norte` deja las fichas de ese proveedor. No has marcado ninguna. La pastilla de E-101 sigue en `pendiente`.

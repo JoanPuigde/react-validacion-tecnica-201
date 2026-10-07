@@ -4,6 +4,8 @@
 
 El checklist es una lista corta que se puede repetir en otra entrega. Cada fila es una acción y lo que se ve. El caso de Cypress cubre el título y el filtro de `Este`. No cubre el foco ni la recarga.
 
+## Demostración
+
 ### Objetivo
 
 Recorrer la lista de la guía y marcar qué fila cubre el caso de Cypress y cuál no.
@@ -151,3 +153,29 @@ Si la lista sale de `/entregables.json`, teclea con Network abierto.
 |---------|----------------|-----------------|
 | `Norte` no quita fichas | El `map` no recorre `visibles` | El `map` de `App.tsx`, el de esta página, recorre `visibles` |
 | La marca sobrevive | Hay otro mecanismo de guardado | En esta bandeja, recargar restaura el origen |
+
+## Laboratorio
+
+La demostración recorrió la tabla que ya estaba. Aquí añades una fila que la tabla no tenía: el rechazado.
+
+### Objetivo
+
+Comprobar E-104, que nace `rechazado`, y anotar la frase del botón.
+
+### Código de partida
+
+La bandeja en el 5173. El caso de Cypress, si está, no se lanza en este ejercicio.
+
+### Qué haces
+
+1. Recarga.
+2. Busca «Inventario de componentes».
+3. Lee la pastilla y el botón. Anota la frase exacta, por ejemplo en un comentario al final de `bandeja.cy.js`.
+4. No cambies el componente para que el botón diga otra cosa.
+
+```js
+// Fila nueva: abrir E-104.
+// Se ve la pastilla «rechazado» y un botón «Anotar E-104», no «Hecho».
+```
+
+→ La pastilla es `rechazado`. El botón no dice «Hecho», porque «Hecho» solo sale con `revisado`. El caso de `Este` no afirma esta fila.

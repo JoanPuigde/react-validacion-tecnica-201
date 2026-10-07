@@ -4,6 +4,8 @@
 
 `lazy` parte el paquete. El trozo llega cuando se muestra. `Suspense` enseña un respaldo mientras llega. El pie de la bandeja basta para ver el mecanismo.
 
+## Demostración
+
 ### Objetivo
 
 Cargar un componente en otro archivo del paquete, con un respaldo mientras llega.
@@ -157,3 +159,50 @@ React avisa de que falta un límite de `Suspense`. El pie vuelve a ir dentro.
 |---------|----------------|-----------------|
 | `Pie is not defined` | Falta el `const Pie = lazy(...)` | El `lazy` está en `App`, no dentro del `return` |
 | El respaldo no desaparece | La ruta del import no resuelve | `./componentes/Pie` |
+
+## Laboratorio
+
+La demostración cargó el pie al arrancar la página. Aquí el trozo llega solo si pulsas un botón.
+
+### Objetivo
+
+`Ayuda` entra con `lazy` cuando `abierta` pasa a verdadero. El respaldo dice «Abriendo ayuda…».
+
+### Código de partida
+
+`App` pinta la lista. Si ya tienes `Pie` con `lazy`, no lo uses: este archivo es otro.
+
+### Qué haces
+
+1. Crea `bandeja/src/componentes/Ayuda.tsx`.
+2. En `App`, el estado, el `lazy` y el botón.
+3. Recarga con la Red abierta. `Ayuda` no se pide todavía.
+4. Pulsa «Ayuda». Aparece el párrafo. En Red, el trozo es un archivo distinto del de `App`.
+5. Puedes dejarlo o quitarlo al acabar.
+
+```tsx
+export default function Ayuda() {
+  return <p>La marca vive en memoria hasta que recargas.</p>
+}
+```
+
+```tsx
+import { lazy, Suspense, useState } from "react"
+
+const Ayuda = lazy(() => import("./componentes/Ayuda"))
+```
+
+```tsx
+const [abierta, setAbierta] = useState(false)
+```
+
+```tsx
+<button type="button" onClick={() => setAbierta(true)}>Ayuda</button>
+{abierta ? (
+  <Suspense fallback={<p>Abriendo ayuda…</p>}>
+    <Ayuda />
+  </Suspense>
+) : null}
+```
+
+→ Antes del clic no está el párrafo ni su archivo. Después del clic se lee la frase. La lista no se ha ido a ese trozo.

@@ -4,6 +4,8 @@
 
 `Tarjeta` es una función. Seis fichas salen de un `map`, no de seis copias. `textoBoton` cambia el rótulo sin tocar el componente. `item` es obligatorio: sin esa prop no compila.
 
+## Demostración
+
 ### Objetivo
 
 Ver que seis fichas salen de un solo `Tarjeta`, y que una prop opcional cambia el rótulo sin copiar el archivo.
@@ -151,3 +153,40 @@ La clase visual de la ficha ya está en `article` dentro de `Tarjeta`. Quita un 
 |---------|----------------|-----------------|
 | Todas dicen «Registrar» | `textoBoton` está fijo en `Tarjeta` | El defecto es `"Anotar"` y el atributo solo va en E-104 |
 | `item` posiblemente indefinido | La prop quedó con `?` | `item: Entregable`, sin `?` |
+
+## Laboratorio
+
+La demostración cambió `textoBoton` en una ficha. Aquí la prop cambia el hueco, no la palabra del botón.
+
+### Objetivo
+
+`ancho` elige si la ficha se estira o se queda estrecha. El defecto es estrecha.
+
+### Código de partida
+
+Un solo `Tarjeta.tsx`. El `map` lo usa seis veces. `item` sigue siendo obligatorio.
+
+### Qué haces
+
+1. Añade `ancho?: "estrecho" | "ancho"` con defecto `"estrecho"`.
+2. El `<article>` usa `style` según ese valor.
+3. En el `map`, E-106 va `ancho`. El resto no pasa la prop.
+4. Quita el atributo. E-106 vuelve al defecto.
+
+```tsx
+ancho?: "estrecho" | "ancho"
+```
+
+```tsx
+function Tarjeta({ item, textoBoton = "Anotar", alMarcar, ancho = "estrecho" }: TarjetaProps) {
+```
+
+```tsx
+<article style={{ maxWidth: ancho === "ancho" ? 480 : 240 }}>
+```
+
+```tsx
+<Tarjeta item={item} alMarcar={marcar} ancho={item.id === "E-106" ? "ancho" : undefined} />
+```
+
+→ E-106 es más ancha. Las otras caben en 240. Sin la prop, las seis usan el defecto. Sigue habiendo un solo archivo de ficha.

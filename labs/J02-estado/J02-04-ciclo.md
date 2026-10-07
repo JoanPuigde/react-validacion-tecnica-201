@@ -4,6 +4,8 @@
 
 Montar es el primer pintado. Actualizar es cada pintado siguiente. Desmontar es cuando el componente deja de estar. La función que devuelve el efecto es la limpieza: React la llama antes de repetir el efecto y al desmontar. Los hooks van al principio de la función, siempre en el mismo orden, nunca debajo de un `return` condicional.
 
+## Demostración
+
 ### Objetivo
 
 Ver la limpieza del efecto y el fallo de un hook que no se llama siempre.
@@ -163,3 +165,53 @@ El editor marca la regla aunque `false` nunca entre. Los hooks no van en una ram
 |---------|----------------|-----------------|
 | La página sigue rota | El `if (texto.length > 2)` sigue | Bórralo y recarga |
 | El filtro no vuelve | Borraste `texto` | `useState("")` sigue al principio |
+
+## Laboratorio
+
+La demostración limpió el efecto del título y rompió el orden de los hooks. Aquí el efecto es un reloj que se desmonta.
+
+### Objetivo
+
+Parar un `setInterval` cuando el reloj deja de pintarse.
+
+### Código de partida
+
+Los hooks de `App` están antes del `return`. El efecto del título puede quedarse.
+
+### Qué haces
+
+1. Crea `bandeja/src/componentes/Reloj.tsx` con este archivo.
+2. En `App`, un estado `ver` y un botón que lo invierte. Si `ver`, pintas `<Reloj />`.
+3. Abre la consola. Muestra el reloj, espera un segundo, ocúltalo.
+4. Borra `Reloj` y el botón si no lo quieres dejar. La limpieza tiene que estar: sin el `return` del efecto, el intervalo seguiría tras ocultarlo.
+
+```tsx
+import { useEffect, useState } from "react"
+
+export default function Reloj() {
+  const [segundos, setSegundos] = useState(0)
+
+  useEffect(() => {
+    const id = setInterval(() => setSegundos((n) => n + 1), 1000)
+    return () => {
+      clearInterval(id)
+      console.log("reloj parado")
+    }
+  }, [])
+
+  return <p>Reloj: {segundos}</p>
+}
+```
+
+```tsx
+const [ver, setVer] = useState(false)
+```
+
+```tsx
+<button type="button" onClick={() => setVer((activo) => !activo)}>
+  {ver ? "Ocultar reloj" : "Ver reloj"}
+</button>
+{ver ? <Reloj /> : null}
+```
+
+→ Al ocultar, la consola escribe «reloj parado» y el número no sigue creciendo en un componente que ya no está.

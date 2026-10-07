@@ -4,6 +4,8 @@
 
 El caso nuevo escribe en `#filtro`. El id del input tiene que ser `filtro`. El script se lanza con `npm run dev` parado, porque Cypress usa el puerto 5173.
 
+## Demostración
+
 ### Objetivo
 
 Añadir el caso que escribe `Este` y verlo fallar cuando el texto no está.
@@ -136,3 +138,33 @@ Al cargar, el botón dice «Anotar E-101». Tras el clic, la pastilla es `revisa
 | No encuentra `#filtro` | El `id` del input es otro | `id="filtro"` |
 | Falla con el inventario | El filtro distingue mal las mayúsculas, o el caso sigue en `zzzz` | `texto.toLowerCase()` y el caso en `"Este"` |
 | Puerto ocupado | `dev` en marcha | Páralo y relanza |
+
+## Laboratorio
+
+La demostración escribió `Este` y buscó el inventario. Aquí el caso es el vacío.
+
+### Objetivo
+
+`zzzz` muestra «Ningún entregable coincide.» y no muestra «Inventario de componentes».
+
+### Código de partida
+
+El `it` de `Este` está en `bandeja.cy.js`. `#filtro` existe. `npm run dev` parado.
+
+### Qué haces
+
+1. Añade este `it` después del de `Este`. No borres el de `Este`.
+2. `npm run test:e2e`.
+3. Cambia la frase esperada por «Lista vacía». Falla.
+4. Restaura «Ningún entregable coincide.».
+
+```js
+it("avisa cuando nada coincide", () => {
+  cy.visit("/")
+  cy.get("#filtro").type("zzzz")
+  cy.contains("Ningún entregable coincide.")
+  cy.contains("Inventario de componentes").should("not.exist")
+})
+```
+
+→ Pasan el título, `Este` y `zzzz`. Con la frase inventada, Cypress cita el texto que no está. El caso de `Este` no se ha tocado.

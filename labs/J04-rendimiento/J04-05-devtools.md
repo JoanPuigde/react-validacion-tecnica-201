@@ -4,6 +4,8 @@
 
 Network dice si cada letra pide el documento o el JSON. Performance dice si el tiempo se fue en script, en pintura o en red. En seis fichas el tramo es corto. La pregunta se hace igual.
 
+## Demostración
+
 ### Objetivo
 
 Leer Network y una pasada corta de Performance mientras se filtra.
@@ -134,3 +136,24 @@ Abre `http://localhost:5173/entregables.json` desde la barra de direcciones.
 |---------|----------------|-----------------|
 | Cada letra pide el HTML | No estás en el puerto de Vite | `npm run dev`, puerto 5173 |
 | Performance vacío | La grabación no estaba en marcha al teclear | Graba, teclea, para |
+
+## Laboratorio
+
+La demostración miró la Red al teclear. Aquí miras la Red al recargar con la CPU y la red limitadas.
+
+### Objetivo
+
+Ver el documento y, si existe, `entregables.json`, con la red en «Slow 3G». Teclear sigue sin repetirlos.
+
+### Código de partida
+
+`npm run dev` en el 5173. F12, pestaña Red.
+
+### Qué haces
+
+1. En Red, elige una limitación lenta (Slow 3G o similar).
+2. Recarga. Anota cuántas veces sale el documento.
+3. Escribe `Norte`. El documento no se repite.
+4. Quita la limitación.
+
+→ El documento se pide una vez, más despacio. `Norte` no añade otra fila del HTML. Si la lista viene de `entregables.json`, esa fila tampoco se repite al teclear.

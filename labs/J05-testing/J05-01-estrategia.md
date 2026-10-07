@@ -4,6 +4,8 @@
 
 Un test de esta jornada afirma lo que vería una persona: un título presente, otro ausente. No afirma el valor de `useState`. El caso que ya está en el repo solo mira el `<h1>`. No mira el filtro ni la pastilla.
 
+## Demostración
+
 ### Objetivo
 
 Leer el caso que ya existe y escribir, en un comentario del propio archivo, lo que no cubre.
@@ -144,3 +146,29 @@ Añade al comentario «el foco de la etiqueta Buscar».
 |---------|----------------|-----------------|
 | No hay archivo de Cypress | No estás en `bandeja/cypress/e2e/` | `bandeja.cy.js` |
 | El comentario rompe el script | Quedó fuera de un `/* */` o sin `//` | Una línea `//` dentro del `describe` |
+
+## Laboratorio
+
+La demostración nombró lo que el caso del título no mira y decidió el caso de `Este`. Aquí escribes otro caso, el del vacío, y no lo implementas todavía.
+
+### Objetivo
+
+Dejar en un comentario el caso de `zzzz`, distinto del de `Este`.
+
+### Código de partida
+
+`bandeja.cy.js` tiene el `it` del título. Puede tener ya el de `Este`. No lo borres.
+
+### Qué haces
+
+1. Debajo del último `it`, pega el comentario.
+2. No añadas el `it` de `zzzz` en este ejercicio. Eso sería otro caso, y aquí solo fijas qué afirmaría.
+3. Lee el comentario en voz alta: es una frase de la página, no un `useState`.
+
+```js
+// Caso pendiente: visitar /, escribir zzzz en #filtro
+// y ver «Ningún entregable coincide.».
+// No afirma el valor de texto ni de items.
+```
+
+→ El archivo sigue pasando `npm run test:e2e` igual que antes del comentario. El caso de `Este`, si está, no cubre esta frase.

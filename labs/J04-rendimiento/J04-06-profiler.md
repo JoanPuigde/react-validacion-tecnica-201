@@ -4,6 +4,8 @@
 
 El Profiler pregunta qué componente se ejecutó y cuánto tardó el render. Hace falta la extensión React DevTools. No sustituye a Network.
 
+## Demostración
+
 ### Objetivo
 
 Grabar un pintado y ver qué componente se ejecutó al teclear.
@@ -133,3 +135,24 @@ Si tienes el efecto de la pestaña, márcalo con el Profiler grabando.
 |---------|----------------|-----------------|
 | No aparece la pestaña Profiler | La extensión no está en ese navegador | Instálala, o usa el `console.count` |
 | La grabación sale vacía | No tecleaste durante la grabación | Graba, escribe una letra, para |
+
+## Laboratorio
+
+La demostración grabó una letra. Aquí grabas un clic en una ficha.
+
+### Objetivo
+
+Ver en el Profiler que marcar E-101 afecta a esa ficha, no pedir el documento.
+
+### Código de partida
+
+React DevTools instalado. La bandeja en el 5173. Si no tienes la extensión, mira la consola: `console.count(item.id)` en `Tarjeta` y pulsa «Anotar E-101».
+
+### Qué haces
+
+1. Abre Profiler. Empieza a grabar.
+2. Pulsa «Anotar E-101». Para.
+3. Busca `Tarjeta` o `App` en la grabación.
+4. No mires la pestaña Red para este ejercicio: el clic no es una petición.
+
+→ La grabación tiene commits del clic. E-101 cambia a `revisado`. No hace falta que las seis fichas hayan recibido otro `item`.

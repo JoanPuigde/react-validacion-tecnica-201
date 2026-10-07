@@ -4,6 +4,8 @@
 
 `useEffect` corre después de pintar, y otra vez cuando cambian las dependencias. Sirve para hablar con algo de fuera: el título de la pestaña. No sirve para calcular `visibles`. Eso sigue siendo un `const`. `[]` significa solo al montar. Si `pendientes` cambia y no está en el array, el título se queda en el primer número.
 
+## Demostración
+
 ### Objetivo
 
 Llevar el número de pendientes al título de la pestaña, y ver qué pasa si las dependencias mienten.
@@ -150,3 +152,30 @@ El efecto corre en cada letra. El título no cambia porque el número no cambió
 | `useEffect is not defined` | El import no lo nombra | `import { useEffect, useState } from "react"` |
 | El título no baja | Dependencias `[]` | `[pendientes]` |
 | Miras el h1 | El número está en la pestaña | Lee la pestaña del navegador |
+
+## Laboratorio
+
+La demostración escribió el número de pendientes en la pestaña. Aquí el efecto escribe en la consola cuando cambia el texto, no el título.
+
+### Objetivo
+
+Un efecto que dependa de `texto` y no toque `document.title`.
+
+### Código de partida
+
+El efecto del título, si está, se queda con `[pendientes]`. No lo borres.
+
+### Qué haces
+
+1. Añade este segundo efecto debajo del primero.
+2. Escribe `Norte`. Mira la consola, no la pestaña.
+3. Cambia las dependencias a `[]`. Escribe otra letra. La consola no repite.
+4. Borra este segundo efecto. El del título se queda.
+
+```tsx
+useEffect(() => {
+  console.log(`Buscar: ${texto}`)
+}, [texto])
+```
+
+→ Cada letra escribe «Buscar: …». La pestaña no cambia por este efecto. Con `[]` solo sale el mensaje del montaje. Al borrar el efecto, la consola calla y «Pendientes: 3» sigue en la pestaña.

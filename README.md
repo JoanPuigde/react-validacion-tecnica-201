@@ -6,7 +6,7 @@ La aplicación de la semana es la [bandeja de entregables](bandeja/README.md), e
 
 Componentes funcionales, ficheros `.tsx`, interfaces propias. Sin `any` y sin clases.
 
-Cada punto es una página. Esa página es la demostración: explica el tema y trae el código de partida, para pegarlo y seguir sin depender de otra. El README de la jornada es solo el índice.
+Cada punto es una página con dos ejercicios distintos. La demostración se sigue tal cual, con su código de partida. El laboratorio pide otra cosa con la misma idea: no repite la demostración. El README de la jornada es solo el índice.
 
 ## Jornada 1 — Fundamentos de React
 

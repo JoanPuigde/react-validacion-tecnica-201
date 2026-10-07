@@ -4,6 +4,8 @@
 
 React pinta en dos momentos. El render llama a las funciones. El commit aplica el árbol al documento. Si el estado vive en el padre, un `setTexto` vuelve a ejecutar al padre y a los hijos. `console.count` cuenta esas llamadas. No dice que la página vaya lenta.
 
+## Demostración
+
 ### Objetivo
 
 Contar cuántas veces se ejecuta `Tarjeta` al teclear, antes de optimizar.
@@ -135,3 +137,24 @@ Escribe `Norte` y compara el contador de una ficha visible con el de una que des
 |---------|----------------|-----------------|
 | No cuenta | El `count` está fuera de la función | Primera línea del cuerpo de `Tarjeta` |
 | No hay caja | `App` no filtra | Pega el archivo de J02-02 |
+
+## Laboratorio
+
+La demostración contó ejecuciones dentro de `Tarjeta`. Aquí cuentas en `App`, para ver una sola llamada del padre.
+
+### Objetivo
+
+Dejar claro que una letra ejecuta `App` una vez, aunque las fichas sean seis.
+
+### Código de partida
+
+La caja «Buscar» y el `map`. Quita `console.count` de `Tarjeta` si la demostración lo dejó.
+
+### Qué haces
+
+1. Como primera línea de `App`, `console.count("App")`.
+2. Limpia la consola. Escribe una letra.
+3. Mira cuántas veces sube `App`.
+4. Borra el `console.count`.
+
+→ Sube el contador de `App`. No sale un salto por ficha: las fichas son hijas, este contador es el padre. En desarrollo, StrictMode puede doblar el número. Mira si sube al teclear, no el valor exacto.

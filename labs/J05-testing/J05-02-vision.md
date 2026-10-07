@@ -4,6 +4,8 @@
 
 Cypress abre la aplicación. No monta el componente en un test de unidad y no lee `texto` ni `items`. Si el filtro compara mal las mayúsculas, el caso lo ve porque el título no está en la página.
 
+## Demostración
+
 ### Objetivo
 
 Lanzar el caso del título y comprobar que no lee el estado de React.
@@ -110,3 +112,31 @@ Lanza `npm run dev` y, sin pararlo, `npm run test:e2e` en otra terminal.
 |---------|----------------|-----------------|
 | Puerto en uso | `dev` sigue | Ctrl+C y otra vez `test:e2e` |
 | Falla el título | El `<h1>` no dice «Bandeja de entregables» | Restaura el texto en `App.tsx` |
+
+## Laboratorio
+
+La demostración ejecutó el caso del título sin importar `App`. Aquí el caso mira un botón de la página, no una variable.
+
+### Objetivo
+
+Afirmar que el primer botón contiene «E-101». Sin `import` de `App` ni de `datos`.
+
+### Código de partida
+
+`npm run dev` parado. `bandeja.cy.js` tiene el caso del título.
+
+### Qué haces
+
+1. Añade este `it`.
+2. `npm run test:e2e`.
+3. Cambia `"E-101"` por `"E-999"`. Falla porque el botón no está en la página.
+4. Restaura `"E-101"`.
+
+```js
+it("muestra el botón del informe", () => {
+  cy.visit("/")
+  cy.contains("button", "E-101")
+})
+```
+
+→ Pasa con E-101. Falla con E-999 y Cypress habla del texto que no encontró. El archivo no importa `entregables`.

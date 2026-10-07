@@ -4,6 +4,8 @@
 
 `useMemo` fija el resultado de un cálculo. No acelera las seis fichas. Se nota cuando falta `texto` en las dependencias: la caja cambia y las fichas no. Entregar un objeto nuevo en `marcar` es lo que permite el repintado.
 
+## Demostración
+
 ### Objetivo
 
 Ver que un `useMemo` sin `texto` miente, y que el array nuevo de `marcar` es el que permite pintar.
@@ -147,3 +149,32 @@ La pastilla puede no cambiar: la referencia del array es la misma. El `map` con 
 |---------|----------------|-----------------|
 | El filtro no vuelve | El array se quedó en `[items]` | `[items, texto]` |
 | `useMemo` no está definido | Falta en el import de `App` | Añádelo junto a `useState` |
+
+## Laboratorio
+
+La demostración memorizó `visibles` y rompió la dependencia `texto`. Aquí memorizas la lista de ids, y la dependencia que miente es `items`.
+
+### Objetivo
+
+Un párrafo con los id visibles que se queda viejo si olvidas `items` al marcar.
+
+### Código de partida
+
+`visibles` es un `const` o un `useMemo` con `[items, texto]`. `marcar` copia el objeto.
+
+### Qué haces
+
+1. Añade este `useMemo` y el párrafo.
+2. Pulsa «Anotar E-101». Los id no cambian, el párrafo puede quedar igual: no incluye el estado. Está bien.
+3. Quita `visibles` del array y deja `[]`. Escribe `Norte`. El párrafo sigue listando los seis id.
+4. Restaura `[visibles]`. `Norte` deja solo los id de ese proveedor. Borra el párrafo si no lo quieres.
+
+```tsx
+const ids = useMemo(() => visibles.map((item) => item.id).join(", "), [visibles])
+```
+
+```tsx
+<p>Ids: {ids}</p>
+```
+
+→ Con `[visibles]`, `Norte` cambia el párrafo. Con `[]`, la caja filtra las fichas y los id escritos no se enteran.

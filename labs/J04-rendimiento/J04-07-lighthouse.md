@@ -4,6 +4,8 @@
 
 Lighthouse hace una pasada de carga. En seis fichas la nota sale holgada. Esa nota no borra lo que decía el contador de la consola, y el contador no es la nota.
 
+## Demostración
+
 ### Objetivo
 
 Leer una pasada de carga y quitar el contador de depuración.
@@ -133,3 +135,24 @@ Marca E-101 y lanza otra pasada. Lighthouse recarga la página.
 |---------|----------------|-----------------|
 | Lighthouse no abre la app | El puerto no responde | `npm run dev` en `bandeja/` |
 | La consola sigue contando | Quedó otro `console.count` | Búscalo en `Tarjeta.tsx` y bórralo |
+
+## Laboratorio
+
+La demostración lanzó Lighthouse en escritorio y no persiguió la nota. Aquí cambias el dispositivo, no el código.
+
+### Objetivo
+
+Sacar una segunda pasada con móvil y quedarte con las dos notas, sin editar `Tarjeta`.
+
+### Código de partida
+
+`npm run dev` en el 5173. Lighthouse en F12. Sin `console.count` en la ficha.
+
+### Qué haces
+
+1. Categoría Rendimiento, dispositivo móvil, analiza.
+2. Anota el número al lado del de escritorio, en un comentario de `App` o en un papel.
+3. No cambies componentes para subir la nota.
+4. Borra el comentario si lo pusiste en el código. Las dos notas bastan como lectura.
+
+→ Hay dos números. Ninguno ha obligado a tocar `memo` ni el filtro. La bandeja se usa igual.
