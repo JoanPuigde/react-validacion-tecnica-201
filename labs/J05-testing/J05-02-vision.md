@@ -2,7 +2,7 @@
 
 [← Página anterior](J05-01-estrategia.md) · [Siguiente página →](J05-03-cypress.md)
 
-Cypress abre la aplicación. No monta el componente en un test de unidad y no lee `texto` ni `items`. Si el filtro compara mal las mayúsculas, el caso lo ve porque el título no está en la página.
+Cypress, en el caso de esta página, abre la aplicación. No monta el componente en un test de unidad y no lee `texto` ni `items`. Si el filtro compara mal las mayúsculas, el caso lo ve porque el título no está en la página. Montar solo una ficha es el [test de componente](J05-07-componente.md).
 
 ## Demostración
 

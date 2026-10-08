@@ -1,6 +1,6 @@
 # J05-04 — Validar un entregable
 
-[← Página anterior](J05-03-cypress.md) · [Siguiente página →](J05-05-checklist.md)
+[← Página anterior](J05-07-componente.md) · [Siguiente página →](J05-05-checklist.md)
 
 Validar es recorrer la pantalla como quien recibe el código. El caso automático cubre un flujo. El resto se mira: la pastilla, el foco de la etiqueta, el vacío y, si la lista viene por HTTP, la red.
 

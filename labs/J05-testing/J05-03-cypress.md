@@ -1,6 +1,6 @@
 # J05-03 — Cypress
 
-[← Página anterior](J05-02-vision.md) · [Siguiente página →](J05-04-entregable.md)
+[← Página anterior](J05-02-vision.md) · [Siguiente página →](J05-07-componente.md)
 
 El caso nuevo escribe en `#filtro`. El id del input tiene que ser `filtro`. El script se lanza con `npm run dev` parado, porque Cypress usa el puerto 5173.
 

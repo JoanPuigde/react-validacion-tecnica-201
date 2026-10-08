@@ -100,6 +100,7 @@ Objetivo: validar un entregable y corregir lo que falle. Índice: [jornada 5](la
 - [Estrategia de testing](labs/J05-testing/J05-01-estrategia.md)
 - [Testing en React](labs/J05-testing/J05-02-vision.md)
 - [Cypress](labs/J05-testing/J05-03-cypress.md)
+- [Test de componente](labs/J05-testing/J05-07-componente.md)
 - [Validar un entregable](labs/J05-testing/J05-04-entregable.md)
 - [Checklist](labs/J05-testing/J05-05-checklist.md)
 - [Riesgos](labs/J05-testing/J05-06-riesgos.md)
@@ -107,6 +108,7 @@ Objetivo: validar un entregable y corregir lo que falle. Índice: [jornada 5](la
 Laboratorios:
 
 - Tests E2E — [J05-03](labs/J05-testing/J05-03-cypress.md)
+- Test de componente — [J05-07](labs/J05-testing/J05-07-componente.md)
 - Validación de un flujo — [J05-04](labs/J05-testing/J05-04-entregable.md)
 - Checklist — [J05-05](labs/J05-testing/J05-05-checklist.md)
 - Corrección — [J05-06](labs/J05-testing/J05-06-riesgos.md)
