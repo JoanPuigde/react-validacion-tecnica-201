@@ -10,11 +10,15 @@ El Profiler pregunta qué componente se ejecutó y cuánto tardó el render. Hac
 
 Grabar un pintado y ver qué componente se ejecutó al teclear.
 
-### Código de partida
+### Fase 1 — La extensión, o el contador
 
-Pega estos dos archivos y recarga `http://localhost:5173`. Hay seis fichas y una caja «Buscar». El botón de una pendiente dice «Anotar» y, al pulsarlo, «Hecho».
+**Objetivo.** Tener la bandeja de esta página y un sitio donde leer el render: el Profiler, o la consola si la extensión no está.
 
-`bandeja/src/App.tsx`
+Estos dos archivos no llevan `memo`. Una letra vuelve a ejecutar las fichas. Si te saltas el pegado y aún tienes el `memo` de J04-02, una letra puede no ejecutar las fichas cuyo `item` no cambió: dilo al leer la grabación, no lo corrijas para «llenar» la barra.
+
+La pestaña Profiler lleva el logo de React y está al lado de Components. No es Rendimiento (Performance). Esa no lista `Tarjeta`.
+
+1. Sustituye `bandeja/src/App.tsx` por este archivo y guarda.
 
 ```tsx
 import { useState } from "react"
@@ -61,7 +65,7 @@ export default function App() {
 }
 ```
 
-`bandeja/src/componentes/Tarjeta.tsx`
+2. Sustituye `bandeja/src/componentes/Tarjeta.tsx` por este archivo y guarda.
 
 ```tsx
 import type { Entregable } from "../modelo"
@@ -93,28 +97,69 @@ export default function Tarjeta({
 }
 ```
 
-Hace falta la extensión React DevTools en el navegador donde se abre el puerto. Sin ella, `console.count(item.id)` en la primera línea de `Tarjeta` responde qué ficha se ejecutó, sin tiempos.
+3. Recarga `http://localhost:5173`. Vacía «Buscar».
+4. F12. Busca las pestañas con el logo de React.
+5. Si no están, instala React Developer Tools en ese navegador y recarga. Si no puedes instalarla, pasa a la fase 4 y usa el contador. Las fases 2 y 3 piden el Profiler.
 
-### 1 — Una letra grabada
+**Validación**
 
-**Dónde:** pestaña Profiler de React DevTools.
+- Hay seis fichas y la caja «Buscar».
+- O ves Profiler junto a Components, o has decidido seguir por la fase 4.
+- No has envuelto `Tarjeta` en `memo` para esta grabación, salvo que anotes que te saltaste el pegado.
 
-**Qué haces:**
+### Fase 2 — Grabar una letra
 
-1. Empieza a grabar.
-2. Escribe una letra en «Buscar».
-3. Para la grabación.
-4. Localiza `App` y `Tarjeta` en el árbol de ese pintado.
+**Objetivo.** Dejar un commit que corresponda a una letra en «Buscar», no a la recarga.
 
-**Experimento:** marca una ficha pendiente con el Profiler grabando. Para y mira si la ficha marcada y las demás salen juntas.
+Hay dos controles redondos. El círculo de grabar registra lo que hagas en la página ya abierta. El otro recarga y empieza a grabar: esa barra sería el primer pintado, no la letra.
 
-→ `App` sale al teclear, porque el estado de la caja vive ahí. `Tarjeta` sale en las que se volvieron a ejecutar. Si `memo` y `useCallback` ya están, una letra no tiene por qué ejecutar las fichas cuyo `item` no cambió. Marcar ejecuta al menos la ficha cuyo objeto es nuevo.
+1. Abre Profiler.
+2. Pulsa el círculo de grabar. La página no se recarga.
+3. Haz clic en «Buscar». Escribe una letra, `n`.
+4. Pulsa el mismo círculo para parar.
 
-**Validación:**
+**Validación**
 
-- Hay una grabación con al menos un commit.
-- No has cambiado código para «mejorar» la barra.
-- La página sigue usable.
+- Hay al menos una barra de commit.
+- La caja contiene `n` y las fichas siguen en pantalla.
+- No has cambiado código mientras grababas.
+
+### Fase 3 — Leer App y Tarjeta
+
+**Objetivo.** En el commit de esa letra, encontrar `App` y las `Tarjeta` que se ejecutaron.
+
+El estado de la caja vive en `App`, así que `App` sale. `Tarjeta` sale en las que se volvieron a ejecutar. Con los archivos de la fase 1, sin `memo`, son las que siguen en pantalla. Pulsa la barra de la letra. Si hay varias, la última es el tecleo.
+
+1. Pulsa la barra de esa grabación.
+2. En el gráfico, localiza el nombre `App`.
+3. Localiza `Tarjeta`. Pueden salir varias, una por ficha visible.
+4. No abras la pestaña Red para explicar esta barra. El Profiler mira el render.
+
+**Validación**
+
+- En el commit se lee `App`.
+- En el commit se lee `Tarjeta`.
+- La página sigue usable: borra la `n` y vuelven a leerse las seis fichas con la caja vacía.
+
+### Fase 4 — Sin la extensión
+
+**Objetivo.** Saber qué ficha se ejecutó al teclear, con `console.count`, cuando no hay Profiler.
+
+Si ya completaste la fase 3, esta fase no sustituye esa lectura. Síguela solo si no tienes la extensión. El contador no da tiempos. Dice qué id se llamó.
+
+1. En la primera línea del cuerpo de `Tarjeta`, añade `console.count(item.id)` y guarda.
+2. Recarga. F12, Consola.
+3. Escribe una letra. Cada id visible sube un paso, o dos con StrictMode.
+4. Borra la letra. Vuelven a subir los que siguen en pantalla.
+5. Deja el `console.count` si el laboratorio de esta página te manda usarlo. Si vas a usar el Profiler en el laboratorio, bórralo al acabar esta fase.
+
+**Validación**
+
+- Sin extensión: los id visibles suben al teclear.
+- Con extensión: la fase 3 ya tiene `App` y `Tarjeta`, y esta fase no te hace falta.
+- No has editado la lista para cambiar la barra del Profiler.
+
+→ `App` sale al teclear, porque el estado de la caja vive ahí. `Tarjeta` sale en las que se volvieron a ejecutar. Si `memo` y `useCallback` ya están porque no pegaste los archivos, una letra no tiene por qué ejecutar las fichas cuyo `item` no cambió.
 
 ## Comprueba tu entendimiento
 
@@ -146,47 +191,76 @@ La demostración grabó una letra. Aquí grabas un clic en una ficha.
 
 Ver en el Profiler el commit del clic que marca E-101. La pastilla de esa ficha pasa a `revisado`.
 
-### Código de partida
+### Fase 1 — E-101 pendiente, Profiler a la vista
 
-La bandeja en `http://localhost:5173`, con las seis fichas. E-101 sigue en `pendiente`: el botón dice «Anotar E-101». Si ya lo marcaste, recarga y vuelve a ese texto.
+**Objetivo.** Dejar el botón «Anotar E-101» y la pestaña Profiler abierta antes de grabar.
 
-Hace falta la extensión React Developer Tools en el mismo navegador. F12. Junto a las pestañas del navegador aparecen dos con el logo de React: Components y Profiler. Profiler no es la pestaña Rendimiento (Performance). Esa no lista `Tarjeta`.
+Si E-101 ya dice «Hecho», el clic no cambia el objeto y el commit no es el de esta práctica. Recargar restaura `datos.ts`: E-101 vuelve a `pendiente`. La pestaña que vas a usar lleva el logo de React. Rendimiento (Performance) no lista `Tarjeta`.
 
-Si no ves el logo, sigue el apartado «Sin la extensión» y salta el apartado del Profiler.
+1. Abre `http://localhost:5173`. Si el botón de «Informe de accesibilidad» no dice «Anotar E-101», recarga.
+2. F12. Localiza Profiler, al lado de Components.
+3. Si no ves el logo, salta a la fase 4. Las fases 2 y 3 son el Profiler.
 
-### 1 — Grabar el clic
+**Validación**
 
-Abre la pestaña Profiler. Hay dos controles redondos. Usa el círculo de grabar. El otro recarga la página y empieza a grabar: no lo uses, porque perderías el clic.
+- El botón dice «Anotar E-101». La pastilla dice `pendiente`.
+- O tienes abierta la pestaña Profiler, o vas a la fase 4.
 
-El círculo pasa a estado de grabación. En la página, pulsa el botón que dice exactamente «Anotar E-101». Es la ficha «Informe de accesibilidad». Hay otros dos «Anotar», E-103 y E-105: no valen para este paso.
+### Fase 2 — Grabar el clic
 
-El botón pasa a «Hecho E-101». La pastilla dice `revisado`.
+**Objetivo.** Registrar solo el clic en «Anotar E-101», con la página ya cargada.
 
-Vuelve a las herramientas y pulsa el mismo círculo para parar.
+El círculo de grabar no recarga. El otro control sí recarga y empezarías con el pintado inicial, sin el clic. E-103 y E-105 también dicen «Anotar». El botón de esta fase es el que incluye el texto `E-101`.
 
-### 2 — Leer el commit
+1. En Profiler, pulsa el círculo de grabar.
+2. En la página, pulsa «Anotar E-101».
+3. El botón pasa a «Hecho E-101». La pastilla dice `revisado`. Desaparece «Falta revisión» en esa ficha.
+4. Vuelve a las herramientas y pulsa el mismo círculo para parar.
 
-Aparece una barra por cada commit. Pulsa la barra de esa grabación. Si hay varias, pulsa la última: es el clic.
-
-El gráfico lista componentes por nombre. Localiza `App`. Localiza `Tarjeta`.
-
-- Si en `App` siguen `memo` y `useCallback`, la `Tarjeta` coloreada es la de E-101. Las otras pueden salir grises: en ese commit no se ejecutaron.
-- Si al empezar esta página pegaste `App` y `Tarjeta` sin `memo`, pueden salir varias `Tarjeta` coloreadas. También vale: el commit es el del clic.
-
-La fila que buscas es el nombre del componente en ese gráfico. La pestaña Red no entra en la comprobación.
-
-**Validación:**
+**Validación**
 
 - Hay al menos una barra de commit.
-- En la página, E-101 dice `revisado` y el botón dice «Hecho E-101».
+- En la página, el botón dice «Hecho E-101».
+- La pastilla de esa ficha dice `revisado`.
+
+### Fase 3 — Leer el commit del clic
+
+**Objetivo.** Encontrar `App` o `Tarjeta` en la barra de ese clic.
+
+Pulsa la última barra si hay varias: es el clic. El gráfico lista componentes por nombre.
+
+Con `memo` y `useCallback` todavía en `App`, la `Tarjeta` coloreada es la de E-101. Las otras pueden salir grises: en ese commit no se ejecutaron. Si esta página empezó pegando `App` y `Tarjeta` sin `memo`, pueden salir varias `Tarjeta` coloreadas. También vale: el commit es el del clic. No hace falta que las seis fichas hayan recibido otro `item`.
+
+La pestaña Red no entra en la comprobación. El clic no pide el documento.
+
+1. Pulsa la barra del clic.
+2. Localiza `App`.
+3. Localiza `Tarjeta`.
+4. No cambies código para hacer la barra más alta.
+
+**Validación**
+
 - En el gráfico se lee `App` o `Tarjeta`.
+- E-101 sigue en `revisado` al mirar la página.
+- No has abierto Red para decidir si el clic cuenta.
 
-### Sin la extensión
+### Fase 4 — Sin la extensión
 
-En la primera línea del cuerpo de `Tarjeta`, añade `console.count(item.id)` y guarda. Recarga. F12, Consola. Limpia la pantalla si quieres: el número no vuelve a cero hasta que recargas, y la recarga ya ha contado el primer pintado.
+**Objetivo.** Ver, con `console.count`, que el clic en E-101 ejecuta al menos esa ficha.
 
-Pulsa «Anotar E-101». El número de `E-101` sube. Si no hay `memo`, los otros id también suben. La pastilla de E-101 dice `revisado`.
+Sigue esta fase solo si no hay Profiler. El número de `console.count` no vuelve a cero al limpiar la consola. Recargar sí lo reinicia, y el primer pintado ya cuenta.
 
-Borra el `console.count` al acabar. La página de Lighthouse lo quiere fuera.
+1. En la primera línea del cuerpo de `Tarjeta`, añade `console.count(item.id)` y guarda.
+2. Recarga. Confirma que el botón vuelve a decir «Anotar E-101».
+3. F12, Consola. Anota el número de `E-101` y el de `E-104`.
+4. Pulsa «Anotar E-101».
+5. `E-101` sube. Si no hay `memo`, `E-104` también sube. La pastilla de E-101 dice `revisado`.
+6. Borra el `console.count` al acabar. La página de Lighthouse lo quiere fuera.
+
+**Validación**
+
+- `E-101` ha subido tras el clic.
+- El botón dice «Hecho E-101».
+- `Tarjeta.tsx` ya no contiene `console.count` cuando terminas el paso 6.
 
 → La grabación tiene el commit del clic. E-101 cambia a `revisado`. No hace falta que las seis fichas hayan recibido otro `item`.

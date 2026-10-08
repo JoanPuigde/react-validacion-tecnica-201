@@ -8,13 +8,16 @@ React pinta en dos momentos. El render llama a las funciones. El commit aplica e
 
 ### Objetivo
 
-Contar cuántas veces se ejecuta `Tarjeta` al teclear, antes de optimizar.
+Contar cuántas veces se ejecuta `Tarjeta` al teclear y al marcar, antes de optimizar.
 
-### Código de partida
+### Fase 1 — La bandeja de esta página
 
-Pega estos dos archivos y recarga `http://localhost:5173`. Hay seis fichas y una caja «Buscar». El botón de una pendiente dice «Anotar» y, al pulsarlo, «Hecho».
+**Objetivo.** Dejar `App` y `Tarjeta` como los de esta hoja, con seis fichas y la caja «Buscar», sin contador y sin `memo`.
 
-`bandeja/src/App.tsx`
+El contador de la fase siguiente mide estas funciones. Si en los archivos queda un `memo`, un `useCallback` o un `console.count` de otra página, el número no corresponde a este punto de partida. Sustituyes los dos archivos enteros y recargas.
+
+1. En `bandeja/`, con `npm run dev` en marcha, abre `http://localhost:5173`.
+2. Sustituye `bandeja/src/App.tsx` por este archivo y guarda.
 
 ```tsx
 import { useState } from "react"
@@ -61,7 +64,7 @@ export default function App() {
 }
 ```
 
-`bandeja/src/componentes/Tarjeta.tsx`
+3. Sustituye `bandeja/src/componentes/Tarjeta.tsx` por este archivo y guarda.
 
 ```tsx
 import type { Entregable } from "../modelo"
@@ -93,30 +96,64 @@ export default function Tarjeta({
 }
 ```
 
-### 1 — El contador
+4. Recarga `http://localhost:5173`. Vacía la caja si tiene texto.
 
-**Dónde:** `Tarjeta.tsx`, primera línea de la función.
+**Validación**
 
-**Qué haces:**
+- Se leen seis fichas, de E-101 a E-106.
+- Hay una caja con la etiqueta «Buscar».
+- E-101, E-103 y E-105 dicen «Anotar» y `pendiente`. E-102 ya dice «Hecho».
+- En `Tarjeta.tsx` no hay `console.count` ni `memo`.
 
-1. Añade `console.count(item.id)`.
-2. Recarga, abre la consola y límpiala.
-3. Escribe una letra. Borra la letra.
-4. Marca una ficha pendiente y mira si otras fichas también cuentan.
+### Fase 2 — Una letra, todas las fichas visibles
+
+**Objetivo.** Ver que una letra vuelve a ejecutar cada `Tarjeta` que sigue en pantalla.
+
+El estado del texto vive en `App`. Cada letra hace `setTexto`, React vuelve a llamar a `App` y, desde el `map`, a cada ficha visible. El contador va en la primera línea del cuerpo de `Tarjeta`, antes del `return`. Ahí corre en cada llamada. Fuera de la función el archivo lo evaluaría una vez al cargarlo y la consola no subiría al teclear. El número cuenta llamadas. La bandeja se ve igual.
+
+1. En `Tarjeta.tsx`, la función queda así en su arranque. El `return` no se toca. Guarda.
 
 ```tsx
-console.count(item.id)
+export default function Tarjeta({
+  item,
+  textoBoton = "Anotar",
+  alMarcar,
+}: TarjetaProps) {
+  console.count(item.id)
+  return (
 ```
 
-**Experimento:** anota el id que más crece.
+2. Recarga con F5. El número de `console.count` vuelve a cero solo al recargar. Limpiar la consola borra las líneas y deja el número donde estaba.
+3. F12, pestaña Consola. El filtro de niveles deja pasar `Info`.
+4. Antes de teclear ya pueden leerse `E-101: 1` o `E-101: 2`, y lo mismo en los otros id. Es el primer pintado. `main.tsx` envuelve la app en `StrictMode` y en desarrollo ese pintado puede contar dos veces.
+5. Haz clic en «Buscar». Escribe una sola letra, `n`.
+6. Mira la consola. Cada id que sigue en pantalla sube un paso (de 2 a 3, o de 2 a 4 si StrictMode dobla también esa ejecución). Suben las seis, porque `n` está vacío de filtro útil: las seis fichas siguen visibles. No mires un único total de seis saltos en una sola línea: hay una línea por id.
+7. Borra la letra. Los mismos id suben otro paso. La lista vuelve a las seis fichas.
 
-→ Una letra vuelve a ejecutar las fichas que siguen en pantalla. El padre se ha ejecutado y ha vuelto a pintar la lista. No has envuelto nada en `memo`.
+**Validación**
 
-**Validación:**
+- Tras la letra, cada id visible ha subido.
+- La página se ve igual que antes del contador: títulos, pastillas y botones en su sitio.
+- `console.count(item.id)` sigue en `Tarjeta`. La fase 3 lo usa.
 
-- La consola muestra `E-101: N` al teclear.
-- La página se ve igual.
-- El contador se queda para el laboratorio siguiente.
+### Fase 3 — Marcar también arrastra a las demás
+
+**Objetivo.** Ver que el clic en una ficha pendiente vuelve a ejecutar a las que siguen en pantalla.
+
+`marcar` vive en `App` y hace `setItems`. El padre se ejecuta otra vez y el `map` vuelve a llamar a las fichas visibles. Anotas el id que más crece para ver que no crece solo el de la ficha pulsada.
+
+1. Sin recargar, anota el número que muestra ahora `E-101` y el de otra ficha, por ejemplo `E-104`.
+2. Pulsa el botón que dice exactamente «Anotar E-101», en «Informe de accesibilidad». E-103 y E-105 también dicen «Anotar»: no valen para esta lectura.
+3. El botón pasa a «Hecho E-101». La pastilla dice `revisado`. Desaparece «Falta revisión» en esa ficha.
+4. En la consola, `E-101` ha subido. `E-104` también, y el resto de ids que siguen a la vista. La ficha marcada no es la única.
+
+**Validación**
+
+- «Hecho E-101» está en pantalla.
+- Al menos dos id distintos han subido con ese clic.
+- La línea `console.count(item.id)` sigue en `Tarjeta` hasta que el laboratorio de esta página la quite.
+
+→ Una letra, y un clic, vuelven a ejecutar las fichas que siguen en pantalla. El padre se ha ejecutado y ha vuelto a pintar la lista. No has envuelto nada en `memo`.
 
 ## Comprueba tu entendimiento
 
@@ -136,7 +173,7 @@ Escribe `Norte` y compara el contador de una ficha visible con el de una que des
 | Síntoma | Causa probable | Cómo arreglarlo |
 |---------|----------------|-----------------|
 | No cuenta | El `count` está fuera de la función | Primera línea del cuerpo de `Tarjeta` |
-| No hay caja | `App` no filtra | Pega el archivo de J02-02 |
+| No hay caja | `App` no filtra | Pega el archivo de la fase 1 |
 | Al teclear sale `App: 6` | El `count("App")` está dentro del `map`, en cada ficha | Primera línea de la función `App`, antes de los `useState` |
 | La consola sigue contando al borrar la línea | Quedó el `console.count` de `Tarjeta` | Bórralo también en `Tarjeta.tsx` y guarda |
 
@@ -148,15 +185,30 @@ La demostración contó ejecuciones dentro de `Tarjeta`. Aquí cuentas en `App`,
 
 Dejar claro que una letra ejecuta `App` una vez, aunque las fichas sean seis.
 
-### Código de partida
+### Fase 1 — La consola solo habla del padre
 
-La bandeja en `http://localhost:5173`, con la caja «Buscar» y las seis fichas. `npm run dev` sigue en marcha dentro de `bandeja/`.
+**Objetivo.** Quitar el contador de `Tarjeta` para que las líneas de las fichas no se mezclen con las de `App`.
 
-Abre `bandeja/src/componentes/Tarjeta.tsx`. Si la demostración dejó `console.count(item.id)`, borra esa línea y guarda. Si se queda, la consola mezcla el padre y las fichas y no se distingue quién sube.
+Si `console.count(item.id)` se queda, al teclear verás seis id y además `App`. Esta fase deja la ficha en silencio. La caja y el `map` siguen como en la demostración.
 
-### Qué haces
+1. Abre `bandeja/src/componentes/Tarjeta.tsx`.
+2. Borra la línea `console.count(item.id)`. El `return` no se toca. Guarda.
+3. Recarga `http://localhost:5173`. F12, Consola.
+4. Escribe una letra en «Buscar». La consola no escribe ids.
 
-1. Abre `bandeja/src/App.tsx`. La primera línea del cuerpo de `App`, antes de `useState`, queda así. Guarda.
+**Validación**
+
+- `Tarjeta.tsx` no contiene `console.count`.
+- La caja «Buscar» sigue filtrando.
+- Siguen las seis fichas cuando la caja está vacía.
+
+### Fase 2 — Una letra, un salto de App
+
+**Objetivo.** Ver que el padre sube una vez por letra, no una vez por ficha.
+
+`console.count("App")` va en la primera línea del cuerpo de `App`, antes de los `useState`. Ahí la función se cuenta una vez por ejecución. Dentro del `map` se contaría una vez por ficha y verías un salto de seis.
+
+1. Abre `bandeja/src/App.tsx`. El arranque de la función queda así. Guarda.
 
 ```tsx
 export default function App() {
@@ -164,24 +216,33 @@ export default function App() {
   const [texto, setTexto] = useState("")
 ```
 
-2. Recarga la página con F5. El número vuelve a cero solo al recargar. Limpiar la consola borra las líneas y deja el número donde estaba. F12, pestaña Consola. El filtro de niveles deja pasar `Info`.
+2. Recarga con F5. F12, Consola. El nivel `Info` está visible.
+3. Antes de teclear ya puede leerse `App: 1` o `App: 2`. Es el primer pintado, doblado si StrictMode repite el render de desarrollo.
+4. Haz clic en «Buscar». Escribe una sola letra, `n`.
+5. El número sube un paso: de 2 a 3, de 2 a 4, o el salto que te haya tocado. Sube una vez por la letra, o dos si StrictMode dobla también esa ejecución. No sube seis.
+6. Sin recargar, escribe otra letra, `o`. El número sube el mismo paso otra vez. En pantalla siguen las fichas que coinciden con `no`. La página no se siente más lenta.
 
-   Antes de teclear ya puede leerse `App: 1` o `App: 2`. Es el primer pintado. `main.tsx` envuelve la app en `StrictMode` y en desarrollo ese pintado puede contar dos veces.
+**Validación**
 
-3. Haz clic en la caja «Buscar». Escribe una sola letra, `n`.
+- Tras la primera letra el número de `App` subió un paso, no seis.
+- Tras la segunda letra subió ese mismo paso, otra vez.
+- No hay líneas `E-101`, `E-102` ni del resto de ids.
 
-   El número sube un paso: de 2 a 3, de 2 a 4, o el salto que te haya tocado. Sube una vez por la letra, o dos si StrictMode dobla también esa ejecución. No sube seis, una por ficha.
+### Fase 3 — Quitar el contador del padre
 
-4. Sin recargar, escribe otra letra, `o`. El número sube el mismo paso, otra vez. En pantalla siguen las fichas que coinciden con `no`. La página no se siente más lenta.
+**Objetivo.** Dejar `App` sin `console.count` antes de la página siguiente.
 
-5. Borra la línea `console.count("App")`. Guarda. Recarga, y escribe `p`.
+La lectura ya está hecha. La línea de depuración no se queda en el archivo.
 
-   Ya no aparece `App`. El filtro sigue. Vacía la caja antes de la página siguiente.
+1. Borra `console.count("App")` de `App.tsx`. Guarda.
+2. Recarga. Escribe `p` en «Buscar».
+3. La consola no escribe `App`.
+4. Vacía la caja.
 
-**Validación:**
+**Validación**
 
-- Tras la primera letra el número subió un paso, no seis.
-- `Tarjeta.tsx` ya no tiene `console.count`.
-- `App.tsx` tampoco, cuando terminas el paso 5.
+- `App.tsx` no contiene `console.count`.
+- `Tarjeta.tsx` tampoco.
+- El filtro sigue respondiendo con la caja vacía: vuelven las seis fichas.
 
-→ El contador que sube es el del padre. Las seis fichas son hijas de esa ejecución. StrictMode puede doblar el número: mira que suba al teclear, no el valor exacto.
+→ El contador que subía era el del padre. Las seis fichas son hijas de esa ejecución. StrictMode puede doblar el número: mira que suba al teclear, no el valor exacto.

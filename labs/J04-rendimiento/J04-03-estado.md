@@ -8,13 +8,15 @@
 
 ### Objetivo
 
-Ver que un `useMemo` sin `texto` miente, y que el array nuevo de `marcar` es el que permite pintar.
+Ver que un `useMemo` sin `texto` miente, y que al devolver `texto` el filtro vuelve. En seis fichas no hay una ganancia que contar.
 
-### Código de partida
+### Fase 1 — El filtro como const
 
-Pega estos dos archivos y recarga `http://localhost:5173`. Hay seis fichas y una caja «Buscar». El botón de una pendiente dice «Anotar» y, al pulsarlo, «Hecho».
+**Objetivo.** Dejar `visibles` calculado en cada pintado, sin `useMemo`, para tener con qué comparar.
 
-`bandeja/src/App.tsx`
+Esta fase borra el `memo` y el `useCallback` si la página anterior los dejó en estos dos archivos. El experimento de las dependencias se lee en la lista, no en el contador.
+
+1. Sustituye `bandeja/src/App.tsx` por este archivo y guarda.
 
 ```tsx
 import { useState } from "react"
@@ -61,7 +63,7 @@ export default function App() {
 }
 ```
 
-`bandeja/src/componentes/Tarjeta.tsx`
+2. Sustituye `bandeja/src/componentes/Tarjeta.tsx` por este archivo y guarda.
 
 ```tsx
 import type { Entregable } from "../modelo"
@@ -93,15 +95,27 @@ export default function Tarjeta({
 }
 ```
 
-### 1 — La dependencia
+3. Recarga `http://localhost:5173`. Vacía «Buscar». Escribe `Norte`.
 
-**Dónde:** el cálculo de `visibles`.
+**Validación**
 
-**Qué haces:**
+- Quedan dos fichas: «Informe de accesibilidad» (E-101) y «Manual de operación» (E-103).
+- `visibles` es un `const`, no un `useMemo`.
+- Vacía la caja: vuelven las seis fichas.
 
-1. Envuélvelo en `useMemo` con `[items, texto]`. Escribe `Norte`.
-2. Deja el array en `[items]`. Recarga y escribe.
-3. Devuelve `[items, texto]`.
+### Fase 2 — Las dos dependencias
+
+**Objetivo.** Envolver el filtro en `useMemo` con `[items, texto]` y ver que `Norte` sigue filtrando igual que el `const`.
+
+Con las dos dependencias el cálculo se rehace cuando cambia la lista o la caja. En seis fichas el resultado es el mismo que sin `useMemo`. Esta fase deja esa forma escrita para romperla en la siguiente.
+
+1. En `App.tsx`, amplía el import. No añadas una segunda línea `from "react"`.
+
+```tsx
+import { useMemo, useState } from "react"
+```
+
+2. Sustituye el `const visibles` por esto. Guarda.
 
 ```tsx
 const visibles = useMemo(
@@ -114,15 +128,56 @@ const visibles = useMemo(
 )
 ```
 
-**Experimento:** con `[items]`, la caja escribe y las fichas no se filtran. Si el editor avisa, señala que `texto` se usa y no está en el array.
+3. Recarga. Vacía la caja. Escribe `Norte`.
 
-→ Al restituir `texto`, `Norte` vuelve a filtrar. En seis fichas no hay una ganancia que contar. El `useMemo` sirvió para ver la dependencia rota.
+**Validación**
 
-**Validación:**
+- Otra vez E-101 y E-103.
+- El array de dependencias es `[items, texto]`.
+- Problems no marca ese array.
+
+### Fase 3 — Quitar texto
+
+**Objetivo.** Ver que, sin `texto` en el array, la caja escribe y las fichas no se mueven.
+
+`useMemo` rehace el filtro solo cuando cambia algo del array. Si `texto` no está, la primera lista queda guardada. El editor puede avisar de que `texto` se usa y no está en las dependencias. El aviso describe esta fase. No lo arregles todavía.
+
+1. Deja el array en `[items]`. Guarda.
+
+```tsx
+  [items],
+```
+
+2. Vacía «Buscar». Recarga con la caja vacía. El memo tiene que nacer con las seis fichas. Si recargas con `Norte` ya escrito, guarda el filtro y no verás la mentira.
+3. Escribe `Norte`.
+4. La caja muestra `Norte`. Las seis fichas siguen. No aparecen solo las de ese proveedor.
+
+**Validación**
+
+- El array es `[items]`.
+- Con `Norte` en la caja, siguen las seis fichas.
+- El aviso del editor, si sale, nombra `texto`.
+
+### Fase 4 — Devolver texto
+
+**Objetivo.** Restituir `texto` y ver que `Norte` vuelve a filtrar.
+
+La lista no se ha acelerado. Has visto para qué estaba la dependencia.
+
+1. El array vuelve a `[items, texto]`. Guarda.
+2. La caja sigue con `Norte`, o la escribes otra vez.
+3. Quedan E-101 y E-103.
+4. Vacía la caja. Vuelven las seis.
+5. `marcar` sigue con el `map` y `{ ...item, estado: "revisado" }`. No lo cambies en esta fase: ese objeto nuevo es el que permite pintar la pastilla. El reto de esta página lo rompe a propósito.
+
+**Validación**
 
 - Las dependencias son `[items, texto]`.
+- `Norte` deja dos fichas.
 - `marcar` sigue creando un objeto nuevo.
 - Problems vacío.
+
+→ Al restituir `texto`, `Norte` vuelve a filtrar. En seis fichas no hay una ganancia que contar. El `useMemo` sirvió para ver la dependencia rota.
 
 ## Comprueba tu entendimiento
 
@@ -160,21 +215,21 @@ La demostración memorizó `visibles` y rompió la dependencia `texto`. Aquí me
 
 Un párrafo `Ids: …` que sigue a las fichas cuando depende de `visibles`, y que se queda en los seis id cuando el array está vacío.
 
-### Código de partida
+### Fase 1 — El párrafo con los seis id
 
-En `App.tsx`, `visibles` es un `const` o un `useMemo` con `[items, texto]`. Las dos formas sirven para este ejercicio. `marcar` sigue copiando el objeto con `{ ...item, estado: "revisado" }`.
+**Objetivo.** Pintar los id visibles en un párrafo que depende de `visibles`.
 
-El import de React incluye `useMemo`. Si la demostración ya lo puso, no lo dupliques.
+El párrafo no incluye el estado, solo el id. Por eso marcar una ficha puede dejar la frase igual: el id sigue en la lista. El cálculo va justo debajo de `visibles`, que puede ser un `const` o un `useMemo` con `[items, texto]`. Las dos formas sirven.
+
+1. En `App.tsx`, el import incluye `useMemo`. Si la demostración ya lo puso, no lo dupliques.
 
 ```tsx
 import { useMemo, useState } from "react"
 ```
 
-Vacía la caja «Buscar» y recarga, para partir de las seis fichas.
-
-### 1 — El párrafo con los seis id
-
-Justo debajo de `visibles`, añade este cálculo.
+2. `marcar` sigue copiando el objeto con `{ ...item, estado: "revisado" }`.
+3. Vacía «Buscar» y recarga, para partir de las seis fichas.
+4. Justo debajo de `visibles`, añade este cálculo.
 
 ```tsx
 const ids = useMemo(
@@ -183,25 +238,43 @@ const ids = useMemo(
 )
 ```
 
-En el `return`, debajo del `input` y antes de la lista:
+5. En el `return`, debajo del `input` y antes de la lista:
 
 ```tsx
 <p>Ids: {ids}</p>
 ```
 
-Guarda. Encima de las fichas se lee:
+6. Guarda.
 
-`Ids: E-101, E-102, E-103, E-104, E-105, E-106`
+**Validación**
 
-### 2 — Marcar no cambia esa frase
+- Encima de las fichas se lee `Ids: E-101, E-102, E-103, E-104, E-105, E-106`.
+- El array de `ids` es `[visibles]`.
+- Hay seis fichas.
 
-Pulsa el botón «Anotar E-101». La pastilla de esa ficha pasa a `revisado` y el botón dice «Hecho E-101».
+### Fase 2 — Marcar no cambia esa frase
 
-El párrafo sigue con los mismos seis id. La frase no incluye el estado, solo el id, y E-101 sigue en la lista. Que no cambie es lo esperado.
+**Objetivo.** Ver que «Anotar E-101» cambia la pastilla y deja el párrafo con los mismos seis id.
 
-### 3 — El array vacío se queda viejo
+La frase no lleva el estado. E-101 sigue visible. Que el párrafo no cambie es lo esperado en esta fase. La mentira de las dependencias llega en la fase 3, al filtrar, no al marcar.
 
-En el `useMemo` de `ids`, deja el array de dependencias vacío.
+1. Pulsa el botón «Anotar E-101».
+2. Mira la pastilla y el botón de esa ficha.
+3. Lee el párrafo.
+
+**Validación**
+
+- La pastilla de E-101 dice `revisado`.
+- El botón dice «Hecho E-101».
+- El párrafo sigue con los seis id, en el mismo orden.
+
+### Fase 3 — El array vacío se queda viejo
+
+**Objetivo.** Dejar el `useMemo` de `ids` con `[]` y ver que `Norte` filtra las fichas mientras el párrafo conserva los seis id.
+
+El memo guarda el resultado del primer pintado y no vuelve a leer `visibles`. Hay que recargar con la caja vacía. Si recargas con `Norte` ya escrito, el párrafo nace filtrado y el experimento no se ve.
+
+1. Deja el array de `ids` vacío. Guarda.
 
 ```tsx
 const ids = useMemo(
@@ -210,27 +283,32 @@ const ids = useMemo(
 )
 ```
 
-Guarda. Vacía «Buscar» si tiene algo. Recarga la página con F5, todavía con la caja vacía. El párrafo tiene que nacer con los seis id. Si recargas con `Norte` ya escrito, el memo guarda el filtro y el experimento no se ve.
+2. Vacía «Buscar» si tiene algo.
+3. Recarga con F5, con la caja vacía. El párrafo tiene que mostrar los seis id antes de escribir.
+4. Escribe `Norte`.
+5. El editor puede avisar de que `visibles` se usa y no está en el array. El aviso describe esta mentira. No lo arregles todavía.
 
-Escribe `Norte`.
+**Validación**
 
-- En la lista quedan dos fichas: «Informe de accesibilidad» (E-101) y «Manual de operación» (E-103).
+- En la lista quedan «Informe de accesibilidad» (E-101) y «Manual de operación» (E-103).
 - El párrafo sigue diciendo `Ids: E-101, E-102, E-103, E-104, E-105, E-106`.
 
-El editor puede avisar de que `visibles` se usa y no está en el array. El aviso describe esta mentira. No lo arregles todavía.
+### Fase 4 — Restaurar la dependencia
 
-### 4 — Restaurar la dependencia
+**Objetivo.** Devolver `[visibles]` y ver que el párrafo se pone al día con `Norte`.
 
-Vuelve a poner `[visibles]`. Guarda. La caja sigue con `Norte`.
+Con la dependencia correcta, el párrafo y las fichas cuentan lo mismo.
 
-El párrafo pasa a `Ids: E-101, E-103`. Borra la caja: vuelven los seis id, en las fichas y en el párrafo.
+1. El array de `ids` vuelve a `[visibles]`. Guarda.
+2. La caja sigue con `Norte`.
+3. Lee el párrafo.
+4. Borra la caja y lee el párrafo otra vez.
+5. Si no quieres dejar el párrafo en la página, borra `<p>Ids: {ids}</p>` y el `useMemo` de `ids`. `visibles` se queda como estaba al empezar este laboratorio.
 
-Si no quieres dejar el párrafo en la página, borra `<p>Ids: {ids}</p>` y el `useMemo` de `ids`. `visibles` se queda como estaba al empezar este laboratorio.
+**Validación**
 
-**Validación:**
-
-- Con `[]`, tras recargar y escribir `Norte`, las fichas son dos y el párrafo lista seis id.
-- Con `[visibles]`, `Norte` deja el párrafo en `E-101, E-103`.
+- Con `Norte`, el párrafo dice `Ids: E-101, E-103`.
+- Con la caja vacía, el párrafo vuelve a los seis id y hay seis fichas.
 - Problems no marca el array `[visibles]`.
 
 → Con `[visibles]`, `Norte` cambia el párrafo. Con `[]`, la caja filtra las fichas y los id escritos se quedan en la primera lista.

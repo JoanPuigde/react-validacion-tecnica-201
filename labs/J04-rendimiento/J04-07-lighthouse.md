@@ -8,13 +8,15 @@ Lighthouse hace una pasada de carga. En seis fichas la nota sale holgada. Esa no
 
 ### Objetivo
 
-Leer una pasada de carga y quitar el contador de depuración.
+Leer una pasada de carga en escritorio y quitar el contador de depuración.
 
-### Código de partida
+### Fase 1 — La página que va a medir
 
-Pega estos dos archivos y recarga `http://localhost:5173`. Hay seis fichas y una caja «Buscar». El botón de una pendiente dice «Anotar» y, al pulsarlo, «Hecho».
+**Objetivo.** Dejar la bandeja en el 5173, con las seis fichas, antes de lanzar Lighthouse.
 
-`bandeja/src/App.tsx`
+Lighthouse recarga la dirección que esté abierta. Tiene que ser `http://localhost:5173`, con `npm run dev` en `bandeja/`. Estos dos archivos no llevan `console.count`. Si `Tarjeta` todavía lo tiene de otra página, la fase 3 lo quita. No lo quites antes de leer la nota si quieres comparar: la fase 2 mide la carga, y el contador no entra en esa nota.
+
+1. Sustituye `bandeja/src/App.tsx` por este archivo y guarda.
 
 ```tsx
 import { useState } from "react"
@@ -61,7 +63,7 @@ export default function App() {
 }
 ```
 
-`bandeja/src/componentes/Tarjeta.tsx`
+2. Sustituye `bandeja/src/componentes/Tarjeta.tsx` por este archivo y guarda. Si quieres conservar un `console.count` para la comparación de la fase 3, no pegues este archivo y deja el que ya cuenta. Si lo pegas, el contador ya no está y la fase 3 solo comprueba que sigue fuera.
 
 ```tsx
 import type { Entregable } from "../modelo"
@@ -93,28 +95,54 @@ export default function Tarjeta({
 }
 ```
 
-Lighthouse viene con el navegador, en F12. Si `Tarjeta` tiene `console.count`, esta página lo quita al final.
+3. Recarga `http://localhost:5173`.
 
-### 1 — Una pasada y el contador fuera
+**Validación**
 
-**Dónde:** pestaña Lighthouse. Luego `Tarjeta.tsx`.
+- Hay seis fichas y la caja «Buscar».
+- El puerto responde.
+- Sabes si `Tarjeta.tsx` contiene `console.count` o no. Lo usarás en la fase 3.
 
-**Qué haces:**
+### Fase 2 — Una pasada de escritorio
 
-1. Categoría Rendimiento. Analiza la carga de la página.
-2. Lee un número: el peso, el bloqueo o la puntuación. No cambies código para subirlo.
-3. Borra `console.count` de `Tarjeta`.
-4. Recarga y escribe una letra. La consola ya no cuenta ids.
+**Objetivo.** Leer un número de la categoría Rendimiento, sin editar código para subirlo.
 
-**Experimento:** repite la pasada si quieres. Compara la holgura de la nota con lo que el contador decía antes de borrarlo.
+Lighthouse viene con el navegador. F12, pestaña Lighthouse. Si no está en la barra, pulsa `>>` y elígela. El modo es Navigation. El dispositivo de esta fase es Desktop (Escritorio). Marca solo Rendimiento (Performance): la pasada es más corta y el número que lees es el de esa categoría.
 
-→ En seis fichas la pasada sale holgada. El contador, mientras estuvo, decía que había ejecuciones de más. Son lecturas distintas. `memo` y `useCallback` pueden quedarse. El `console.count` no.
+«Analyze page load» recarga sola la página. No pulses la bandeja mientras el círculo no haya aparecido. El número grande, de 0 a 100, es la puntuación. También puedes leer el peso o el bloqueo, el que tengas a la vista. Anótalo como escritorio. El laboratorio lo pone al lado del de móvil. Una segunda pasada puede variar unos puntos: te quedas con el que ha salido.
 
-**Validación:**
+1. Abre Lighthouse.
+2. Modo Navigation. Dispositivo Desktop. Categoría Rendimiento. El resto sin marcar.
+3. Pulsa «Analyze page load». Espera al círculo.
+4. Anota la puntuación, o el peso, o el bloqueo. Una cifra basta.
+5. No cambies `Tarjeta`, el filtro ni `memo` para subirla.
+
+**Validación**
+
+- Tienes un número de escritorio apuntado.
+- La pasada ha terminado: se ve el informe, no una barra a medias.
+- No has editado componentes en esta fase.
+
+### Fase 3 — El contador fuera
+
+**Objetivo.** Dejar `Tarjeta` sin `console.count` y comprobar que una letra ya no escribe ids.
+
+La nota de la fase 2 mira la carga. El contador, si estuvo, miraba renders. Son lecturas distintas. `memo` y `useCallback` pueden quedarse si otra página los dejó y no pegaste el `Tarjeta` de la fase 1. El `console.count` no se queda.
+
+1. Abre `bandeja/src/componentes/Tarjeta.tsx`.
+2. Si hay `console.count`, borra esa línea. Guarda. Si no hay ninguna, el archivo ya está listo.
+3. Busca en el proyecto otra línea `console.count` por si la dejaste en `App.tsx`. Bórrala también.
+4. Recarga. F12, Consola. Limpia la pantalla. Escribe una letra en «Buscar».
+5. La consola no escribe `E-101` ni `App`.
+
+**Validación**
 
 - Has leído al menos un número de Lighthouse.
 - `Tarjeta.tsx` no contiene `console.count`.
-- El filtro y marcar siguen igual.
+- Una letra no escribe ids en la consola.
+- El filtro y marcar siguen igual: `Norte` deja dos fichas, y «Anotar E-101» pasa esa ficha a `revisado` si todavía estaba pendiente. Recarga si Lighthouse te dejó la caja en otro estado.
+
+→ En seis fichas la pasada sale holgada. El contador, mientras estuvo, decía que había ejecuciones de más. Son lecturas distintas. `memo` y `useCallback` pueden quedarse. El `console.count` no.
 
 ## Comprueba tu entendimiento
 
@@ -146,47 +174,63 @@ La demostración lanzó Lighthouse en escritorio y no persiguió la nota. Aquí 
 
 Sacar una segunda pasada con móvil y quedarte con las dos notas, sin editar `Tarjeta`.
 
-### Código de partida
+### Fase 1 — El número de escritorio, si te falta
 
-`npm run dev` dentro de `bandeja/`. La página es `http://localhost:5173`. En `Tarjeta.tsx` no queda ningún `console.count`. Si queda, bórralo y guarda antes de medir: la pasada no es el sitio para depurar renders.
+**Objetivo.** Tener apuntada la cifra de escritorio antes de cambiar el dispositivo.
 
-Si en la demostración no anotaste el número de escritorio, el paso 1 lo saca. Si ya lo tienes en un papel, pasa al paso 2.
+Si la demostración ya te la dejó en un papel, anótala al margen y pasa a la fase 2. Esta fase repite la pasada de escritorio solo cuando esa cifra no existe. `Tarjeta.tsx` no lleva `console.count`. Si queda, bórralo y guarda antes de medir: la pasada no es el sitio para depurar renders.
 
-### 1 — El número de escritorio, si te falta
+1. Confirma que `npm run dev` responde en `http://localhost:5173`.
+2. Busca `console.count` en `Tarjeta.tsx`. Si está, bórralo y guarda.
+3. Si ya tienes el número de escritorio, sigue a la fase 2.
+4. Si no lo tienes: F12, Lighthouse, modo Navigation, dispositivo Desktop, solo Rendimiento. «Analyze page load». Espera al círculo. No pulses la bandeja durante la pasada.
+5. Anota el número grande, de 0 a 100, como escritorio.
 
-F12. Abre Lighthouse. Si no está en la barra, pulsa `>>` y elígela.
+**Validación**
 
-Deja el modo en Navigation. Dispositivo: Desktop (Escritorio). En categorías marca solo Rendimiento (Performance) y quita el resto: la pasada es más corta y coincide con lo que vas a leer.
+- Tienes una cifra llamada escritorio.
+- `Tarjeta.tsx` no contiene `console.count`.
+- No has cambiado componentes para subir la cifra.
 
-Pulsa «Analyze page load». La herramienta recarga sola la página. Espera al círculo. No pulses la bandeja mientras tanto.
+### Fase 2 — La pasada de móvil
 
-El número es el grande, de 0 a 100, junto a Rendimiento. Anótalo como escritorio. Una segunda pasada en el mismo dispositivo puede variar unos puntos: te quedas con el que ha salido.
+**Objetivo.** Sacar el número de móvil con la misma categoría, sin tocar el código.
 
-### 2 — Móvil
+El dispositivo pasa a Mobile (Móvil). El resto del panel se queda: Navigation, solo Rendimiento. Lighthouse recarga otra vez. El estado de la bandeja (una marca, un filtro) se pierde porque vuelve a cargar `/`.
 
-En el mismo panel, dispositivo Mobile (Móvil). Categoría Rendimiento, el resto sin marcar. «Analyze page load» otra vez. Espera al círculo.
+1. En el mismo panel, dispositivo Mobile.
+2. Categoría Rendimiento marcada. El resto sin marcar.
+3. «Analyze page load». Espera al círculo.
+4. Anota el número grande como móvil, al lado del de escritorio.
 
-Anota ese número como móvil, al lado del de escritorio.
+**Validación**
 
-### 3 — Dónde dejarlos, y quitarlos
+- Tienes dos números, con el dispositivo escrito al lado de cada uno.
+- La segunda pasada es la de móvil.
+- `Tarjeta.tsx` sigue sin `console.count` y sin otros cambios de esta fase.
 
-Si los apuntas en código, la primera línea de `bandeja/src/App.tsx` puede ser un comentario con tus dos cifras:
+### Fase 3 — Apuntarlos y quitar el apunte del código
+
+**Objetivo.** Conservar las dos cifras fuera de los componentes, y dejar `App.tsx` como estaba.
+
+El papel basta. Si las escribes en código, es un comentario de un momento en la primera línea de `App.tsx`, y se borra antes de seguir. Esas cifras del ejemplo no son las tuyas.
+
+1. Copia tus dos números a un papel, o pon este comentario con tus cifras y guárdalo solo para leerlo.
 
 ```tsx
 // Lighthouse: escritorio 90, móvil 80
 ```
 
-Esas cifras son un ejemplo de formato. Escribe las que te han salido a ti.
+2. No cambies `Tarjeta`, el filtro ni `memo` para acercar un número al otro.
+3. Borra el comentario si lo pusiste. `App.tsx` vuelve a empezar en el `import`.
+4. Recarga. Escribe `Norte`: quedan E-101 y E-103. Vacía la caja.
+5. Pulsa «Anotar E-101». La pastilla pasa a `revisado` y el botón dice «Hecho E-101».
 
-No cambies `Tarjeta`, el filtro ni `memo` para subirlas. Guarda el comentario solo un momento, léelo, y bórralo. El papel vale igual. Al borrar, `App.tsx` vuelve a empezar en el `import`.
+**Validación**
 
-Recarga. La caja «Buscar» filtra. «Anotar E-101» sigue pasando esa ficha a `revisado`. La pasada de móvil no ha dejado la marca puesta: Lighthouse recarga `/` y el estado de memoria se pierde.
-
-**Validación:**
-
-- Tienes dos números, escritorio y móvil.
-- `Tarjeta.tsx` no contiene `console.count`.
-- El comentario, si lo pusiste, ya no está.
+- Sigues teniendo las dos cifras, en papel o en la cabeza, no dentro de un archivo.
+- El comentario ya no está en `App.tsx`.
 - El filtro y el botón responden.
+- `Tarjeta.tsx` no se ha editado en este laboratorio para subir la nota.
 
 → Hay dos números. Ninguno ha obligado a tocar `memo` ni el filtro. La bandeja se usa igual.
