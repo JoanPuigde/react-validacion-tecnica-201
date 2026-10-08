@@ -113,4 +113,16 @@ Laboratorios:
 - Checklist — [J05-05](labs/J05-testing/J05-05-checklist.md)
 - Corrección — [J05-06](labs/J05-testing/J05-06-riesgos.md)
 
+## Jornada 6 — Estudiar y reportar el rendimiento
+
+Objetivo: saber qué hace cada herramienta, cómo se usa y para qué sirve el dato. La app se mira con el entorno de desarrollo. Índice: [jornada 6](labs/J06-informe/README.md).
+
+- [Qué herramienta](labs/J06-informe/J06-01-mapa.md)
+- [Chrome DevTools](labs/J06-informe/J06-02-devtools.md)
+- [React DevTools](labs/J06-informe/J06-03-react.md)
+- [Lighthouse](labs/J06-informe/J06-04-lighthouse.md)
+- [El informe](labs/J06-informe/J06-05-informe.md)
+
+Sin demo ni laboratorio. El cierre es saber qué contarle al autor.
+
 → Empieza por **[Jornada 1 — Fundamentos de React](labs/J01-fundamentos/README.md)**.
