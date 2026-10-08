@@ -149,32 +149,88 @@ La pastilla puede no cambiar: la referencia del array es la misma. El `map` con 
 |---------|----------------|-----------------|
 | El filtro no vuelve | El array se quedó en `[items]` | `[items, texto]` |
 | `useMemo` no está definido | Falta en el import de `App` | Añádelo junto a `useState` |
+| Con `[]` el párrafo ya nace filtrado | Escribiste `Norte` antes de recargar | Vacía la caja, guarda el `[]`, recarga, y luego escribe `Norte` |
+| Con `[visibles]` el párrafo no filtra | El `useMemo` de `ids` sigue en `[]` | El array de `ids` es `[visibles]` |
 
 ## Laboratorio
 
-La demostración memorizó `visibles` y rompió la dependencia `texto`. Aquí memorizas la lista de ids, y la dependencia que miente es `items`.
+La demostración memorizó `visibles` y rompió la dependencia `texto`. Aquí memorizas la lista de ids. La dependencia que miente es la de ese segundo `useMemo`: si la dejas en `[]`, el párrafo no se entera del filtro.
 
 ### Objetivo
 
-Un párrafo con los id visibles que se queda viejo si olvidas `items` al marcar.
+Un párrafo `Ids: …` que sigue a las fichas cuando depende de `visibles`, y que se queda en los seis id cuando el array está vacío.
 
 ### Código de partida
 
-`visibles` es un `const` o un `useMemo` con `[items, texto]`. `marcar` copia el objeto.
+En `App.tsx`, `visibles` es un `const` o un `useMemo` con `[items, texto]`. Las dos formas sirven para este ejercicio. `marcar` sigue copiando el objeto con `{ ...item, estado: "revisado" }`.
 
-### Qué haces
-
-1. Añade este `useMemo` y el párrafo.
-2. Pulsa «Anotar E-101». Los id no cambian, el párrafo puede quedar igual: no incluye el estado. Está bien.
-3. Quita `visibles` del array y deja `[]`. Escribe `Norte`. El párrafo sigue listando los seis id.
-4. Restaura `[visibles]`. `Norte` deja solo los id de ese proveedor. Borra el párrafo si no lo quieres.
+El import de React incluye `useMemo`. Si la demostración ya lo puso, no lo dupliques.
 
 ```tsx
-const ids = useMemo(() => visibles.map((item) => item.id).join(", "), [visibles])
+import { useMemo, useState } from "react"
 ```
+
+Vacía la caja «Buscar» y recarga, para partir de las seis fichas.
+
+### 1 — El párrafo con los seis id
+
+Justo debajo de `visibles`, añade este cálculo.
+
+```tsx
+const ids = useMemo(
+  () => visibles.map((item) => item.id).join(", "),
+  [visibles],
+)
+```
+
+En el `return`, debajo del `input` y antes de la lista:
 
 ```tsx
 <p>Ids: {ids}</p>
 ```
 
-→ Con `[visibles]`, `Norte` cambia el párrafo. Con `[]`, la caja filtra las fichas y los id escritos no se enteran.
+Guarda. Encima de las fichas se lee:
+
+`Ids: E-101, E-102, E-103, E-104, E-105, E-106`
+
+### 2 — Marcar no cambia esa frase
+
+Pulsa el botón «Anotar E-101». La pastilla de esa ficha pasa a `revisado` y el botón dice «Hecho E-101».
+
+El párrafo sigue con los mismos seis id. La frase no incluye el estado, solo el id, y E-101 sigue en la lista. Que no cambie es lo esperado.
+
+### 3 — El array vacío se queda viejo
+
+En el `useMemo` de `ids`, deja el array de dependencias vacío.
+
+```tsx
+const ids = useMemo(
+  () => visibles.map((item) => item.id).join(", "),
+  [],
+)
+```
+
+Guarda. Vacía «Buscar» si tiene algo. Recarga la página con F5, todavía con la caja vacía. El párrafo tiene que nacer con los seis id. Si recargas con `Norte` ya escrito, el memo guarda el filtro y el experimento no se ve.
+
+Escribe `Norte`.
+
+- En la lista quedan dos fichas: «Informe de accesibilidad» (E-101) y «Manual de operación» (E-103).
+- El párrafo sigue diciendo `Ids: E-101, E-102, E-103, E-104, E-105, E-106`.
+
+El editor puede avisar de que `visibles` se usa y no está en el array. El aviso describe esta mentira. No lo arregles todavía.
+
+### 4 — Restaurar la dependencia
+
+Vuelve a poner `[visibles]`. Guarda. La caja sigue con `Norte`.
+
+El párrafo pasa a `Ids: E-101, E-103`. Borra la caja: vuelven los seis id, en las fichas y en el párrafo.
+
+Si no quieres dejar el párrafo en la página, borra `<p>Ids: {ids}</p>` y el `useMemo` de `ids`. `visibles` se queda como estaba al empezar este laboratorio.
+
+**Validación:**
+
+- Con `[]`, tras recargar y escribir `Norte`, las fichas son dos y el párrafo lista seis id.
+- Con `[visibles]`, `Norte` deja el párrafo en `E-101, E-103`.
+- Problems no marca el array `[visibles]`.
+
+→ Con `[visibles]`, `Norte` cambia el párrafo. Con `[]`, la caja filtra las fichas y los id escritos se quedan en la primera lista.

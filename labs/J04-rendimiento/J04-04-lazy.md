@@ -159,6 +159,8 @@ React avisa de que falta un límite de `Suspense`. El pie vuelve a ir dentro.
 |---------|----------------|-----------------|
 | `Pie is not defined` | Falta el `const Pie = lazy(...)` | El `lazy` está en `App`, no dentro del `return` |
 | El respaldo no desaparece | La ruta del import no resuelve | `./componentes/Pie` |
+| `Ayuda` sale en Red al recargar | La etiqueta está siempre en el `return`, sin el `abierta ?` | Envuelve `<Ayuda />` en `{abierta ? ( … ) : null}` |
+| El botón no pide ningún archivo | `lazy` está dentro de la función `App` | `const Ayuda = lazy(...)` va junto a los import, fuera del componente |
 
 ## Laboratorio
 
@@ -170,15 +172,11 @@ La demostración cargó el pie al arrancar la página. Aquí el trozo llega solo
 
 ### Código de partida
 
-`App` pinta la lista. Si ya tienes `Pie` con `lazy`, no lo uses: este archivo es otro.
+`App` pinta la lista en el 5173. Si la demostración dejó `Pie` con `lazy`, no lo reutilices: este componente es otro archivo. El pie puede quedarse en la página. La fila que vas a buscar en Red se llama `Ayuda`, no `Pie`.
 
-### Qué haces
+### 1 — El archivo
 
-1. Crea `bandeja/src/componentes/Ayuda.tsx`.
-2. En `App`, el estado, el `lazy` y el botón.
-3. Recarga con la Red abierta. `Ayuda` no se pide todavía.
-4. Pulsa «Ayuda». Aparece el párrafo. En Red, el trozo es un archivo distinto del de `App`.
-5. Puedes dejarlo o quitarlo al acabar.
+Crea `bandeja/src/componentes/Ayuda.tsx`.
 
 ```tsx
 export default function Ayuda() {
@@ -186,23 +184,65 @@ export default function Ayuda() {
 }
 ```
 
+### 2 — El lazy fuera del componente
+
+En `bandeja/src/App.tsx`, deja un solo import de React. Si ya tenías `useState`, amplíalo: no añadas una segunda línea `from "react"`.
+
 ```tsx
 import { lazy, Suspense, useState } from "react"
+```
 
+Debajo de los import, y antes de `export default function App`, declara el lazy. Ahí se ejecuta una vez. Dentro de `App` nacería otro componente en cada pintado.
+
+```tsx
 const Ayuda = lazy(() => import("./componentes/Ayuda"))
 ```
+
+Dentro de `App`, junto a los otros `useState`:
 
 ```tsx
 const [abierta, setAbierta] = useState(false)
 ```
 
+En el `return`, después de `</ul>` y antes de `</main>`:
+
 ```tsx
-<button type="button" onClick={() => setAbierta(true)}>Ayuda</button>
+<button type="button" onClick={() => setAbierta(true)}>
+  Ayuda
+</button>
 {abierta ? (
   <Suspense fallback={<p>Abriendo ayuda…</p>}>
     <Ayuda />
   </Suspense>
 ) : null}
 ```
+
+Guarda.
+
+### 3 — La red antes del clic
+
+F12, pestaña Red. Pulsa el icono de prohibido para vaciar la lista. En la barra de filtros pulsa `JS`, para quedarte con los archivos de script.
+
+Recarga la página con la pestaña Red abierta.
+
+Bajo la lista se ve el botón «Ayuda». No se lee «La marca vive en memoria hasta que recargas.» Ni «Abriendo ayuda…».
+
+En la columna Nombre no hay ninguna fila cuyo nombre contenga `Ayuda`. Puede haber una fila `Pie` si dejaste el de la demostración: esa llega al recargar, y no es la de este ejercicio.
+
+### 4 — El clic
+
+Pulsa «Ayuda».
+
+Aparece una fila nueva cuyo nombre contiene `Ayuda`. Es un archivo distinto de `App.tsx`. Debajo del botón se lee «La marca vive en memoria hasta que recargas.»
+
+«Abriendo ayuda…» puede cruzar la pantalla tan rápido que no llegues a leerlo. Si la frase final está y la fila `Ayuda` apareció al pulsar, el respaldo cumplió. Vuelve a pulsar el botón: `abierta` ya es verdadero, no sale otra fila.
+
+Al acabar puedes dejar el botón o quitar el estado, el `lazy`, la etiqueta y el archivo `Ayuda.tsx`.
+
+**Validación:**
+
+- Al recargar, con el filtro `JS`, no hay fila `Ayuda`.
+- Tras el clic, la fila existe y se lee la frase de la marca.
+- La lista de fichas sigue en `App`, no dentro de `Ayuda.tsx`.
 
 → Antes del clic no está el párrafo ni su archivo. Después del clic se lee la frase. La lista no se ha ido a ese trozo.

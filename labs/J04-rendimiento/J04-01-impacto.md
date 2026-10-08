@@ -137,6 +137,8 @@ Escribe `Norte` y compara el contador de una ficha visible con el de una que des
 |---------|----------------|-----------------|
 | No cuenta | El `count` está fuera de la función | Primera línea del cuerpo de `Tarjeta` |
 | No hay caja | `App` no filtra | Pega el archivo de J02-02 |
+| Al teclear sale `App: 6` | El `count("App")` está dentro del `map`, en cada ficha | Primera línea de la función `App`, antes de los `useState` |
+| La consola sigue contando al borrar la línea | Quedó el `console.count` de `Tarjeta` | Bórralo también en `Tarjeta.tsx` y guarda |
 
 ## Laboratorio
 
@@ -148,13 +150,38 @@ Dejar claro que una letra ejecuta `App` una vez, aunque las fichas sean seis.
 
 ### Código de partida
 
-La caja «Buscar» y el `map`. Quita `console.count` de `Tarjeta` si la demostración lo dejó.
+La bandeja en `http://localhost:5173`, con la caja «Buscar» y las seis fichas. `npm run dev` sigue en marcha dentro de `bandeja/`.
+
+Abre `bandeja/src/componentes/Tarjeta.tsx`. Si la demostración dejó `console.count(item.id)`, borra esa línea y guarda. Si se queda, la consola mezcla el padre y las fichas y no se distingue quién sube.
 
 ### Qué haces
 
-1. Como primera línea de `App`, `console.count("App")`.
-2. Limpia la consola. Escribe una letra.
-3. Mira cuántas veces sube `App`.
-4. Borra el `console.count`.
+1. Abre `bandeja/src/App.tsx`. La primera línea del cuerpo de `App`, antes de `useState`, queda así. Guarda.
 
-→ Sube el contador de `App`. No sale un salto por ficha: las fichas son hijas, este contador es el padre. En desarrollo, StrictMode puede doblar el número. Mira si sube al teclear, no el valor exacto.
+```tsx
+export default function App() {
+  console.count("App")
+  const [texto, setTexto] = useState("")
+```
+
+2. Recarga la página con F5. El número vuelve a cero solo al recargar. Limpiar la consola borra las líneas y deja el número donde estaba. F12, pestaña Consola. El filtro de niveles deja pasar `Info`.
+
+   Antes de teclear ya puede leerse `App: 1` o `App: 2`. Es el primer pintado. `main.tsx` envuelve la app en `StrictMode` y en desarrollo ese pintado puede contar dos veces.
+
+3. Haz clic en la caja «Buscar». Escribe una sola letra, `n`.
+
+   El número sube un paso: de 2 a 3, de 2 a 4, o el salto que te haya tocado. Sube una vez por la letra, o dos si StrictMode dobla también esa ejecución. No sube seis, una por ficha.
+
+4. Sin recargar, escribe otra letra, `o`. El número sube el mismo paso, otra vez. En pantalla siguen las fichas que coinciden con `no`. La página no se siente más lenta.
+
+5. Borra la línea `console.count("App")`. Guarda. Recarga, y escribe `p`.
+
+   Ya no aparece `App`. El filtro sigue. Vacía la caja antes de la página siguiente.
+
+**Validación:**
+
+- Tras la primera letra el número subió un paso, no seis.
+- `Tarjeta.tsx` ya no tiene `console.count`.
+- `App.tsx` tampoco, cuando terminas el paso 5.
+
+→ El contador que sube es el del padre. Las seis fichas son hijas de esa ejecución. StrictMode puede doblar el número: mira que suba al teclear, no el valor exacto.

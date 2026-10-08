@@ -135,6 +135,8 @@ Marca E-101 y lanza otra pasada. Lighthouse recarga la página.
 |---------|----------------|-----------------|
 | Lighthouse no abre la app | El puerto no responde | `npm run dev` en `bandeja/` |
 | La consola sigue contando | Quedó otro `console.count` | Búscalo en `Tarjeta.tsx` y bórralo |
+| No veo la pestaña Lighthouse | Está en el menú de pestañas escondidas | F12, el botón `>>`, y elige Lighthouse |
+| La pasada falla al momento | Otra extensión bloquea la página | Cierra el aviso del informe y lanza otra vez, con la bandeja en el 5173 |
 
 ## Laboratorio
 
@@ -146,13 +148,45 @@ Sacar una segunda pasada con móvil y quedarte con las dos notas, sin editar `Ta
 
 ### Código de partida
 
-`npm run dev` en el 5173. Lighthouse en F12. Sin `console.count` en la ficha.
+`npm run dev` dentro de `bandeja/`. La página es `http://localhost:5173`. En `Tarjeta.tsx` no queda ningún `console.count`. Si queda, bórralo y guarda antes de medir: la pasada no es el sitio para depurar renders.
 
-### Qué haces
+Si en la demostración no anotaste el número de escritorio, el paso 1 lo saca. Si ya lo tienes en un papel, pasa al paso 2.
 
-1. Categoría Rendimiento, dispositivo móvil, analiza.
-2. Anota el número al lado del de escritorio, en un comentario de `App` o en un papel.
-3. No cambies componentes para subir la nota.
-4. Borra el comentario si lo pusiste en el código. Las dos notas bastan como lectura.
+### 1 — El número de escritorio, si te falta
+
+F12. Abre Lighthouse. Si no está en la barra, pulsa `>>` y elígela.
+
+Deja el modo en Navigation. Dispositivo: Desktop (Escritorio). En categorías marca solo Rendimiento (Performance) y quita el resto: la pasada es más corta y coincide con lo que vas a leer.
+
+Pulsa «Analyze page load». La herramienta recarga sola la página. Espera al círculo. No pulses la bandeja mientras tanto.
+
+El número es el grande, de 0 a 100, junto a Rendimiento. Anótalo como escritorio. Una segunda pasada en el mismo dispositivo puede variar unos puntos: te quedas con el que ha salido.
+
+### 2 — Móvil
+
+En el mismo panel, dispositivo Mobile (Móvil). Categoría Rendimiento, el resto sin marcar. «Analyze page load» otra vez. Espera al círculo.
+
+Anota ese número como móvil, al lado del de escritorio.
+
+### 3 — Dónde dejarlos, y quitarlos
+
+Si los apuntas en código, la primera línea de `bandeja/src/App.tsx` puede ser un comentario con tus dos cifras:
+
+```tsx
+// Lighthouse: escritorio 90, móvil 80
+```
+
+Esas cifras son un ejemplo de formato. Escribe las que te han salido a ti.
+
+No cambies `Tarjeta`, el filtro ni `memo` para subirlas. Guarda el comentario solo un momento, léelo, y bórralo. El papel vale igual. Al borrar, `App.tsx` vuelve a empezar en el `import`.
+
+Recarga. La caja «Buscar» filtra. «Anotar E-101» sigue pasando esa ficha a `revisado`. La pasada de móvil no ha dejado la marca puesta: Lighthouse recarga `/` y el estado de memoria se pierde.
+
+**Validación:**
+
+- Tienes dos números, escritorio y móvil.
+- `Tarjeta.tsx` no contiene `console.count`.
+- El comentario, si lo pusiste, ya no está.
+- El filtro y el botón responden.
 
 → Hay dos números. Ninguno ha obligado a tocar `memo` ni el filtro. La bandeja se usa igual.

@@ -136,6 +136,8 @@ Abre `http://localhost:5173/entregables.json` desde la barra de direcciones.
 |---------|----------------|-----------------|
 | Cada letra pide el HTML | No estás en el puerto de Vite | `npm run dev`, puerto 5173 |
 | Performance vacío | La grabación no estaba en marcha al teclear | Graba, teclea, para |
+| Al teclear aparecen muchas filas | Estás contando los `.js` de Vite | En la barra de Red pulsa el filtro `Doc` y cuenta solo esa fila |
+| No encuentro Slow 3G | El desplegable trae otros nombres | La opción más lenta que no sea Offline: `3G` o `Slow 4G` |
 
 ## Laboratorio
 
@@ -147,13 +149,47 @@ Ver el documento y, si existe, `entregables.json`, con la red en «Slow 3G». Te
 
 ### Código de partida
 
-`npm run dev` en el 5173. F12, pestaña Red.
+`npm run dev` dentro de `bandeja/`. La página abierta es `http://localhost:5173`. F12.
 
-### Qué haces
+El `App.tsx` de esta página importa `datos.ts`. Con ese archivo no hay fila `entregables.json`. Si tu `App` sí pide el JSON, la fila existe y el paso 4 te dice qué hacer con ella.
 
-1. En Red, elige una limitación lenta (Slow 3G o similar).
-2. Recarga. Anota cuántas veces sale el documento.
-3. Escribe `Norte`. El documento no se repite.
-4. Quita la limitación.
+### 1 — Limitar
+
+Pestaña Red. En la barra de esa pestaña hay un desplegable que dice `No throttling` o `Sin limitación`. Ábrelo y elige `Slow 3G`. Si no está, elige la opción más lenta que no sea `Offline` (`3G` o `Slow 4G`).
+
+La CPU no se limita en ese desplegable. Ve a la pestaña Rendimiento (Performance). Pulsa el engranaje, «Capture settings». En CPU elige `4x slowdown`. Si ese nombre no está, cualquier slowdown que no sea `No throttling`. En la pestaña queda un icono de aviso: la CPU sigue limitada mientras las herramientas estén abiertas. Vuelve a Red.
+
+### 2 — Una sola fila de documento
+
+En Red, pulsa el icono de prohibido para vaciar la lista. En la barra de filtros pulsa `Doc`, no `All` y no `JS`. Así solo ves el HTML.
+
+Recarga con F5 y espera. Con Slow 3G la barra tarda más que antes.
+
+Queda una fila. El tipo es `document`. El nombre es la dirección de la página, a menudo `localhost` o `/`. El estado es 200. Anota un 1.
+
+Las filas de módulos (`.js`, `.tsx`) no entran en esta cuenta. Si las ves, el filtro `Doc` no está pulsado.
+
+### 3 — Teclear no pide otro HTML
+
+Sin vaciar la lista y sin quitar el filtro `Doc`, haz clic en «Buscar» y escribe `Norte`.
+
+La lista de la página se queda en dos fichas, E-101 y E-103. En Red sigue habiendo una fila `document`. `Norte` no ha añadido otra.
+
+### 4 — El JSON, si tu app lo pide
+
+Quita el filtro `Doc` y pulsa `Fetch/XHR`.
+
+- Si `App` importa `datos.ts`, esta lista sale vacía. No busques `entregables.json`: esta página no lo pide.
+- Si tu `App` carga `/entregables.json`, esa fila salió en la recarga del paso 2. Escribe `Norte` otra vez, con la lista sin vaciar: la fila no se repite.
+
+### 5 — Quitar las limitaciones
+
+En Red, el desplegable vuelve a `No throttling`. En Rendimiento, el engranaje, CPU vuelve a `No throttling`. Recarga una vez y comprueba que la página responde como al empezar.
+
+**Validación:**
+
+- Con el filtro `Doc`, la recarga dejó una fila.
+- `Norte` no añadió una segunda fila `document`.
+- El desplegable de red y la CPU han vuelto a `No throttling`.
 
 → El documento se pide una vez, más despacio. `Norte` no añade otra fila del HTML. Si la lista viene de `entregables.json`, esa fila tampoco se repite al teclear.

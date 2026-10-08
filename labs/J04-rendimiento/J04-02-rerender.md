@@ -163,6 +163,8 @@ La flecha es nueva en cada pintado. El contador vuelve a subir. La prop tiene qu
 |---------|----------------|-----------------|
 | Siguen contando todas | `memo` no está aplicado, o la prop es una flecha nueva | `export default memo(Tarjeta)` y `alMarcar={marcar}` |
 | `useCallback` no está definido | Falta en el import | `import { useCallback, useState } from "react"` dentro del archivo que declara `marcar` |
+| No sale `resumen` | `Resumen` no está en el `return` de `App`, o la consola filtra los log | `<Resumen texto={texto} />` debajo de la caja, y el nivel `Info` visible |
+| Al teclear salen los id | `Tarjeta` volvió a ejecutarse | `export default memo(Tarjeta)`, `alMarcar={marcar}` y `marcar` dentro de `useCallback` |
 
 ## Laboratorio
 
@@ -174,15 +176,21 @@ La demostración aplicó `memo` a `Tarjeta` y `useCallback` a `marcar`. Aquí el
 
 ### Código de partida
 
-`export default memo(Tarjeta)` y `marcar` en `useCallback`. Si no están, la demostración de esta página los deja. Quita `console.count` de `Tarjeta` y pon `console.log`.
+Antes de crear nada, comprueba estas tres cosas. Si falta una, la demostración de esta página la deja: no sigas con `Resumen` hasta tenerlas.
 
-### Qué haces
+- `bandeja/src/componentes/Tarjeta.tsx` termina en `export default memo(Tarjeta)`.
+- En `bandeja/src/App.tsx`, `marcar` está dentro de `useCallback` con `[]`.
+- En el `map`, la prop es `alMarcar={marcar}`. Una flecha `alMarcar={(id) => marcar(id)}` rompe el salto de la ficha.
 
-1. Crea `Resumen.tsx` que hace `console.log("resumen")` y pinta `texto`.
-2. Ponlo en `App` con `texto={texto}`. No lo envuelvas en `memo`.
-3. Limpia la consola. Escribe una letra.
-4. Envuelve `memo(Resumen)`. Escribe otra letra. Sigue saliendo, porque `texto` es otro.
-5. Borra `Resumen` al terminar, o déjalo.
+En `Tarjeta`, cambia el contador por un log y guarda. Así, si una ficha se ejecuta, su id aparece escrito; si no se ejecuta, no aparece.
+
+```tsx
+console.log(item.id)
+```
+
+### 1 — El hijo que sí debe ejecutarse
+
+Crea el archivo `bandeja/src/componentes/Resumen.tsx` con este contenido. Todavía no lleva `memo`.
 
 ```tsx
 function Resumen({ texto }: { texto: string }) {
@@ -193,4 +201,47 @@ function Resumen({ texto }: { texto: string }) {
 export default Resumen
 ```
 
-→ «resumen» sale al teclear. Los id de las fichas no, si `memo` y `useCallback` siguen bien puestos. `memo(Resumen)` no calla el log: la prop cambió.
+En `App.tsx`, importa el componente junto a `Tarjeta`.
+
+```tsx
+import Resumen from "./componentes/Resumen"
+```
+
+En el `return`, justo debajo del `input` de «Buscar», antes de la lista:
+
+```tsx
+<Resumen texto={texto} />
+```
+
+Guarda los dos archivos. F12, Consola, y límpiala con el icono de prohibido. Haz clic en «Buscar» y escribe `a`.
+
+En la página, debajo de la caja, se lee `Texto: a`. En la consola se lee `resumen`. No se leen `E-101`, `E-102` ni el resto de ids: esas fichas no se han ejecutado. StrictMode puede escribir `resumen` dos veces por la misma letra. Sigue siendo el párrafo, no las fichas.
+
+### 2 — memo no calla a Resumen
+
+Sustituye `Resumen.tsx` por este archivo y guarda.
+
+```tsx
+import { memo } from "react"
+
+function Resumen({ texto }: { texto: string }) {
+  console.log("resumen")
+  return <p>Texto: {texto}</p>
+}
+
+export default memo(Resumen)
+```
+
+Limpia la consola. Escribe otra letra, `b`, sin borrar la caja. La página pasa a `Texto: ab`. La consola vuelve a escribir `resumen`. Los id de las fichas siguen sin salir.
+
+`memo` ha comparado las props. `texto` pasó de `"a"` a `"ab"`, así que `Resumen` se ejecuta. El `item` de cada ficha es el mismo objeto y `marcar` es la misma función, así que `Tarjeta` no.
+
+Al terminar puedes borrar el import, la etiqueta `<Resumen />` y el archivo. Si los dejas, la página siguiente que diga «pega `App.tsx`» quitará la etiqueta al sustituir ese archivo.
+
+**Validación:**
+
+- Con la caja en `ab`, la consola muestra `resumen` y no muestra ids.
+- `Tarjeta` sigue exportada con `memo`.
+- `alMarcar={marcar}`.
+
+→ «resumen» sale al teclear. Los id de las fichas no. `memo(Resumen)` no calla el log: la prop `texto` cambió.

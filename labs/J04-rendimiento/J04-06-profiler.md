@@ -135,6 +135,8 @@ Si tienes el efecto de la pestaña, márcalo con el Profiler grabando.
 |---------|----------------|-----------------|
 | No aparece la pestaña Profiler | La extensión no está en ese navegador | Instálala, o usa el `console.count` |
 | La grabación sale vacía | No tecleaste durante la grabación | Graba, escribe una letra, para |
+| Grabé en Performance y no veo `Tarjeta` | Esa pestaña es la del navegador | La pestaña Profiler lleva el logo de React, al lado de Components |
+| El botón no dice «Hecho» | Pulsaste «Anotar E-103» o «Anotar E-105» | El botón cuyo texto es «Anotar E-101» |
 
 ## Laboratorio
 
@@ -142,17 +144,49 @@ La demostración grabó una letra. Aquí grabas un clic en una ficha.
 
 ### Objetivo
 
-Ver en el Profiler que marcar E-101 afecta a esa ficha, no pedir el documento.
+Ver en el Profiler el commit del clic que marca E-101. La pastilla de esa ficha pasa a `revisado`.
 
 ### Código de partida
 
-React DevTools instalado. La bandeja en el 5173. Si no tienes la extensión, mira la consola: `console.count(item.id)` en `Tarjeta` y pulsa «Anotar E-101».
+La bandeja en `http://localhost:5173`, con las seis fichas. E-101 sigue en `pendiente`: el botón dice «Anotar E-101». Si ya lo marcaste, recarga y vuelve a ese texto.
 
-### Qué haces
+Hace falta la extensión React Developer Tools en el mismo navegador. F12. Junto a las pestañas del navegador aparecen dos con el logo de React: Components y Profiler. Profiler no es la pestaña Rendimiento (Performance). Esa no lista `Tarjeta`.
 
-1. Abre Profiler. Empieza a grabar.
-2. Pulsa «Anotar E-101». Para.
-3. Busca `Tarjeta` o `App` en la grabación.
-4. No mires la pestaña Red para este ejercicio: el clic no es una petición.
+Si no ves el logo, sigue el apartado «Sin la extensión» y salta el apartado del Profiler.
 
-→ La grabación tiene commits del clic. E-101 cambia a `revisado`. No hace falta que las seis fichas hayan recibido otro `item`.
+### 1 — Grabar el clic
+
+Abre la pestaña Profiler. Hay dos controles redondos. Usa el círculo de grabar. El otro recarga la página y empieza a grabar: no lo uses, porque perderías el clic.
+
+El círculo pasa a estado de grabación. En la página, pulsa el botón que dice exactamente «Anotar E-101». Es la ficha «Informe de accesibilidad». Hay otros dos «Anotar», E-103 y E-105: no valen para este paso.
+
+El botón pasa a «Hecho E-101». La pastilla dice `revisado`.
+
+Vuelve a las herramientas y pulsa el mismo círculo para parar.
+
+### 2 — Leer el commit
+
+Aparece una barra por cada commit. Pulsa la barra de esa grabación. Si hay varias, pulsa la última: es el clic.
+
+El gráfico lista componentes por nombre. Localiza `App`. Localiza `Tarjeta`.
+
+- Si en `App` siguen `memo` y `useCallback`, la `Tarjeta` coloreada es la de E-101. Las otras pueden salir grises: en ese commit no se ejecutaron.
+- Si al empezar esta página pegaste `App` y `Tarjeta` sin `memo`, pueden salir varias `Tarjeta` coloreadas. También vale: el commit es el del clic.
+
+La fila que buscas es el nombre del componente en ese gráfico. La pestaña Red no entra en la comprobación.
+
+**Validación:**
+
+- Hay al menos una barra de commit.
+- En la página, E-101 dice `revisado` y el botón dice «Hecho E-101».
+- En el gráfico se lee `App` o `Tarjeta`.
+
+### Sin la extensión
+
+En la primera línea del cuerpo de `Tarjeta`, añade `console.count(item.id)` y guarda. Recarga. F12, Consola. Limpia la pantalla si quieres: el número no vuelve a cero hasta que recargas, y la recarga ya ha contado el primer pintado.
+
+Pulsa «Anotar E-101». El número de `E-101` sube. Si no hay `memo`, los otros id también suben. La pastilla de E-101 dice `revisado`.
+
+Borra el `console.count` al acabar. La página de Lighthouse lo quiere fuera.
+
+→ La grabación tiene el commit del clic. E-101 cambia a `revisado`. No hace falta que las seis fichas hayan recibido otro `item`.
