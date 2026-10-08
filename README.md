@@ -115,7 +115,7 @@ Laboratorios:
 
 ## Jornada 6 — Estudiar y reportar el rendimiento
 
-Objetivo: saber qué hace cada herramienta, cómo se usa y para qué sirve el dato. La app se mira con el entorno de desarrollo. Índice: [jornada 6](labs/J06-informe/README.md).
+Objetivo: saber qué hace cada herramienta, cómo se usa y para qué sirve el dato. La app se mira con el entorno de desarrollo. Las páginas van clic a clic, con capturas de la bandeja en marcha. Índice: [jornada 6](labs/J06-informe/README.md).
 
 - [Qué herramienta](labs/J06-informe/J06-01-mapa.md)
 - [Chrome DevTools](labs/J06-informe/J06-02-devtools.md)
