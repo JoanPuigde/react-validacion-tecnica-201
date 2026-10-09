@@ -1,0 +1,225 @@
+/* Pestaña «Tienda»: el foco, los interruptores y la explicación con código. */
+
+/* El numerito naranja: cuántas veces ha vuelto a ejecutarse el componente.
+   Lo escribe el hook en data-pintadas. Con 0 no se ve. */
+[data-pintadas] {
+  position: relative;
+}
+
+[data-pintadas]::after {
+  content: "×" attr(data-pintadas);
+  position: absolute;
+  top: -0.6rem;
+  right: -0.4rem;
+  z-index: 1;
+  min-width: 1.5rem;
+  padding: 0 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.2rem;
+  text-align: center;
+  color: #fff;
+  background: #e8590c;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+[data-pintadas="0"]::after {
+  display: none;
+}
+
+.pasos-foco {
+  margin: 0 0 1rem;
+  padding-left: 1.4rem;
+}
+
+/* Interruptores */
+
+.interruptores {
+  margin-bottom: 0.75rem;
+}
+
+.interruptores .check {
+  margin-top: 0.4rem;
+}
+
+.interruptores button {
+  margin-top: 0.6rem;
+}
+
+.botonera {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Resumen del último pintado */
+
+.resumen {
+  margin-top: 1rem;
+}
+
+.cambio-causa {
+  margin: 0 0 0.5rem;
+}
+
+.cambio-fila {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.3rem;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.9rem;
+  border-radius: 0.4rem;
+  background: #ece7df;
+  color: #6b6256;
+}
+
+.cambio-fila.activa {
+  background: #fde3d3;
+  color: #1c1915;
+}
+
+.cambio-fila.nueva {
+  background: #e7eefb;
+  color: #1c1915;
+}
+
+.cambio-fila strong {
+  color: #1c1915;
+}
+
+.muestras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  color: #6b6256;
+}
+
+.muestra {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-right: 0.3rem;
+  vertical-align: -0.15rem;
+  border-radius: 0.2rem;
+  background: #fff;
+}
+
+.muestra.repinta {
+  border: 3px solid #e8590c;
+}
+
+.muestra.nace {
+  border: 3px solid #3f6fc4;
+}
+
+/* Explicación con código */
+
+.explicacion {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e3d9c8;
+}
+
+.explicacion h3 {
+  margin: 1.5rem 0 0.4rem;
+}
+
+.explicacion p {
+  line-height: 1.55;
+}
+
+.codigo {
+  min-width: 0;
+  margin: 0.6rem 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #1c1915;
+  border-left: 4px solid #6b6256;
+}
+
+.codigo.antes {
+  border-left-color: #c0392b;
+}
+
+.codigo.despues {
+  border-left-color: #3f9360;
+}
+
+.codigo figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.75rem;
+  color: #d8cfbe;
+  background: #2a2620;
+}
+
+.codigo pre {
+  margin: 0;
+  padding: 0.7rem 0.8rem;
+  overflow-x: auto;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #f4f0e8;
+}
+
+.codigo code {
+  padding: 0;
+  font-size: inherit;
+  background: none;
+  color: inherit;
+}
+
+.explicacion a {
+  color: #3f6fc4;
+}
+
+/* La tabla de lo medido */
+
+.tabla-medida {
+  width: 100%;
+  margin: 0.6rem 0;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tabla-medida th,
+.tabla-medida td {
+  padding: 0.5rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #e3d9c8;
+}
+
+.tabla-medida th {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6256;
+}
+
+.tabla-medida .cifra {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tabla-medida tr.activa td {
+  background: #f3e5d0;
+}
+
+.tabla-medida tr.activa td:first-child {
+  font-weight: 700;
+}
+
+.dos-codigos {
+  margin: 1rem 0;
+}
+
+.dos-codigos .codigo {
+  margin: 0.35rem 0;
+}
