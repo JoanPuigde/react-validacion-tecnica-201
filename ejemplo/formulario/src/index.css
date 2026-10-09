@@ -1,0 +1,500 @@
+/* ==========================================================================
+   1. Base del curso (la misma que bandeja/src/estilos.css)
+   ========================================================================== */
+
+:root {
+  color: #1c1915;
+  background: #f4f0e8;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  line-height: 1.45;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+
+.kicker {
+  margin: 0;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #6b6256;
+}
+
+h1 {
+  margin: 0.35rem 0 0.5rem;
+  font-size: 1.8rem;
+}
+
+.lista {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.lista li,
+article {
+  background: #fffdf8;
+  border: 1px solid #e3d9c8;
+  border-radius: 0.6rem;
+  padding: 0.9rem 1rem;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.estado {
+  display: inline-block;
+  margin: 0.35rem 0 0;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: #ece7df;
+}
+
+.estado.pendiente {
+  background: #f3e2c4;
+}
+
+.estado.revisado {
+  background: #d7ead8;
+}
+
+.estado.rechazado {
+  background: #f3d4d0;
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #cbbfaa;
+  border-radius: 0.4rem;
+  font: inherit;
+  background: #fff;
+}
+
+button {
+  margin-top: 0.75rem;
+  font: inherit;
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.4rem;
+  border: 1px solid #1c1915;
+  background: #1c1915;
+  color: #f4f0e8;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   2. Lo que añade esta aplicación (misma paleta que el curso)
+   ========================================================================== */
+
+/* --- Página y menú --- */
+
+.app {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.app h1 {
+  margin: 0 0 1rem;
+}
+
+.app h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.3rem;
+}
+
+.app h3 {
+  margin: 1.25rem 0 0.5rem;
+  font-size: 1rem;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+nav button {
+  margin-top: 0;
+  background: #fffdf8;
+  color: #1c1915;
+}
+
+nav button.activo {
+  background: #1c1915;
+  color: #f4f0e8;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+code {
+  padding: 0.05rem 0.35rem;
+  border-radius: 0.3rem;
+  font-size: 0.9em;
+  background: #ece7df;
+}
+
+select {
+  display: block;
+  width: 100%;
+  margin-top: 0.35rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #cbbfaa;
+  border-radius: 0.4rem;
+  font: inherit;
+  background: #fff;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.check input {
+  display: inline-block;
+  width: auto;
+  margin: 0;
+}
+
+.sub {
+  display: block;
+  font-size: 0.8rem;
+  color: #6b6256;
+}
+
+.nota {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: #6b6256;
+}
+
+/* --- Dos columnas y paneles --- */
+
+.columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 720px) {
+  .columnas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: #fffdf8;
+  border: 1px solid #e3d9c8;
+  border-radius: 0.6rem;
+  padding: 0.75rem 1rem 1rem;
+}
+
+.panel > h3:first-child {
+  margin-top: 0.25rem;
+}
+
+/* --- Pestaña Estado: la libreta --- */
+
+.libreta {
+  margin: 0.75rem 0;
+  padding: 1rem;
+  font-size: 3rem;
+  text-align: center;
+  background: #fbf1d6;
+  border: 2px solid #cfb46a;
+  border-radius: 0.6rem;
+}
+
+.libreta ~ button + button {
+  margin-left: 0.5rem;
+}
+
+/* --- Lista de fichas --- */
+
+.lista {
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.lista li {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr auto;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.55rem 0.9rem;
+}
+
+.lista li .estado {
+  margin: 0;
+  text-align: center;
+}
+
+.lista li button {
+  margin-top: 0;
+}
+
+/* --- Mesas (los componentes) --- */
+
+.leyenda {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  color: #6b6256;
+}
+
+.mesas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.mesa {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background: #fffdf8;
+  border: 2px solid #e3d9c8;
+  border-radius: 0.5rem;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.mesa.pide {
+  border-color: #3f6fc4;
+  background: #e7eefb;
+}
+
+.mesa.lee {
+  border-color: #3f9360;
+  background: #e3f1e4;
+}
+
+.etiqueta {
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+/* --- El armario y sus cajones --- */
+
+.armario {
+  padding: 0.5rem;
+  background: #f3e5d0;
+  border: 3px solid #7b5b3a;
+  border-radius: 0.5rem;
+}
+
+.armario-titulo {
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  color: #5b4126;
+}
+
+.cajon {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  margin-bottom: 0.4rem;
+  background: #fffdf8;
+  border: 1px solid #c8b08b;
+  border-radius: 0.4rem;
+}
+
+.cajon-nombre {
+  font-weight: bold;
+}
+
+.flash {
+  animation: flash 0.8s ease-out;
+}
+
+@keyframes flash {
+  from { background: #ffd54f; }
+  to { background: transparent; }
+}
+
+.frase {
+  margin: 0.75rem 0 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  background: #ece7df;
+  border-radius: 0.4rem;
+}
+
+/* --- Pestaña Datos de fuera --- */
+
+.aviso {
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.8rem;
+  background: #ece7df;
+  border-radius: 0.4rem;
+}
+
+.aviso.error {
+  background: #f3d4d0;
+  color: #8a2a1f;
+}
+
+.recorrido {
+  margin-bottom: 0.75rem;
+}
+
+.recorrido-fila {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 0.4rem;
+  align-items: center;
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.recorrido-caja {
+  padding: 0.5rem 0.25rem;
+  background: #fffdf8;
+  border: 2px solid #e3d9c8;
+  border-radius: 0.5rem;
+  font-weight: bold;
+}
+
+.recadero.camino {
+  border-color: #d99a00;
+  background: #fff4d6;
+  animation: latido 1s ease-in-out infinite;
+}
+
+.recadero.ok {
+  border-color: #3f9360;
+  background: #e3f1e4;
+}
+
+.recadero.error {
+  border-color: #c0392b;
+  background: #f6dcd8;
+}
+
+@keyframes latido {
+  50% { opacity: 0.55; }
+}
+
+.recorrido-texto {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+}
+
+.papeles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  min-height: 1.5rem;
+}
+
+.papel {
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  background: #ece7df;
+}
+
+/* --- Pestaña Introducción --- */
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 720px) {
+  .tarjetas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tarjeta {
+  background: #fffdf8;
+  border: 1px solid #e3d9c8;
+  border-radius: 0.6rem;
+  padding: 0.6rem 0.9rem;
+}
+
+.tarjeta p {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+}
+
+.simbolos {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fffdf8;
+  border: 1px solid #e3d9c8;
+  font-size: 0.9rem;
+}
+
+.simbolos th,
+.simbolos td {
+  padding: 0.4rem 0.7rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #ece7df;
+}
+
+.simbolos th {
+  font-size: 0.75rem;
+  color: #6b6256;
+}
+
+.pasos {
+  padding-left: 1.4rem;
+}
+
+.indice {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.indice li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.9rem;
+  margin-bottom: 0.5rem;
+  background: #fffdf8;
+  border: 1px solid #e3d9c8;
+  border-radius: 0.6rem;
+}
+
+.indice button {
+  margin-top: 0;
+}
